@@ -1,0 +1,30 @@
+@use '../abstracts' as *;
+
+.alert {
+  padding: var(--space-xs) var(--space-s);
+  border: 1px solid var(--color-border);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius-s);
+  background-color: var(--color-surface-raised);
+  margin-block-end: var(--space-m);
+
+  &__title {
+    font-weight: var(--weight-medium);
+  }
+
+  &__body {
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+  }
+
+  // Colour is never the only signal. The flash partial pairs each variant with a
+  // role (status or alert) and a visible title, because a reader who cannot
+  // distinguish the border colours gets nothing from the border alone.
+  &--success {
+    border-inline-start-color: var(--color-success);
+  }
+
+  &--danger {
+    border-inline-start-color: var(--color-danger);
+  }
+}

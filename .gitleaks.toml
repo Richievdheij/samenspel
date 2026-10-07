@@ -1,0 +1,33 @@
+# gitleaks configuration.
+#
+# There are no allowlist entries, and that was MEASURED rather than assumed:
+# gitleaks 8.30.1's default ruleset reports nothing on this repository with this
+# file's exemptions removed entirely, so every exemption drafted for it was dead
+# configuration. An inherited rule that fires on nothing still has to be read,
+# trusted and maintained by everyone who comes after, so it is worse than absent.
+#
+# Two things this file therefore exists for: to pin the scan to the default
+# ruleset, and to make sure the first person who needs an exemption writes a safe
+# one. Read the next paragraph before adding one.
+#
+# A `paths` allowlist SKIPS THE ENTIRE FILE before any rule runs, and adding
+# `condition = "AND"` does not restrain it. The obvious-looking narrow exemption —
+# this path AND this exact value — exempts every secret in that file. Measured on
+# 8.30.1: a planted live-looking key in an exempted file went unreported while the
+# same key elsewhere was caught. In a Laravel repository the tempting-and-wrong
+# path exemptions are `tests/` and `database/seeders/`, and both are exactly where
+# a real API key ends up when somebody is in a hurry.
+#
+# So: allowlist on the VALUE. The default regexTarget matches the detected secret
+# rather than the whole line, which is what you want — `regexTarget = "line"`
+# exempts every other finding that happens to share a line with it.
+#
+# And verify any exemption you add the way this file's absence of them was
+# verified: plant a realistic secret in the file it covers, confirm the scan still
+# fails, then delete the plant before committing. gitleaks scans HISTORY, so a
+# committed plant makes the gate permanently red with no clean way back.
+
+title = "laravel-starter-template"
+
+[extend]
+useDefault = true

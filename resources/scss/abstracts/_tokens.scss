@@ -1,0 +1,107 @@
+// Design tokens.
+//
+// These are CSS custom properties on :root, not Sass variables, on purpose: they
+// stay readable in devtools, they can be overridden per component or per media
+// query, and JavaScript can read them. Sass variables would be compiled away and
+// every value would then live twice.
+//
+// Naming is --<category>-<name>. Add a token here before using a raw value
+// anywhere else; a hex code in a component is the thing this file exists to stop.
+
+:root {
+  // ─── Colour ───────────────────────────────────────────────────────────────
+  --color-surface: #ffffff;
+  --color-surface-raised: #f6f7f9;
+  --color-border: #e2e5ea;
+  --color-text: #16191d;
+  --color-text-muted: #5c636e;
+  --color-accent: #2f6feb;
+  --color-accent-contrast: #ffffff;
+  --color-danger: #c0392b;
+  --color-danger-contrast: #ffffff;
+  --color-success: #1e7e46;
+  --color-backdrop: rgb(16 25 45 / 55%);
+
+  // ─── Spacing ──────────────────────────────────────────────────────────────
+  // A 4px-based scale. Steps, not arbitrary numbers, so two components that mean
+  // "one gap apart" cannot drift to 12px and 14px.
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+
+  // ─── Typography ───────────────────────────────────────────────────────────
+  --font-body: system-ui, -apple-system, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
+  --font-mono: ui-monospace, sfmono-regular, 'SF Mono', menlo, monospace;
+
+  --text-s: 0.875rem;
+  --text-m: 1rem;
+  --text-l: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  // ─── Shape and depth ──────────────────────────────────────────────────────
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 16px;
+  --radius-full: 9999px;
+
+  --shadow-s: 0 1px 2px rgb(16 25 45 / 8%);
+  --shadow-m: 0 4px 16px rgb(16 25 45 / 10%);
+
+  // ─── Layout ───────────────────────────────────────────────────────────────
+  --container-width: 68rem;
+  --header-height: 4rem;
+  --footer-height: 6rem;
+  --card-width: 28rem;
+  --dropdown-width: 14rem;
+  --modal-width: 36rem;
+
+  // ─── Stacking ─────────────────────────────────────────────────────────────
+  // Named layers, so a dropdown and the skip link cannot fight over who is on
+  // top with ever larger numbers.
+  --layer-dropdown: 20;
+  --layer-skip-link: 30;
+
+  // ─── Motion ───────────────────────────────────────────────────────────────
+  --duration-fast: 120ms;
+  --duration-slow: 400ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+// Dark scheme by preference. Only the colour tokens change; every component
+// reads the same names and so needs no dark-specific rule of its own.
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #101317;
+    --color-surface-raised: #181c22;
+    --color-border: #2a3038;
+    --color-text: #eef1f5;
+    --color-text-muted: #9aa3b0;
+    --color-accent: #6d9dff;
+    --color-accent-contrast: #0b0e12;
+    --color-danger: #ef6a5b;
+    --color-danger-contrast: #0b0e12;
+    --color-success: #45b877;
+    --color-backdrop: rgb(0 0 0 / 65%);
+  }
+}
+
+// Respect a reduced-motion preference globally rather than per component.
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-slow: 1ms;
+  }
+}

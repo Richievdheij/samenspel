@@ -1,0 +1,56 @@
+# Normalise on the way in, LF on the way out, everywhere.
+* text=auto eol=lf
+
+# ─── The files a CRLF checkout would actually break ─────────────────────────
+#
+# `text=auto` already resolves to LF above, but these are stated explicitly
+# because the failure mode is silent and specific rather than cosmetic, and a
+# future `* text=auto` without `eol=lf` — or a contributor with a global
+# core.autocrlf=true — would otherwise reintroduce it:
+#
+#   Makefile        a recipe line ending in \r passes \r to the shell as part of
+#                   the command, so `php artisan migrate\r` is "command not found"
+#                   naming a command that looks perfectly correct.
+#   *.sh, hooks     a CRLF shebang fails with `bad interpreter: /usr/bin/env sh^M`,
+#                   naming a path that exists.
+#   scripts/*.mjs   `.` in a JavaScript regex excludes \r, so a KEY=value pattern
+#                   matches NOTHING on a CRLF checkout, and the env renderer then
+#                   writes a file that looks configured and holds no value.
+#   .env*           sourced as shell; each bare \r is executed and prints
+#                   "not found", and the values silently carry a trailing \r.
+Makefile           text eol=lf
+*.mk               text eol=lf
+*.sh               text eol=lf
+*.mjs              text eol=lf
+*.js               text eol=lf
+*.json             text eol=lf
+*.neon             text eol=lf
+*.toml             text eol=lf
+*.yml              text eol=lf
+*.yaml             text eol=lf
+*.php              text eol=lf
+*.blade.php        text eol=lf
+*.scss             text eol=lf
+*.md               text eol=lf
+.githooks/*        text eol=lf
+.env.example       text eol=lf
+.env.*.example     text eol=lf
+.gitmessage        text eol=lf
+.nvmrc             text eol=lf
+.editorconfig      text eol=lf
+
+# ─── Binary ─────────────────────────────────────────────────────────────────
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.zip binary
+*.sqlite binary

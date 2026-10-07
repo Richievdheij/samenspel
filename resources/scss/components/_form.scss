@@ -1,0 +1,41 @@
+@use '../abstracts' as *;
+
+// The parts of a form that are not a field: the row of actions at the end, and
+// the transient "Saved." beside the button that saved.
+
+.form {
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-block-start: var(--space-m);
+    font-size: var(--text-s);
+
+    &--start {
+      justify-content: flex-start;
+    }
+
+    &--end {
+      justify-content: flex-end;
+    }
+  }
+
+  &__saved {
+    color: var(--color-text-muted);
+    transition: opacity var(--duration-slow) var(--easing-standard);
+
+    // Set by app.js two seconds after the page loads, as Breeze's Alpine
+    // `x-show` did. Without JavaScript the message simply stays.
+    &[data-transient='done'] {
+      opacity: 0;
+    }
+  }
+
+  &__notice {
+    margin-block-start: var(--space-2xs);
+    color: var(--color-success);
+    font-weight: var(--weight-medium);
+  }
+}

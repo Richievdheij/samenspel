@@ -1,0 +1,7 @@
+// Everything a component may need from the abstract layer, behind one name.
+// A component writes `@use '../abstracts' as *;` and gets the mixins; the tokens
+// come along as CSS output, which Sass emits exactly once however often this
+// module is used.
+
+@forward 'tokens';
+@forward 'breakpoints';

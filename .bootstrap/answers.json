@@ -1,0 +1,86 @@
+{
+  "$comment": "TOOLCHAIN-BOOTSTRAP.md §1. A second run reads this and asks nothing. Every value was verified against the machine during the §2 preflight probe; `verified` records what was actually observed, `answer` what the toolchain is pinned to.",
+  "project_name": "laravel-starter-template",
+  "stack_profile": "php-laravel",
+  "package_manager": "npm@11",
+  "monorepo": "no",
+  "docker": "no",
+  "environments": ["local", "production"],
+  "ci": "github-actions (ubuntu-latest only)",
+  "base_branch": "main",
+  "commit_grammar": "type(scope): subject",
+  "contributor_os": ["macos", "linux", "windows-wsl2"],
+  "permissions": ["commit-per-phase", "no-push", "no-global-installs"],
+  "stack": {
+    "php": {
+      "constraint": "^8.4",
+      "local_verified": "8.4.23",
+      "local_source": "Herd 1.30.0 (php84)",
+      "note": "php_local 8.5 was requested but Herd has no php85 binary and permissions forbid global installs. ^8.4 already admits 8.5, so nothing in the toolchain changes. Recorded in §11."
+    },
+    "laravel": {
+      "constraint": "^13.0",
+      "latest_verified": "13.31.0",
+      "skeleton": "laravel/laravel v13.10.1"
+    },
+    "node": {
+      "constraint": ">=24",
+      "local_verified": "24.20.0"
+    },
+    "npm": {
+      "constraint": ">=11",
+      "local_verified": "11.19.0"
+    },
+    "composer": {
+      "local_verified": "2.10.2"
+    },
+    "make": {
+      "local_verified": "GNU Make 3.81",
+      "note": "macOS stock. No .ONESHELL, no $(file ...) used anywhere."
+    },
+    "awk": {
+      "local_verified": "BSD awk 20200816",
+      "note": "printf %-*s and match()/substr() empirically verified before the help block was written."
+    }
+  },
+  "toolchain": {
+    "test_framework": "pest ^5.1",
+    "test_runner_entrypoint": "php artisan test",
+    "static_analysis": {
+      "tool": "larastan ^3.11",
+      "phpstan": "^2.2",
+      "level": 6,
+      "baseline": "none - greenfield, a day-one baseline is @ts-ignore at scale"
+    },
+    "formatter_php": "pint ^1.31 (laravel preset, strict types)",
+    "formatter_web": "prettier ^3.9",
+    "linter_web": "eslint ^10 flat config",
+    "frontend": "blade + vite ^8.2 + scss",
+    "css_preprocessor": "sass-embedded ^1.104 (dart sass)",
+    "css_architecture": "tokens in :root, BEM, @use/@forward",
+    "tailwind": "no",
+    "starter_kit": "none"
+  },
+  "database": {
+    "local": "sqlite",
+    "production": "mysql 8.4",
+    "test": "sqlite :memory:",
+    "integration": "mysql - local 127.0.0.1:3306 when DB env is present, CI service container mysql:8.4 otherwise",
+    "ci": ["sqlite", "mysql 8.4"],
+    "note": "Local Homebrew MySQL is 9.5.0; CI pins 8.4 because production is 8.4. The laptop is not the reference."
+  },
+  "app": {
+    "locale": "nl",
+    "fallback_locale": "en",
+    "timezone": "Europe/Amsterdam"
+  },
+  "decisions": {
+    "pest_5_over_4": "php_constraint ^8.4 is exactly Pest 5's floor. Pinning Pest 4 would buy PHP 8.3 compatibility that the constraint already gave up. Pest 5.1.4 -> PHPUnit ^13.3; Laravel 13.31 tests against PHPUnit ^13.0.3.",
+    "integration_db": "`make test` is SQLite :memory: and always runs. `make integration` targets MySQL and fails loudly when no database is reachable - it never skips, because a skip reads exactly like a pass.",
+    "template_scope": "One conventions slice with empty bodies: layout + partials + component, SCSS token/BEM architecture, and Model/Migration/Factory/Seeder/Controller/FormRequest/Policy/Resource plus matching Pest tests. Configuration is complete; domain logic is absent.",
+    "branching": "main is always deployable and nobody commits to it directly; develop is the integration branch; work happens on feature/<name> branches cut from develop. Documented in docs/branching.md.",
+    "windows_is_wsl2": "Native Windows was tried and measured on a windows-latest runner: the chocolatey make spawns cmd.exe per recipe line and silently ignores a POSIX SHELL it cannot resolve, so the gates never ran. WSL2 is Linux, so the toolchain needs no special case at all.",
+    "ci_is_ubuntu_only": "One runner OS. It saves Actions minutes, make is native there, and a second OS was buying a platform nobody on this project develops on."
+  },
+  "integration_branch": "develop"
+}

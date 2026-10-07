@@ -1,0 +1,96 @@
+@use '../abstracts' as *;
+
+// BEM, in full: .button is the block, .button__icon an element, .button--primary
+// a modifier. A modifier never appears without its block, and an element never
+// styles anything outside its block.
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-s);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-m);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--easing-standard);
+
+  &:hover {
+    background-color: var(--color-surface-raised);
+  }
+
+  &[disabled],
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    inline-size: 1em;
+    block-size: 1em;
+    flex: none;
+  }
+
+  &--primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-contrast);
+
+    &:hover {
+      // No token for a hover shade: derive it rather than inventing a new colour.
+      filter: brightness(1.08);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    border-color: transparent;
+
+    &:hover {
+      background-color: var(--color-surface-raised);
+    }
+  }
+
+  // Irreversible actions: deleting the account. Red is not the only signal —
+  // the label says what happens, and the modal asks again.
+  &--danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+    color: var(--color-danger-contrast);
+
+    &:hover {
+      background-color: var(--color-danger);
+      filter: brightness(1.08);
+    }
+  }
+
+  // A button that reads as a link, for an action inside running text such as
+  // "re-send the verification email". Still a <button>: it acts.
+  &--link {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font-size: inherit;
+    font-weight: var(--weight-normal);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    &:hover {
+      background: none;
+      color: var(--color-text);
+    }
+  }
+
+  &--block {
+    display: flex;
+    inline-size: 100%;
+  }
+}

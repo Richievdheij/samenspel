@@ -1,0 +1,9 @@
+# type(scope): subject
+#
+# type:    feat fix docs style refactor perf test build ci chore revert
+# scope:   optional, lower case, e.g. (auth) (env) (make)
+# subject: imperative, lower case, no full stop, at most 90 characters
+#
+# Then a blank line, then WHY this change — the diff already says what.
+#
+# No Co-authored-by line for an AI tool: the author is the developer, always.

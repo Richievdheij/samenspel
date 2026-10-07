@@ -1,0 +1,228 @@
+@use '../abstracts' as *;
+
+// The page frame. Block names describe the role, never the appearance: renaming
+// `.site-header` because it turned blue is the failure this convention avoids.
+
+// The header and the content together fill exactly one screen, whatever the page
+// holds; the footer starts below it and appears only once you scroll. So a new
+// page always reads as "the content goes here", and the footer as "below".
+.site__screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.site__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-block: var(--space-xl);
+}
+
+// Grows to the bottom of the screen, so a page can centre something in it.
+.site__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.site-header {
+  // The containing block for the hamburger panel, which spans the full width.
+  position: relative;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-raised);
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-l);
+    min-block-size: var(--header-height);
+  }
+
+  &__brand {
+    font-weight: var(--weight-bold);
+    font-size: var(--text-l);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  // The inline navigation and the account area are the wide-screen layout; below
+  // `m` the hamburger menu carries the same links instead, exactly as Breeze's
+  // responsive menu does.
+  &__nav,
+  &__account {
+    display: none;
+    gap: var(--space-m);
+    align-items: center;
+
+    @include from('m') {
+      display: flex;
+    }
+  }
+
+  &__nav {
+    margin-inline-end: auto;
+  }
+
+  // Full header height, so the user menu opens from the header's bottom edge
+  // rather than from halfway down it.
+  &__account {
+    align-self: stretch;
+    align-items: stretch;
+  }
+
+  // Plain text: no background, no border, no radius. The current page is the
+  // one in the text colour and bold — weight, so colour is not the only signal.
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: var(--text-m);
+    font-weight: var(--weight-normal);
+    line-height: var(--leading-tight);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &[aria-current='page'] {
+      color: var(--color-text);
+      font-weight: var(--weight-bold);
+    }
+  }
+}
+
+// The hamburger menu: a <details>, so it opens without JavaScript. The panel
+// drops below the header bar and spans the viewport.
+.site-menu {
+  @include from('m') {
+    display: none;
+  }
+
+  &__toggle {
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  &__icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  &__close,
+  &[open] &__open {
+    display: none;
+  }
+
+  &[open] &__close {
+    display: inline;
+  }
+
+  &__panel {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: var(--layer-dropdown);
+    border-block: 1px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+    box-shadow: var(--shadow-m);
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--space-2xs);
+
+    & + & {
+      border-block-start: 1px solid var(--color-border);
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-2xs) var(--space-s);
+  }
+
+  &__name {
+    font-weight: var(--weight-medium);
+  }
+
+  &__email {
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+  }
+
+  &__link {
+    display: block;
+    inline-size: 100%;
+    padding: var(--space-2xs) var(--space-s);
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &[aria-current='page'] {
+      color: var(--color-text);
+      font-weight: var(--weight-bold);
+    }
+  }
+}
+
+// The optional band above the content, filled by a page's `header` slot.
+.page-header {
+  margin-block: calc(-1 * var(--space-xl)) var(--space-l);
+  padding-block: var(--space-m);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-s);
+
+  h1 {
+    font-size: var(--text-xl);
+  }
+}
+
+.site-footer {
+  min-block-size: var(--footer-height);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-muted);
+  font-size: var(--text-s);
+}
+
+.skip-link {
+  @include visually-hidden;
+
+  // Becomes visible on keyboard focus. Without this a keyboard user tabs through
+  // the whole navigation on every page before reaching the content.
+  &:focus-visible {
+    position: fixed;
+    inset-block-start: var(--space-2xs);
+    inset-inline-start: var(--space-2xs);
+    z-index: var(--layer-skip-link);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: var(--space-2xs) var(--space-s);
+    clip-path: none;
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-m);
+  }
+}

@@ -1,0 +1,40 @@
+@use '../abstracts' as *;
+
+// A native <dialog>. The browser supplies the focus trap, Escape and the inert
+// page behind it; this only draws it. The dialog itself has no padding, so a
+// click that lands on the dialog element and not on its body is a click on the
+// backdrop — which is how app.js tells the two apart.
+
+.modal {
+  inline-size: calc(100% - 2 * var(--space-s));
+  max-inline-size: var(--modal-width);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-m);
+
+  &::backdrop {
+    background-color: var(--color-backdrop);
+  }
+
+  &__body {
+    padding: var(--space-m);
+
+    @include from('m') {
+      padding: var(--space-l);
+    }
+  }
+
+  &__title {
+    margin-block-end: var(--space-2xs);
+    font-size: var(--text-l);
+  }
+
+  &__text {
+    margin-block-end: var(--space-m);
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+  }
+}

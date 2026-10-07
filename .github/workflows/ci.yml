@@ -1,0 +1,124 @@
+name: CI
+
+# Every step below is `run: make <target>` and nothing else. CI owns which runner,
+# which service container and which condition a gate runs under; the Makefile owns
+# what the gates ARE. scripts/check-ci-parity.mjs refuses a difference in either
+# direction, so this file and `make ci` cannot drift apart.
+
+on:
+  pull_request:
+  push:
+    # develop is where work is integrated and main is what gets released, so both
+    # are protected by the same gates. Feature branches are covered through their
+    # pull request rather than on every push, which would run the same gates twice.
+    branches: [main, develop]
+
+# An unstated permissions block inherits the repository default, which is commonly
+# read-write. Nothing here writes.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # `make commit-messages` reads history. The default clone is one commit
+          # deep, which has neither end of the range.
+          fetch-depth: 0
+
+      # A local action is only resolvable after checkout.
+      - uses: ./.github/actions/setup
+
+      - run: make commit-messages
+        env:
+          # TWO dots, and that is correct here: `git log A..B` is exactly "the
+          # commits on B that are not on A". Three dots is what a `git diff` needs
+          # — scripts/lib/branch.mjs uses it there, for changed files.
+          COMMIT_RANGE: >-
+            ${{ github.event_name == 'pull_request'
+             && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha)
+             || format('{0}..{1}', github.event.before, github.sha) }}
+
+      - run: make format-check
+      - run: make checks
+      - run: make lint
+      - run: make analyse
+      - run: make rector-check
+      - run: make arch
+      - run: make test
+      - run: make build
+
+  integration:
+    name: integration (mysql 8.4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mysql:
+        # Pinned to the production major by digest. The developer laptop this was
+        # built on runs MySQL 9.5; production is the reference, not the laptop.
+        # The digest is the multi-arch index, so it resolves on any runner.
+        image: mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel_starter_template
+        ports: ["3306:3306"]
+        # Without a health gate the job races the server's first start and fails
+        # on connection refused, intermittently, which reads as a flaky test.
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+
+      - run: make integration
+        env:
+          # scripts/db-env.mjs prefers the process environment over the env file,
+          # so these win here and .env wins on a laptop — one resolution order,
+          # both callers.
+          DB_HOST: 127.0.0.1
+          DB_PORT: "3306"
+          DB_DATABASE: laravel_starter_template
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+  # Its own job because it is the only one that needs a browser, and pulling ~100 MB
+  # of Chromium into every job to run one test would be the slowest thing here.
+  browser:
+    name: browser smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          browsers: "true"
+
+      # `make browser` depends on `make build`, so the assets exist before the
+      # browser asks for them. That ordering is the whole point of this test.
+      - run: make browser
+
+  supply-chain:
+    name: supply chain
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # gitleaks scans history, not the working tree: a secret committed and
+          # then deleted is still in the pack files and still leaked.
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - run: make audit
+      - run: make secrets-scan

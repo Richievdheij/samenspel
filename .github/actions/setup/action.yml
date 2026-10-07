@@ -1,0 +1,86 @@
+name: Setup
+description: PHP, Node and both dependency trees, at the versions this repository declares.
+
+# One place to bump a toolchain version, used by every job. Four jobs with four
+# copies of this is four places to edit and three chances to forget one.
+
+inputs:
+  browsers:
+    description: >-
+      Install the Playwright browser that `make browser` needs. Off by default —
+      it is a ~100 MB download, and only one job runs the browser suite.
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+
+  steps:
+    # The PHP version is READ FROM composer.json rather than written here.
+    # Two declarations of the same version drift, and the failure surfaces as a
+    # resolver error in CI only, long after everything worked locally.
+    - name: Read the PHP version from composer.json
+      id: php
+      shell: bash
+      run: |
+        version=$(node -p "require('./composer.json').require.php.replace(/[^0-9.]/g, '').split('.').slice(0, 2).join('.')")
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "composer.json requires PHP $version"
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+      with:
+        php-version: ${{ steps.php.outputs.version }}
+        # Every extension the dependency graph requires, named explicitly. The
+        # failure mode when one is missing is `composer install` refusing to
+        # resolve THE LOCK FILE — a message that reads like a corrupt lockfile and
+        # is really a missing extension. `sockets` is here because
+        # pest-plugin-browser requires ext-sockets; when a dependency adds a
+        # platform requirement, it belongs in this list.
+        extensions: bcmath, ctype, curl, dom, fileinfo, filter, hash, intl, mbstring, openssl, pdo, pdo_mysql, pdo_sqlite, session, sockets, tokenizer, xml, zip
+        # Larastan boots the application, and PHPStan runs out of memory on a
+        # Laravel app at the default limit. The failure is a fatal allocation
+        # error that reads like a broken install rather than a lint failure.
+        ini-values: memory_limit=1G
+        coverage: none
+
+    - name: Set up Node
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      with:
+        # .nvmrc, not package.json: setup-node would read `engines.node` there,
+        # and ">=24" is a floor rather than a version it can install.
+        node-version-file: .nvmrc
+        cache: npm
+
+    # The key carries github.job on purpose. With one key per commit, the first
+    # job to finish claims it and every later job saves nothing at all — the
+    # cache looks configured and never warms.
+    - name: Restore the Composer cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ~/.cache/composer
+        key: composer-${{ runner.os }}-${{ github.job }}-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-${{ runner.os }}-${{ github.job }}-
+          composer-${{ runner.os }}-
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        composer install --no-interaction --prefer-dist --no-progress
+        npm ci
+
+    # From the LOCAL playwright, never `npx playwright@<version>`. The browser
+    # binary is tied to the package version, and fetching a different one gives
+    # "Playwright is outdated" at the first assertion.
+    - name: Install the Playwright browser
+      if: inputs.browsers == 'true'
+      shell: bash
+      run: ./node_modules/.bin/playwright install --with-deps chromium
+
+    # Every artisan command boots the framework, so Larastan and the test suite
+    # both need an APP_KEY. `make env` generates one and is idempotent, so this
+    # is the same command a contributor runs on a fresh clone.
+    - name: Create the environment file
+      shell: bash
+      run: make env

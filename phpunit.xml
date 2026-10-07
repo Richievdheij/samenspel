@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnDeprecation="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+        <!-- Its own suite so `make arch` can run the rules alone, and so the
+             architecture gate is visibly separate from the behaviour one. -->
+        <!-- Real browser, real built assets. Its own suite so it can be run and
+             skipped independently of the fast suites. -->
+        <testsuite name="Browser">
+            <directory>tests/Browser</directory>
+        </testsuite>
+        <testsuite name="Arch">
+            <directory>tests/Arch</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <!-- Test environment is declared HERE and nowhere else. A variable exported
+         from a shell arrives empty in some runners and the specs that need it
+         then skip, which reads exactly like a pass. -->
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <!-- Pinned so the suite proves the Dutch locale rather than inheriting
+             whatever a given developer happens to have in .env. -->
+        <env name="APP_LOCALE" value="nl"/>
+        <env name="APP_FALLBACK_LOCALE" value="en"/>
+        <env name="APP_TIMEZONE" value="Europe/Amsterdam"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="BROADCAST_CONNECTION" value="null"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <!-- DB_SQLITE_DATABASE, not DB_DATABASE: DB_DATABASE is the MySQL schema
+             name that `make integration` supplies, and one key cannot mean two
+             things. Setting it here instead would be read by the sqlite driver
+             as a file path. tests/Feature/DatabaseConnectionTest.php asserts this
+             actually took effect, because the failure is silent and green. -->
+        <env name="DB_SQLITE_DATABASE" value=":memory:"/>
+        <env name="DB_URL" value=""/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="NIGHTWATCH_ENABLED" value="false"/>
+    </php>
+</phpunit>

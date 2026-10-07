@@ -1,0 +1,53 @@
+Copyright (c) 2026 Richie van der Heij. All rights reserved.
+
+PROPRIETARY AND CONFIDENTIAL
+
+This software and its source code are the private property of the copyright
+holder. They are made available to no one, and no licence to use them is granted
+by their being hosted, mirrored, cached, or otherwise made technically reachable.
+
+You may not, without prior written permission from the copyright holder:
+
+  1. copy, reproduce, or download this software in whole or in part;
+  2. use it, in source or compiled form, for any purpose, commercial or
+     otherwise, including as the starting point or template for another project;
+  3. modify it, adapt it, translate it, or create derivative works from it;
+  4. distribute, publish, sublicense, sell, rent, lease, or otherwise transfer it
+     or any derivative of it;
+  5. remove, obscure, or alter this notice.
+
+No transfer of ownership or of any intellectual property right is made or implied.
+Any permission that may be granted is non-exclusive, non-transferable, revocable
+at will, and limited to the specific purpose stated in writing.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+-------------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+-------------------------------------------------------------------------------
+
+The terms above cover the original work in this repository. They do NOT and
+cannot cover third-party code that is included in it or installed alongside it,
+which remains under its own licence. This section is not a formality: relicensing
+somebody else's work is not something a copyright notice can do.
+
+  Laravel skeleton (laravel/laravel) — MIT, Copyright (c) Taylor Otwell.
+      Files derived from the framework's application skeleton — among them
+      `artisan`, `bootstrap/`, `public/index.php`, `config/*.php` and parts of
+      `app/` and `database/` — originate there. MIT permits their inclusion in a
+      proprietary work provided the copyright notice is retained, which this
+      section does.
+
+  Dependencies installed by Composer and npm — various licences.
+      Nothing under `vendor/` or `node_modules/` is tracked in this repository.
+      Each package is governed by its own licence; run `composer licenses` to
+      list the PHP side.
+
+If you want the terms above relaxed for a specific project or person, that is a
+conversation, not an assumption. Ask.

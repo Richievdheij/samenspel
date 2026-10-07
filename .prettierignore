@@ -1,0 +1,35 @@
+# Written before the first format run, on purpose. A formatter let loose on a
+# tree it was never scoped to is how a template placeholder gets re-quoted and
+# survives into production as visible text, with the diff looking like whitespace.
+
+# Dependencies and build output
+/vendor
+/node_modules
+/public/build
+/public/hot
+/storage
+/bootstrap/cache
+
+# Generated. A formatter must never rewrite a lockfile.
+composer.lock
+package-lock.json
+
+# Real and template environment files. Re-indenting or re-quoting a value here
+# changes what the application reads.
+.env
+.env.*
+
+# PHP, including Blade. Prettier has no PHP parser; pointed at a .blade.php it
+# parses the file as HTML and rewrites directives and {{ }} expressions. Pint
+# owns PHP layout — it skips .blade.php natively — and `php artisan view:cache`
+# syntax-checks every Blade file during `make build`.
+**/*.php
+
+# An imported specification, kept verbatim as the record of why this toolchain
+# looks the way it does. Reflowing its tables would bury that history in a diff.
+TOOLCHAIN-BOOTSTRAP.md
+
+# boost.json is written by `php artisan boost:install`, which formats it with four
+# spaces. Prettier wants two, so leaving it here would make every boost run dirty
+# the tree and fail format-check.
+boost.json

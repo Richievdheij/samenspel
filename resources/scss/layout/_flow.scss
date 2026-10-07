@@ -1,0 +1,18 @@
+@use '../abstracts' as *;
+
+// Two layout primitives for spacing siblings, so a page does not reach for a
+// margin on each child. `.stack` stacks blocks vertically, `.cluster` lines
+// inline items up and lets them wrap.
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs);
+}

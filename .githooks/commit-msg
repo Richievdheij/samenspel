@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+# Installed by `make git-hooks`, which `make install` runs, via core.hooksPath —
+# so the file that runs is the file in the diff. Nothing is copied into
+# .git/hooks, where it would not survive a clone and could drift from this one.
+#
+# `git rev-parse --show-toplevel` rather than a path relative to $0: git does not
+# guarantee that $0 is a usable path when it invokes a hook.
+#
+# cd first, then pass a RELATIVE path. Under Git Bash on Windows that toplevel is
+# an MSYS path like /c/Users/you/repo, and node.exe is a native Windows program
+# that does not understand one. Git Bash tries to convert such arguments back to
+# C:\... on the way out, but the heuristic is exactly that — a heuristic. A
+# relative path needs no conversion at all, so this sidesteps the question.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+exec node scripts/check-commit-message.mjs "$1"

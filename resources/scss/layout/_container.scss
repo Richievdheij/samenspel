@@ -1,0 +1,12 @@
+@use '../abstracts' as *;
+
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-inline: auto;
+  padding-inline: var(--space-s);
+
+  @include from('m') {
+    padding-inline: var(--space-m);
+  }
+}

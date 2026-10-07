@@ -1,0 +1,41 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    # Without this, PHPStan reads Pest's `$this->get(...)` inside a test closure as
+    # a call on TestCall and reports every assertion in the suite as an undefined
+    # method. The fix is to teach the analyser the DSL, not to exclude tests/ from
+    # the paths and lose the coverage, and certainly not to bank it in a baseline.
+    - vendor/pestphp/pest-plugin-phpstan/extension.neon
+
+parameters:
+    # Measured, not guessed. After one real fix in config/filesystems.php, levels
+    # 7, 8, 9 AND 10 all reach zero errors on this tree:
+    #
+    #   level    before ide-helper   after ide-helper   after the fix
+    #   7        1                   1                  0
+    #   8        1                   1                  0
+    #   9        1                   1                  0
+    #   10       -                   -                  0
+    #
+    # 9 rather than 10, deliberately. Both are clean today because there is barely
+    # any code yet; the difference only appears in what they demand of code written
+    # LATER. Level 10 treats every `mixed` as explicit, which on a template other
+    # people build on turns an ordinary `$request->input('x')` into a wall. 9 keeps
+    # null-safety and strict comparisons without that.
+    #
+    # Raising to 10 is one line, and it is currently free. Never lower it, and never
+    # generate a baseline — a day-one baseline is an ignore comment applied to the
+    # whole repository.
+    level: 9
+
+    paths:
+        - app
+        - bootstrap/app.php
+        - config
+        - database
+        - routes
+        - tests
+
+    # No baseline, and none is to be added. If a finding cannot be fixed, the
+    # narrow fix is an `ignoreErrors` entry here carrying the reason, so the next
+    # reader can tell a deliberate exception from an unpaid debt.
+    ignoreErrors: []

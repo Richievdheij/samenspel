@@ -1,0 +1,8 @@
+@use '../abstracts' as *;
+
+// The one utility class this template ships. Text that must exist for a screen
+// reader but must not take space on screen — an icon-only button's label, a
+// heading that would be redundant visually.
+.sr-only {
+  @include visually-hidden;
+}

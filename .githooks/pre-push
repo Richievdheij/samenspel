@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+# Pre-push, deliberately not pre-commit.
+#
+# A gate whose cost is minutes and whose trigger is "I want to save my work"
+# teaches people to stop committing, and you lose the granular history that makes
+# a change reviewable. Committing stays instant; pushing is where the tree has to
+# be defensible.
+#
+# Escape hatch, stated out loud rather than discovered: `git push --no-verify`
+# skips this. In the last 72 hours before a deadline, working-but-red beats
+# blocked-and-clean, and nobody has to ask permission to say so. CI still runs.
+set -e
+
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+
+printf "\033[1;36m▶\033[0m %s\n" "Running 'make verify' before pushing (skip with --no-verify)"
+exec make verify
