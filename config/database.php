@@ -42,7 +42,7 @@ return [
              * MySQL schema name — `make integration` and production both need it,
              * so both env templates declare it. SQLite would then read that same
              * value as a FILE PATH and create a database called
-             * "laravel_starter_template" in the project root: untracked, outside
+             * "samenspel" in the project root: untracked, outside
              * .gitignore, and in a place `make status` does not look, so status
              * reports the database as missing while the application happily uses
              * it. One key cannot mean two things.

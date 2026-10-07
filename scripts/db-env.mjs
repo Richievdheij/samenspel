@@ -40,7 +40,7 @@ const values = {
   DB_CONNECTION: 'mysql',
   DB_HOST: resolve('DB_HOST', '127.0.0.1'),
   DB_PORT: resolve('DB_PORT', '3306'),
-  DB_DATABASE: resolve('DB_DATABASE', 'laravel_starter_template'),
+  DB_DATABASE: resolve('DB_DATABASE', 'samenspel'),
   DB_USERNAME: resolve('DB_USERNAME', 'root'),
   DB_PASSWORD: resolve('DB_PASSWORD', ''),
 }
