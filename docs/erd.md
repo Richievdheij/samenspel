@@ -179,6 +179,20 @@ erDiagram
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
+    "events" {
+        int id PK
+        int user_id FK
+        int game_id FK
+        int category_id FK
+        string title
+        text description
+        datetime starts_at
+        string location
+        int max_participants
+        string status
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
+    }
     "failed_jobs" {
         int id PK
         string uuid UK
@@ -238,7 +252,10 @@ erDiagram
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
+    "categories" ||--o{ "events" : "category_id"
+    "games" ||--o{ "events" : "game_id"
     "users" |o..o{ "sessions" : "user_id"
+    "users" ||--o{ "events" : "user_id"
 ```
 
 <!-- erd:end -->

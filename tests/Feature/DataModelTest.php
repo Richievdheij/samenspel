@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Enums\EventStatus;
 use App\Models\Category;
+use App\Models\Event;
 use App\Models\Game;
+use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 /*
@@ -15,3 +19,39 @@ it('refuses a second game or category with the same name', function (string $mod
     $model::query()->create(['name' => 'LAN']);
     $model::query()->create(['name' => 'LAN']);
 })->with([Game::class, Category::class])->throws(UniqueConstraintViolationException::class);
+
+it('connects an event to its organiser', function (): void {
+    $organiser = User::factory()->create();
+    $event = Event::factory()->for($organiser, 'organizer')->create();
+
+    expect($event->organizer->is($organiser))->toBeTrue()
+        ->and($organiser->organizedEvents->modelKeys())->toBe([$event->id]);
+});
+
+it('removes the events a user organised when the account is deleted', function (): void {
+    $event = Event::factory()->create();
+
+    $event->organizer->delete();
+
+    $this->assertModelMissing($event);
+});
+
+it('refuses to delete a game an event still uses', function (): void {
+    $game = Game::factory()->has(Event::factory())->create();
+
+    $game->delete();
+})->throws(QueryException::class);
+
+it('opens a new event unless the organiser closes it', function (): void {
+    $event = User::factory()->create()->organizedEvents()->create([
+        'game_id' => Game::factory()->create()->id,
+        'category_id' => Category::factory()->create()->id,
+        'title' => 'LAN-avond',
+        'description' => 'Neem je eigen pc mee.',
+        'starts_at' => now()->addWeek(),
+        'location' => 'Utrecht',
+        'max_participants' => 8,
+    ]);
+
+    expect($event->refresh()->status)->toBe(EventStatus::Open);
+});

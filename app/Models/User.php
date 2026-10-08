@@ -8,7 +8,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -26,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, Event> $organizedEvents
  *
  * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
@@ -52,6 +55,16 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * The events this user organises.
+     *
+     * @return HasMany<Event, $this>
+     */
+    public function organizedEvents(): HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
 
     /**
      * Get the attributes that should be cast.
