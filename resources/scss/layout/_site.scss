@@ -29,8 +29,8 @@
 .site-header {
   // The containing block for the hamburger panel, which spans the full width.
   position: relative;
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-line);
+  background-color: var(--color-paper);
 
   &__inner {
     display: flex;
@@ -41,10 +41,7 @@
   }
 
   &__brand {
-    font-weight: var(--weight-bold);
-    font-size: var(--text-l);
-    color: var(--color-text);
-    text-decoration: none;
+    flex: none;
   }
 
   // The inline navigation and the account area are the wide-screen layout; below
@@ -81,7 +78,7 @@
     padding: 0;
     border: 0;
     background: none;
-    color: var(--color-text-muted);
+    color: var(--color-muted);
     font-size: var(--text-m);
     font-weight: var(--weight-normal);
     line-height: var(--leading-tight);
@@ -89,11 +86,11 @@
     cursor: pointer;
 
     &:hover {
-      color: var(--color-text);
+      color: var(--color-ink);
     }
 
     &[aria-current='page'] {
-      color: var(--color-text);
+      color: var(--color-ink);
       font-weight: var(--weight-bold);
     }
   }
@@ -133,8 +130,8 @@
     inset-block-start: 100%;
     inset-inline: 0;
     z-index: var(--layer-dropdown);
-    border-block: 1px solid var(--color-border);
-    background-color: var(--color-surface-raised);
+    border-block: 1px solid var(--color-line);
+    background-color: var(--color-paper);
     box-shadow: var(--shadow-m);
   }
 
@@ -144,7 +141,7 @@
     padding-block: var(--space-2xs);
 
     & + & {
-      border-block-start: 1px solid var(--color-border);
+      border-block-start: 1px solid var(--color-line);
     }
   }
 
@@ -155,11 +152,11 @@
   }
 
   &__name {
-    font-weight: var(--weight-medium);
+    font-weight: var(--weight-semibold);
   }
 
   &__email {
-    color: var(--color-text-muted);
+    color: var(--color-muted);
     font-size: var(--text-s);
   }
 
@@ -169,17 +166,17 @@
     padding: var(--space-2xs) var(--space-s);
     border: 0;
     background: none;
-    color: var(--color-text-muted);
+    color: var(--color-muted);
     text-align: start;
     text-decoration: none;
     cursor: pointer;
 
     &:hover {
-      color: var(--color-text);
+      color: var(--color-ink);
     }
 
     &[aria-current='page'] {
-      color: var(--color-text);
+      color: var(--color-ink);
       font-weight: var(--weight-bold);
     }
   }
@@ -189,7 +186,7 @@
 .page-header {
   margin-block: calc(-1 * var(--space-xl)) var(--space-l);
   padding-block: var(--space-m);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-s);
 
@@ -200,9 +197,9 @@
 
 .site-footer {
   min-block-size: var(--footer-height);
-  border-top: 1px solid var(--color-border);
-  background-color: var(--color-surface-raised);
-  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-line);
+  background-color: var(--color-paper);
+  color: var(--color-muted);
   font-size: var(--text-s);
 }
 

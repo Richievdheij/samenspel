@@ -46,7 +46,7 @@ it('serves the homepage in Dutch with its built assets and a clean console', fun
         // The compiled SCSS did not just get LINKED, it got APPLIED. A missing Vite
         // manifest entry renders a <link> to a 404 and every token falls back to
         // empty, which no server-side assertion and no HTML snapshot would notice.
-        ->assertScript("getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim()", '#2f6feb')
+        ->assertScript("getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim()", '#f0603a')
         ->assertScript('document.styleSheets.length > 0')
 
         // The header and the content fill the first screen and the footer starts

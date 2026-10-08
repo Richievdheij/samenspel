@@ -23,7 +23,7 @@
   }
 
   &__saved {
-    color: var(--color-text-muted);
+    color: var(--color-muted);
     transition: opacity var(--duration-slow) var(--easing-standard);
 
     // Set by app.js two seconds after the page loads, as Breeze's Alpine
@@ -35,7 +35,7 @@
 
   &__notice {
     margin-block-start: var(--space-2xs);
-    color: var(--color-success);
-    font-weight: var(--weight-medium);
+    color: var(--color-felt);
+    font-weight: var(--weight-semibold);
   }
 }

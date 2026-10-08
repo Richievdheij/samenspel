@@ -1,4 +1,4 @@
-// Design tokens.
+// Design tokens: the Samenspel brand, "speeltafel".
 //
 // These are CSS custom properties on :root, not Sass variables, on purpose: they
 // stay readable in devtools, they can be overridden per component or per media
@@ -7,20 +7,36 @@
 //
 // Naming is --<category>-<name>. Add a token here before using a raw value
 // anywhere else; a hex code in a component is the thing this file exists to stop.
+// What each token is for, and the contrast ratios behind the colour rules, are in
+// docs/design-system.md.
 
 :root {
-  // ─── Colour ───────────────────────────────────────────────────────────────
-  --color-surface: #ffffff;
-  --color-surface-raised: #f6f7f9;
-  --color-border: #e2e5ea;
-  --color-text: #16191d;
-  --color-text-muted: #5c636e;
-  --color-accent: #2f6feb;
-  --color-accent-contrast: #ffffff;
-  --color-danger: #c0392b;
+  // ─── Colour: core ─────────────────────────────────────────────────────────
+  // Warm paper, deep green table felt, one coral accent for actions.
+  --color-paper: #f6f1e7;
+  --color-surface: #fffbf2;
+  --color-ink: #1b1f1c;
+  --color-muted: #5a615b;
+  --color-line: #d9d2c3;
+  --color-line-strong: #8c8472;
+  --color-felt: #1f4d3a;
+  --color-felt-dark: #143427;
+  // A fill only. Never text on paper (2.90:1) and never with white text on it
+  // (3.26:1): a primary button is accent with ink text.
+  --color-accent: #f0603a;
+  --color-accent-hover: #f47b58;
+
+  // ─── Colour: states ───────────────────────────────────────────────────────
+  --color-felt-tint: #dce8df;
+  --color-neutral-tint: #e7e1d3;
+  --color-neutral-ink: #4a514b;
+  --color-warning-tint: #fbe9bd;
+  --color-warning-ink: #7a4b00;
+  --color-danger: #b42318;
+  --color-danger-tint: #fbe4df;
+  --color-danger-ink: #8f1c13;
   --color-danger-contrast: #ffffff;
-  --color-success: #1e7e46;
-  --color-backdrop: rgb(16 25 45 / 55%);
+  --color-backdrop: rgb(27 31 28 / 55%);
 
   // ─── Spacing ──────────────────────────────────────────────────────────────
   // A 4px-based scale. Steps, not arbitrary numbers, so two components that mean
@@ -35,38 +51,60 @@
   --space-2xl: 4rem;
 
   // ─── Typography ───────────────────────────────────────────────────────────
-  --font-body: system-ui, -apple-system, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
-  --font-mono: ui-monospace, sfmono-regular, 'SF Mono', menlo, monospace;
+  // Bricolage Grotesque is self-hosted (base/_fonts.scss). Hanken Grotesk and
+  // JetBrains Mono are not installed yet, so their fallbacks render until they are.
+  --font-display: 'Bricolage Grotesque', 'Helvetica Neue', arial, sans-serif;
+  --font-body: 'Hanken Grotesk', 'Helvetica Neue', arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, sfmono-regular, menlo, monospace;
 
-  --text-s: 0.875rem;
+  // Ratio 1.25 on a 16px base.
+  --text-xs: 0.8rem;
+  --text-s: 0.9rem;
   --text-m: 1rem;
   --text-l: 1.25rem;
-  --text-xl: 1.75rem;
-  --text-2xl: 2.25rem;
+  --text-xl: 1.563rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-hero: clamp(2.6rem, 6vw, 4rem);
 
-  --leading-tight: 1.2;
+  --leading-tight: 1.15;
   --leading-normal: 1.6;
 
+  --tracking-display: -0.01em;
+  --measure: 70ch;
+
   --weight-normal: 400;
-  --weight-medium: 500;
+  --weight-semibold: 600;
   --weight-bold: 700;
 
   // ─── Shape and depth ──────────────────────────────────────────────────────
-  --radius-s: 4px;
-  --radius-m: 8px;
-  --radius-l: 16px;
-  --radius-full: 9999px;
+  // Two radii. Hierarchy comes from borders and surface contrast; shadows are
+  // for what floats (dropdown, modal) and the hard-edged lift of a hovered card.
+  --radius-s: 6px;
+  --radius-m: 14px;
+  --radius-full: 999px;
 
-  --shadow-s: 0 1px 2px rgb(16 25 45 / 8%);
-  --shadow-m: 0 4px 16px rgb(16 25 45 / 10%);
+  --shadow-s: 0 1px 2px rgb(27 31 28 / 8%);
+  --shadow-m: 0 4px 16px rgb(27 31 28 / 12%);
+  --shadow-lift: 0 6px 0 -2px var(--color-line);
+
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
 
   // ─── Layout ───────────────────────────────────────────────────────────────
-  --container-width: 68rem;
+  --container-width: 72rem;
   --header-height: 4rem;
   --footer-height: 6rem;
   --card-width: 28rem;
   --dropdown-width: 14rem;
   --modal-width: 36rem;
+  --touch-target: 44px;
+
+  // The brand guidelines' minimum sizes: 180px for the horizontal logo, 32px for
+  // the emblem.
+  --logo-horizontal-width: 11.25rem;
+  --logo-stacked-width: 12rem;
+  --logo-emblem-width: 2.5rem;
 
   // ─── Stacking ─────────────────────────────────────────────────────────────
   // Named layers, so a dropdown and the skip link cannot fight over who is on
@@ -75,30 +113,16 @@
   --layer-skip-link: 30;
 
   // ─── Motion ───────────────────────────────────────────────────────────────
-  --duration-fast: 120ms;
+  // Colour, background, border and transform only. No page-load or scroll
+  // animation.
+  --duration-fast: 150ms;
   --duration-slow: 400ms;
-  --easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+  --easing-standard: ease-out;
 }
 
-// Dark scheme by preference. Only the colour tokens change; every component
-// reads the same names and so needs no dark-specific rule of its own.
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-surface: #101317;
-    --color-surface-raised: #181c22;
-    --color-border: #2a3038;
-    --color-text: #eef1f5;
-    --color-text-muted: #9aa3b0;
-    --color-accent: #6d9dff;
-    --color-accent-contrast: #0b0e12;
-    --color-danger: #ef6a5b;
-    --color-danger-contrast: #0b0e12;
-    --color-success: #45b877;
-    --color-backdrop: rgb(0 0 0 / 65%);
-  }
-}
-
-// Respect a reduced-motion preference globally rather than per component.
+// The brand has one light scheme and no dark one, so there is no
+// prefers-color-scheme block here. Reduced motion is respected globally rather
+// than per component.
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 1ms;
