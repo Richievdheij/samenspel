@@ -2,10 +2,11 @@
 
 .alert {
   padding: var(--space-xs) var(--space-s);
-  border: 1px solid var(--color-line);
-  border-inline-start-width: 4px;
+  border: var(--line);
+  border-inline-start-width: calc(3 * var(--line-width));
   border-radius: var(--radius-s);
-  background-color: var(--color-paper);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-depth-s);
   margin-block-end: var(--space-m);
 
   &__title {
@@ -22,9 +23,11 @@
   // distinguish the border colours gets nothing from the border alone.
   &--success {
     border-inline-start-color: var(--color-felt);
+    background-color: var(--color-felt-tint);
   }
 
   &--danger {
     border-inline-start-color: var(--color-danger);
+    background-color: var(--color-danger-tint);
   }
 }

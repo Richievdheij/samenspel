@@ -1,0 +1,181 @@
+@use '../abstracts' as *;
+
+// The Memphis shapes. Each one is a mask over a background colour, so the
+// outline comes from a --shape-* token and the colour from a --color-* token.
+// The variants only decide where the shapes sit; they never draw one of their
+// own. Below the `m` breakpoint most shapes step aside, so they never crowd a
+// heading on a narrow screen.
+
+.memphis {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  &__shape {
+    position: absolute;
+    display: block;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+
+    &--squiggle {
+      inline-size: 7rem;
+      block-size: 1.4rem;
+      background-color: var(--color-accent);
+      mask-image: var(--shape-squiggle);
+      transform: rotate(-12deg);
+    }
+
+    &--triangle {
+      inline-size: 2.5rem;
+      block-size: 2.25rem;
+      background-color: var(--color-felt);
+      mask-image: var(--shape-triangle);
+      transform: rotate(14deg);
+    }
+
+    &--ring {
+      inline-size: 2.25rem;
+      block-size: 2.25rem;
+      background-color: var(--color-sun);
+      mask-image: var(--shape-ring);
+    }
+
+    &--zigzag {
+      inline-size: 5rem;
+      block-size: 1.25rem;
+      background-color: var(--color-felt);
+      mask-image: var(--shape-zigzag);
+      transform: rotate(8deg);
+    }
+
+    &--cross {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+      background-color: var(--color-ink);
+      mask-image: var(--shape-cross);
+      transform: rotate(20deg);
+    }
+
+    // The two that are not masks: a solid dot with a line-art contour, and a
+    // patch of the page's own dot grid in ink.
+    &--dot {
+      inline-size: 1.1rem;
+      block-size: 1.1rem;
+      border: var(--line);
+      border-radius: var(--radius-full);
+      background-color: var(--color-sky);
+    }
+
+    &--dots {
+      inline-size: 6rem;
+      block-size: 4rem;
+      background-image: radial-gradient(circle, var(--color-ink) 1.5px, transparent 2px);
+      background-size: 12px 12px;
+      opacity: 0.35;
+    }
+  }
+
+  // ─── header: along the right of the page heading band ──────────────────
+  &--header &__shape {
+    display: none;
+
+    @include from('m') {
+      display: block;
+    }
+  }
+
+  &--header &__shape--squiggle {
+    inset-block-start: 28%;
+    inset-inline-end: 9%;
+  }
+
+  &--header &__shape--triangle {
+    inset-block-end: 14%;
+    inset-inline-end: 24%;
+  }
+
+  &--header &__shape--ring {
+    display: block;
+    inset-block-start: 14%;
+    inset-inline-end: var(--space-s);
+
+    @include from('m') {
+      inset-block-start: auto;
+      inset-block-end: 16%;
+      inset-inline-end: 4%;
+    }
+  }
+
+  &--header &__shape--zigzag {
+    inset-block-start: 18%;
+    inset-inline-end: 30%;
+  }
+
+  &--header &__shape--cross {
+    inset-block-start: 20%;
+    inset-inline-end: 19%;
+  }
+
+  &--header &__shape--dot {
+    inset-block-end: 22%;
+    inset-inline-end: 38%;
+  }
+
+  &--header &__shape--dots {
+    inset-block-start: 0;
+    inset-inline-end: 14%;
+  }
+
+  // ─── guest: in the corners of the sign-in screens ─────────────────────
+  &--guest &__shape--squiggle {
+    inset-block-start: 12%;
+    inset-inline-start: 8%;
+  }
+
+  &--guest &__shape--triangle {
+    inset-block-end: 14%;
+    inset-inline-start: 12%;
+  }
+
+  &--guest &__shape--ring {
+    inset-block-start: 18%;
+    inset-inline-end: 10%;
+  }
+
+  &--guest &__shape--zigzag {
+    inset-block-end: 10%;
+    inset-inline-end: 8%;
+  }
+
+  &--guest &__shape--cross {
+    inset-block-start: 46%;
+    inset-inline-start: 4%;
+  }
+
+  &--guest &__shape--dot {
+    inset-block-start: 52%;
+    inset-inline-end: 5%;
+  }
+
+  &--guest &__shape--dots {
+    inset-block-start: 4%;
+    inset-inline-end: 22%;
+  }
+
+  // On a narrow screen the guest card fills the width; only the ring and the
+  // zigzag stay, so no shape sits behind the logo or a field.
+  &--guest &__shape--squiggle,
+  &--guest &__shape--dots,
+  &--guest &__shape--cross,
+  &--guest &__shape--dot,
+  &--guest &__shape--triangle {
+    display: none;
+
+    @include from('m') {
+      display: block;
+    }
+  }
+}

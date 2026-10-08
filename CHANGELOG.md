@@ -19,6 +19,18 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 - De teksten spreken van gaming-events en LAN-party's in plaats van
   game-avonden en LAN-sessies.
+- Nieuwe stijl voor de hele site: Memphis, line art en isometrisch. Elk vlak
+  en elke knop heeft een inktcontour en een harde isometrische diepte. Knoppen
+  komen omhoog bij hover en zakken in bij klikken. Een stippenraster en losse
+  Memphis-vormen in de paginakop en op de inlogpagina's zorgen voor de
+  speelsheid.
+- De hele stijl wordt ingesteld vanuit één blok tokens in `_tokens.scss`
+  (lijndikte, diepte, kanteling, patroon en vormen), zodat nieuwe pagina's hem
+  vanzelf volgen. Uitleg in `docs/design-system.md`, sectie 3b.
+- Invoervelden houden in elke toestand dezelfde randdikte. Focus kleurt de rand
+  groen met een groene diepte eronder, met een vloeiende overgang.
+- Klikken of tikken geeft geen focusrand of grijze tikflits meer. Met het
+  toetsenbord blijft de focusrand zichtbaar.
 
 ## 2026-10-08: Datamodel
 

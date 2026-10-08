@@ -25,6 +25,8 @@
         <a class="skip-link" href="#main">{{ __('Skip to content') }}</a>
 
         <div class="guest">
+            <x-memphis variant="guest" />
+
             <a class="guest__brand" href="{{ route('home') }}">
                 <x-logo layout="stacked" />
             </a>

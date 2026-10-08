@@ -26,3 +26,8 @@ it('marks the current page in the navigation', function (): void {
 
     expect($html)->toMatch('#href="'.preg_quote(route('dashboard'), '#').'"\s+aria-current="page"#');
 });
+
+it('draws the memphis shapes behind a page heading as decoration only', function (): void {
+    actingAs(User::factory()->create())->get('/dashboard')
+        ->assertSeeHtml('<div class="memphis memphis--header" aria-hidden="true">');
+});

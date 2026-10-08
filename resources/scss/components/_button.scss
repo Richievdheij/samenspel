@@ -3,31 +3,52 @@
 // BEM, in full: .button is the block, .button__icon an element, .button--primary
 // a modifier. A modifier never appears without its block, and an element never
 // styles anything outside its block.
+//
+// Line art and isometric depth: an ink contour and a hard offset beneath. On
+// hover the button rises half a step out of its depth; pressed, it sinks into
+// it. The border keeps its width in every state.
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2xs);
+  min-block-size: var(--touch-target);
   padding: var(--space-2xs) var(--space-s);
-  border: 1px solid var(--color-line-strong);
+  border: var(--line);
   border-radius: var(--radius-s);
   background-color: var(--color-surface);
+  box-shadow: var(--shadow-depth-s);
   color: var(--color-ink);
   font-size: var(--text-m);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-tight);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--easing-standard);
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--easing-standard),
+    color var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-standard);
 
   &:hover {
-    background-color: var(--color-paper);
+    background-color: var(--color-felt-tint);
+    box-shadow: var(--shadow-depth-m);
+    transform: translate(var(--lift), var(--lift));
+  }
+
+  &:active {
+    box-shadow: var(--shadow-depth-none);
+    transform: translate(var(--depth-s), var(--depth-s));
   }
 
   &[disabled],
   &[aria-disabled='true'] {
-    opacity: 0.55;
+    background-color: var(--color-neutral-tint);
+    box-shadow: var(--shadow-depth-none);
+    color: var(--color-neutral-ink);
+    transform: none;
     cursor: not-allowed;
   }
 
@@ -39,22 +60,24 @@
 
   &--primary {
     background-color: var(--color-accent);
-    border-color: var(--color-accent);
     // Ink, never white: white on accent measures 3.26:1 and fails AA.
     color: var(--color-ink);
 
     &:hover {
       background-color: var(--color-accent-hover);
-      border-color: var(--color-accent-hover);
     }
   }
 
   &--ghost {
-    background-color: transparent;
     border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
 
-    &:hover {
-      background-color: var(--color-paper);
+    &:hover,
+    &:active {
+      background-color: var(--color-felt-tint);
+      box-shadow: none;
+      transform: none;
     }
   }
 
@@ -62,12 +85,10 @@
   // the label says what happens, and the modal asks again.
   &--danger {
     background-color: var(--color-danger);
-    border-color: var(--color-danger);
     color: var(--color-danger-contrast);
 
     &:hover {
-      background-color: var(--color-danger);
-      filter: brightness(1.08);
+      background-color: var(--color-danger-ink);
     }
   }
 
@@ -75,18 +96,23 @@
   // "re-send the verification email". Still a <button>: it acts.
   &--link {
     display: inline;
+    min-block-size: 0;
     padding: 0;
     border: 0;
     background: none;
+    box-shadow: none;
     color: var(--color-felt);
     font-size: inherit;
     font-weight: var(--weight-normal);
     text-decoration: underline;
     text-underline-offset: 0.15em;
 
-    &:hover {
+    &:hover,
+    &:active {
       background: none;
+      box-shadow: none;
       color: var(--color-ink);
+      transform: none;
     }
   }
 

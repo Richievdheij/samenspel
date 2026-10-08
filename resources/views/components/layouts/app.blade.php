@@ -43,7 +43,9 @@
                 <main class="site__main" id="main" tabindex="-1">
                     @isset($header)
                         <div class="page-header">
-                            <div class="container">
+                            <x-memphis variant="header" />
+
+                            <div class="container page-header__inner">
                                 {{ $header }}
                             </div>
                         </div>

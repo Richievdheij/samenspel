@@ -53,9 +53,28 @@ select {
   color: inherit;
 }
 
+// No grey flash over a link or button when it is tapped on a touch screen.
+// The control's own hover and pressed states already answer the tap.
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 // A visible focus ring is an accessibility requirement, not a style preference.
 // Never remove this without replacing it with something at least as visible.
 :focus-visible {
   outline: var(--focus-ring-width) solid var(--color-felt);
   outline-offset: var(--focus-ring-offset);
+}
+
+// Focus that came from a mouse click or a tap draws no ring: the pointer
+// already shows where it is. The keyboard ring above stays untouched.
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// <main tabindex="-1"> takes focus from the skip link and after a form posts
+// back, so the next Tab starts in the content. It is a landmark, not a
+// control, so it never draws a ring around the whole page.
+[tabindex='-1']:focus {
+  outline: none;
 }

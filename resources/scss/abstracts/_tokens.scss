@@ -77,19 +77,53 @@
   --weight-semibold: 600;
   --weight-bold: 700;
 
-  // ─── Shape and depth ──────────────────────────────────────────────────────
-  // Two radii. Hierarchy comes from borders and surface contrast; shadows are
-  // for what floats (dropdown, modal) and the hard-edged lift of a hovered card.
+  // ─── Shape ────────────────────────────────────────────────────────────────
+  // Two radii, and a pill.
   --radius-s: 6px;
   --radius-m: 14px;
   --radius-full: 999px;
 
-  --shadow-s: 0 1px 2px rgb(27 31 28 / 8%);
-  --shadow-m: 0 4px 16px rgb(27 31 28 / 12%);
-  --shadow-lift: 0 6px 0 -2px var(--color-line);
-
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
+
+  // ─── Style: Memphis × line art × isometric ───────────────────────────────
+  // The look of the whole site comes from this block. Change a value here and
+  // every component follows; no component draws its own line, depth or tilt.
+  // docs/design-system.md, section 2b, explains each one.
+
+  // Line art: one ink contour around every surface and every control. The width
+  // never changes with state, so nothing on the page grows a thicker edge when
+  // it is hovered or focused; state shows as colour and depth instead.
+  --line-width: 2px;
+  --line-color: var(--color-ink);
+  --line: var(--line-width) solid var(--line-color);
+
+  // Isometric: a hard, unblurred offset down and to the right, as if every
+  // surface were a block lit from the top left. A control rises out of it on
+  // hover and sinks into it when pressed.
+  --depth-s: 3px;
+  --depth-m: 6px;
+  --depth-color: var(--color-ink);
+  --shadow-depth-none: 0 0 0 0 var(--depth-color);
+  --shadow-depth-s: var(--depth-s) var(--depth-s) 0 0 var(--depth-color);
+  --shadow-depth-m: var(--depth-m) var(--depth-m) 0 0 var(--depth-color);
+  --lift: calc(-1 * var(--depth-s) / 2);
+
+  // Memphis: a dot grid behind the page, tilted labels and loose geometric
+  // shapes. Sun and sky are decoration only, never text or a state.
+  --tilt: -3deg;
+  --color-sun: #f6c445;
+  --color-sky: #86ccca;
+  --pattern-dot: radial-gradient(circle, var(--color-line) 1.2px, transparent 1.6px);
+  --pattern-dot-size: 22px;
+
+  // The Memphis shapes, as masks: the element's background colour fills them,
+  // so a shape takes any colour token.
+  --shape-squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M4 12c7-10 14-10 21 0s14 10 21 0 14-10 21 0 14 10 21 0 14-10 21 0' fill='none' stroke='black' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --shape-triangle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 36'%3E%3Cpath d='M20 4 36 32H4z' fill='none' stroke='black' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --shape-ring: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='black' stroke-width='4'/%3E%3C/svg%3E");
+  --shape-zigzag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 20'%3E%3Cpath d='M3 16 13 4l10 12 10-12 10 12 10-12 10 12 10-12' fill='none' stroke='black' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --shape-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v18M3 12h18' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
 
   // ─── Layout ───────────────────────────────────────────────────────────────
   --container-width: 72rem;

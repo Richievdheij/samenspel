@@ -1,14 +1,15 @@
 @use '../abstracts' as *;
 
-// A raised surface holding one unit of content: the guest card, a dashboard
-// panel, each section of the profile page.
+// A surface holding one unit of content: the guest card, a dashboard panel,
+// each section of the profile page. An ink contour and a fixed isometric
+// depth; a card does not move, because it does not act.
 
 .card {
   padding: var(--space-m);
-  border: 1px solid var(--color-line);
+  border: var(--line);
   border-radius: var(--radius-m);
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-s);
+  box-shadow: var(--shadow-depth-m);
 
   @include from('m') {
     padding: var(--space-l);
@@ -20,13 +21,12 @@
 
   &__title {
     margin-block-end: var(--space-2xs);
-    font-size: var(--text-l);
+    font-size: var(--text-xl);
   }
 
   &__intro {
     margin-block-end: var(--space-m);
     color: var(--color-muted);
-    font-size: var(--text-s);
   }
 
   &__header &__intro {
@@ -36,7 +36,7 @@
   &__footer {
     margin-block-start: var(--space-m);
     padding-block-start: var(--space-s);
-    border-block-start: 1px solid var(--color-line);
+    border-block-start: 1px dashed var(--color-line-strong);
     color: var(--color-muted);
     font-size: var(--text-s);
   }

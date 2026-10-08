@@ -29,8 +29,10 @@
 .site-header {
   // The containing block for the hamburger panel, which spans the full width.
   position: relative;
-  border-bottom: 1px solid var(--color-line);
-  background-color: var(--color-paper);
+  // Above the page heading's Memphis shapes and the depth of the cards.
+  z-index: var(--layer-dropdown);
+  border-bottom: var(--line);
+  background-color: var(--color-surface);
 
   &__inner {
     display: flex;
@@ -130,9 +132,8 @@
     inset-block-start: 100%;
     inset-inline: 0;
     z-index: var(--layer-dropdown);
-    border-block: 1px solid var(--color-line);
-    background-color: var(--color-paper);
-    box-shadow: var(--shadow-m);
+    border-block-end: var(--line);
+    background-color: var(--color-surface);
   }
 
   &__section {
@@ -182,22 +183,28 @@
   }
 }
 
-// The optional band above the content, filled by a page's `header` slot.
+// The optional band above the content, filled by a page's `header` slot. The
+// Memphis shapes sit behind the heading, on the right.
 .page-header {
-  margin-block: calc(-1 * var(--space-xl)) var(--space-l);
-  padding-block: var(--space-m);
-  border-bottom: 1px solid var(--color-line);
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-s);
+  position: relative;
+  margin-block: calc(-1 * var(--space-xl)) var(--space-xl);
+  padding-block: var(--space-xl);
+  border-bottom: var(--line);
+  background-color: var(--color-felt-tint);
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+  }
 
   h1 {
-    font-size: var(--text-xl);
+    font-size: var(--text-3xl);
   }
 }
 
 .site-footer {
   min-block-size: var(--footer-height);
-  border-top: 1px solid var(--color-line);
+  border-top: var(--line);
   background-color: var(--color-paper);
   color: var(--color-muted);
   font-size: var(--text-s);
@@ -218,8 +225,9 @@
     margin: 0;
     padding: var(--space-2xs) var(--space-s);
     clip-path: none;
+    border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
-    box-shadow: var(--shadow-m);
+    box-shadow: var(--shadow-depth-s);
   }
 }

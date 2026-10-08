@@ -1,5 +1,10 @@
 @use '../abstracts' as *;
 
+// A labelled input. The control keeps one border width in every state: hover
+// adds a shallow depth, focus turns the border felt and gives it a felt depth.
+// That colour-and-depth change replaces the global focus outline and is at
+// least as visible, which is the condition the reset sets for replacing it.
+
 .field {
   display: flex;
   flex-direction: column;
@@ -12,11 +17,25 @@
   }
 
   &__control {
+    min-block-size: var(--touch-target);
     padding: var(--space-2xs) var(--space-xs);
-    // Strong, not the decorative line: an input boundary needs 3:1.
-    border: 1px solid var(--color-line-strong);
+    border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
+    box-shadow: var(--shadow-depth-none);
+    transition:
+      border-color var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard);
+
+    &:hover {
+      box-shadow: var(--depth-s) var(--depth-s) 0 0 var(--color-line-strong);
+    }
+
+    &:focus-visible {
+      border-color: var(--color-felt);
+      outline: none;
+      box-shadow: var(--depth-s) var(--depth-s) 0 0 var(--color-felt);
+    }
   }
 
   &__hint {
@@ -31,5 +50,11 @@
 
   &--invalid &__control {
     border-color: var(--color-danger);
+    background-color: var(--color-danger-tint);
+  }
+
+  &--invalid &__control:focus-visible {
+    border-color: var(--color-danger);
+    box-shadow: var(--depth-s) var(--depth-s) 0 0 var(--color-danger);
   }
 }

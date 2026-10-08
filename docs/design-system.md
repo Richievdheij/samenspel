@@ -2,6 +2,8 @@
 
 Source of truth for the look of Samenspel (game-night planner). Direction: **speeltafel**. A warm paper background, deep green "table felt" as the dominant colour, one sharp coral accent for actions. Friendly and tactile, not a SaaS dashboard.
 
+The style on top of that palette is **Memphis × line art × isometric** (section 3b): ink contours around every surface, a hard isometric depth beneath it, and loose geometric shapes and tilted labels as decoration. The whole style is set from one block of tokens, so it holds on every new page without per-component work.
+
 All tokens live in [`resources/scss/abstracts/_tokens.scss`](../resources/scss/abstracts/_tokens.scss) as CSS custom properties on `:root`. Use them by name, for example `color: var(--color-felt)`.
 
 Rules for this document:
@@ -41,6 +43,15 @@ Defined once as CSS custom properties on `:root`. There is no dark scheme: the b
 | `--color-danger`       | `#B42318` | Error text and error borders on paper        |
 | `--color-danger-tint`  | `#FBE4DF` | Error flash and field-error background       |
 | `--color-danger-ink`   | `#8F1C13` | Text on `--color-danger-tint`                |
+
+### Decoration
+
+Memphis colours for shapes and accent labels only. Never text, never a state.
+
+| Token         | Value     | Role                              |
+| ------------- | --------- | --------------------------------- |
+| `--color-sun` | `#F6C445` | Memphis ring, accent labels       |
+| `--color-sky` | `#86CCCA` | Memphis dot, tags (with ink text) |
 
 ### Verified contrast
 
@@ -127,16 +138,37 @@ Spacing is a 4px scale:
 | `--space-2xl` | 4rem    |
 
 - Two radii only: `--radius-s` 6px (inputs, buttons), `--radius-m` 14px (cards, flash messages, modal). `--radius-full` 999px for pills.
-- Hierarchy comes from borders (`1px solid var(--color-line)`) and surface contrast, not shadows. `--shadow-lift` (`0 6px 0 -2px var(--color-line)`, a hard offset like a card edge) is for card hover. `--shadow-s` and `--shadow-m` are only for what floats above the page: the dropdown and the modal.
+- Hierarchy comes from the line-art contour and the isometric depth of section 3b, not from soft shadows. There are no blurred shadows anywhere.
 - Focus ring: `--focus-ring-width` 3px, `--focus-ring-offset` 2px.
 - Container: `--container-width` 72rem. Touch target: `--touch-target` 44px.
 
 Breakpoints are a Sass map in `abstracts/_breakpoints.scss` (custom properties do not work in media queries): `s` 30rem, `m` 48rem, `l` 64rem, `xl` 80rem. Mobile first: `@include from('m') { ... }`.
 
+## 3b. Style: Memphis × line art × isometric
+
+All of it lives in the "Style" block of `_tokens.scss`. Change a value there and every component follows; no component draws its own line, depth or tilt.
+
+| Token                                    | Default                 | What it sets                                                                               |
+| ---------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------ |
+| `--line-width`, `--line-color`, `--line` | 2px, ink                | The contour around cards, buttons, fields, pills, tags, dropdown, modal, header and footer |
+| `--depth-s`, `--depth-m`                 | 3px, 6px                | The isometric offset: `s` for controls and small parts, `m` for cards, dropdown and modal  |
+| `--depth-color`                          | ink                     | The colour of that offset                                                                  |
+| `--shadow-depth-s/m/none`                | composed                | The offsets as `box-shadow` values, so a component never writes the offset by hand         |
+| `--lift`                                 | half of `--depth-s`     | How far a control rises on hover                                                           |
+| `--tilt`                                 | -3deg                   | The Memphis tilt of accent labels                                                          |
+| `--pattern-dot`, `--pattern-dot-size`    | 1.2px dots on 22px grid | The dot grid behind every page                                                             |
+| `--shape-*`                              | SVG masks               | Squiggle, triangle, ring, zigzag and cross, drawn by `<x-memphis>` in any colour token     |
+
+**Line art.** Every surface and control has one ink contour of `--line-width`. The width never changes with state, so nothing grows a thicker edge on hover or focus; state shows as colour and depth.
+
+**Isometric.** Surfaces sit on a hard, unblurred offset down and to the right, as if lit from the top left. Cards keep a fixed `--shadow-depth-m` and never move. Controls (buttons, pagination) rest on `--shadow-depth-s`, rise by `--lift` onto `--shadow-depth-m` on hover, and sink flat into their depth when pressed.
+
+**Memphis.** A dot grid behind the page, loose shapes from `<x-memphis>` (variants `header` and `guest`) and labels tilted by `--tilt`. Shapes are decoration: `aria-hidden`, no pointer events, and most step aside below the `m` breakpoint so they never crowd a heading. Their colours are accent, felt, sun, sky and ink.
+
 ## 4. Motion
 
-- Default transition `150ms ease-out` (`--duration-fast` and `--easing-standard`) on colour, background, border and transform only.
-- Card hover lifts 2px and shows `--shadow-lift`. Status toggle changes pill colour with the same 150ms transition.
+- Default transition `150ms ease-out` (`--duration-fast` and `--easing-standard`) on colour, background, border colour, box-shadow and transform only. Never on a border width.
+- Only what acts on a click has a hover state. A card that is not a link does not move or change on hover: a hover on something that does nothing is a promise the page cannot keep. Controls rise on hover and sink when pressed (section 3b). Status toggle changes pill colour with the same 150ms transition.
 - Everything inside `@media (prefers-reduced-motion: reduce)` drops to no transition and no transform.
 - No page-load animations, no scroll animations.
 
@@ -144,15 +176,18 @@ Breakpoints are a Sass map in `abstracts/_breakpoints.scss` (custom properties d
 
 Each component has one SCSS partial and uses tokens only.
 
-**Button.** Base: 44px minimum height (touch target), `--radius-s`, weight 600, `--text-m`.
+**Button.** Base: 44px minimum height (touch target), `--radius-s`, weight 600, `--text-m`, the `--line` contour on `--shadow-depth-s`. Hover rises by `--lift` onto `--shadow-depth-m`; pressed, it sinks flat.
 
 - Primary: fill `--color-accent`, text `--color-ink`, hover fill `--color-accent-hover`.
-- Secondary: transparent, 2px `--color-felt` border, text `--color-felt`, hover fill `--color-felt` with `--color-paper` text.
-- Danger: fill `--color-danger` with `#FFFFFF` text (6.57), or an outline variant with `--color-danger` text on paper (5.84).
-- Ghost: text `--color-felt`, underline on hover, for low-priority actions.
-- Disabled: `--color-neutral-tint` fill, `--color-neutral-ink` text, `cursor: not-allowed`, `aria-disabled` set.
+- Secondary (the base `.button`): `--color-surface` fill, `--color-ink` text, hover fill `--color-felt-tint`.
+- Danger: fill `--color-danger` with `#FFFFFF` text (6.57), hover `--color-danger-ink`.
+- Ghost: no contour and no depth, hover fill `--color-felt-tint`, for low-priority actions.
+- Link: reads as a link inside running text; no contour, no depth.
+- Disabled: `--color-neutral-tint` fill, `--color-neutral-ink` text, no depth, `cursor: not-allowed`, `aria-disabled` set.
 
-**Form field.** Label above the field, 600 weight. Input on `--color-surface`, 1px `--color-line-strong` border, `--radius-s`, 44px minimum height. Helper text in `--color-muted`. Error state: border and message in `--color-danger`, field background `--color-danger-tint`, message linked with `aria-describedby`. Server-side messages render in this slot (client-side checks are an addition, never the only validation).
+**Form field.** Label above the field, 600 weight. Input on `--color-surface` with the `--line` contour, `--radius-s`, 44px minimum height. The border width is the same in every state. Hover adds a `--depth-s` offset in `--color-line-strong`. Focus turns the border `--color-felt` and the offset felt; that colour-and-depth change replaces the global outline and is at least as visible. Helper text in `--color-muted`. Error state: border and message in `--color-danger`, field background `--color-danger-tint`, a danger offset on focus, message linked with `aria-describedby`. Server-side messages render in this slot (client-side checks are an addition, never the only validation).
+
+**Card.** `--color-surface`, the `--line` contour, `--radius-m`, a fixed `--shadow-depth-m`. A card footer is divided by a dashed `--color-line-strong` line.
 
 **Event card.** `--color-surface`, 1px `--color-line` border, `--radius-m`. Left: date stamp (day in display face, month abbreviation in mono, `--color-felt` block with `--color-paper` text). Right: title (`--text-l`, display), game and category as text, location, participant counter in mono ("4 / 8"), status pill, primary action. Hover lifts as described in section 4. The whole title is the link; the card is not one big clickable area.
 
@@ -168,7 +203,7 @@ Each component has one SCSS partial and uses tokens only.
 
 **Navigation.** Top bar in `--color-felt` with `--color-paper` text, the logo as `<x-logo variant="dark" />` (section 8), links with a 2px `--color-accent` underline on the active item (a decorative accent on felt, the label itself stays paper). Collapses to a menu button below the `m` breakpoint. Admin link visible to admins only.
 
-**Flash message.** `--radius-m`, left 4px bar. Success: felt-tint with felt text. Warning: warning-tint. Error: danger-tint with danger-ink. Always has a text label ("Gelukt", "Let op", "Fout") and `role="status"` or `role="alert"`.
+**Flash message.** `--radius-s`, the `--line` contour with a left bar three times as wide, on `--shadow-depth-s`. Success: felt-tint with a felt bar. Error: danger-tint with a danger bar. Always has a text label ("Gelukt", "Fout") and `role="status"` or `role="alert"`.
 
 **Table (admin).** Header row `--color-felt` with paper text, rows on `--color-surface` with `--color-line` dividers, row actions right-aligned. Scrolls horizontally inside its own container below the `m` breakpoint.
 
@@ -178,11 +213,17 @@ Each component has one SCSS partial and uses tokens only.
 
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
+**Page header.** The band under the navigation that holds a page's `h1` (`--text-3xl`): `--color-felt-tint` with a `--line` bottom edge and the `header` variant of `<x-memphis>` on the right.
+
+**Dropdown and modal.** `--color-surface`, the `--line` contour, `--radius-m`, `--shadow-depth-m`.
+
 **Footer.** `--color-felt-dark`, `--color-paper` text.
 
 ## 6. Focus and accessibility
 
-- Every interactive element has a visible `:focus-visible` outline: 3px solid `--color-felt`, 2px offset, on paper and surface. On `--color-felt` and `--color-felt-dark` backgrounds the outline is `--color-paper`.
+- Every interactive element has a visible `:focus-visible` outline: 3px solid `--color-felt`, 2px offset, on paper and surface. Form fields replace it with the felt border and felt depth of section 5, which is at least as visible.
+- Focus from a mouse click or a tap draws no ring, and touch screens get no grey tap flash: the pointer already shows where it is. The keyboard ring is never removed. `<main tabindex="-1">` is a landmark, not a control, so it never draws one.
+- Buttons are not text-selectable, so a quick double click never highlights a label.
 - Minimum touch target 44 by 44px.
 - Form errors are announced (`role="alert"` on the summary, `aria-describedby` per field).
 - The page has one `h1`, a skip link to main content, and `lang="nl"` on `<html>`.

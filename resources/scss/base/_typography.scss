@@ -3,7 +3,10 @@ body {
   font-size: var(--text-m);
   font-weight: var(--weight-normal);
   color: var(--color-ink);
-  background-color: var(--color-paper);
+  // The Memphis dot grid, behind everything.
+  background:
+    var(--pattern-dot) 0 0 / var(--pattern-dot-size) var(--pattern-dot-size),
+    var(--color-paper);
 }
 
 h1,
