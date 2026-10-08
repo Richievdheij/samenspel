@@ -173,6 +173,12 @@ erDiagram
         string owner
         int expiration
     }
+    "categories" {
+        int id PK
+        string name UK
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
+    }
     "failed_jobs" {
         int id PK
         string uuid UK
@@ -181,6 +187,12 @@ erDiagram
         text payload
         text exception
         datetime failed_at
+    }
+    "games" {
+        int id PK
+        string name UK
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
     }
     "job_batches" {
         string id PK
