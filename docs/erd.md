@@ -179,6 +179,13 @@ erDiagram
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
+    "event_user" {
+        int id PK
+        int event_id FK
+        int user_id FK
+        datetime created_at "nullable"
+        datetime updated_at "nullable"
+    }
     "events" {
         int id PK
         int user_id FK
@@ -254,8 +261,10 @@ erDiagram
         string role
     }
     "categories" ||--o{ "events" : "category_id"
+    "events" ||--o{ "event_user" : "event_id"
     "games" ||--o{ "events" : "game_id"
     "users" |o..o{ "sessions" : "user_id"
+    "users" ||--o{ "event_user" : "user_id"
     "users" ||--o{ "events" : "user_id"
 ```
 

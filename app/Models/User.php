@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Event> $organizedEvents
+ * @property-read Collection<int, Event> $joinedEvents
  *
  * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
@@ -69,6 +71,16 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
     public function organizedEvents(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    /**
+     * The events this user has signed up for, through the event_user pivot table.
+     *
+     * @return BelongsToMany<Event, $this>
+     */
+    public function joinedEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class)->withTimestamps();
     }
 
     /**

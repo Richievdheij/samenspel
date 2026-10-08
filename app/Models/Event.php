@@ -7,9 +7,11 @@ namespace App\Models;
 use App\Enums\EventStatus;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -34,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @property-read User $organizer
  * @property-read Game $game
  * @property-read Category $category
+ * @property-read Collection<int, User> $participants
  */
 #[Fillable([
     'game_id',
@@ -72,6 +75,16 @@ class Event extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * The users signed up for this event, through the event_user pivot table.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function participants(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
     /**

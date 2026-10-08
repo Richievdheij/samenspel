@@ -10,6 +10,7 @@ use App\Models\Game;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
 /*
  * The data model in docs/erd.md, held to what the database itself guarantees:
@@ -21,12 +22,33 @@ it('refuses a second game or category with the same name', function (string $mod
     $model::query()->create(['name' => 'LAN']);
 })->with([Game::class, Category::class])->throws(UniqueConstraintViolationException::class);
 
-it('connects an event to its organiser', function (): void {
+it('connects an event to its organiser and its participants', function (): void {
     $organiser = User::factory()->create();
+    $participant = User::factory()->create();
     $event = Event::factory()->for($organiser, 'organizer')->create();
 
+    $event->participants()->attach($participant);
+
     expect($event->organizer->is($organiser))->toBeTrue()
-        ->and($organiser->organizedEvents->modelKeys())->toBe([$event->id]);
+        ->and($organiser->organizedEvents->modelKeys())->toBe([$event->id])
+        ->and($participant->joinedEvents->modelKeys())->toBe([$event->id])
+        ->and(DB::table('event_user')->whereNotNull('created_at')->count())->toBe(1);
+});
+
+it('refuses a second sign-up for the same event in the database', function (): void {
+    $event = Event::factory()->create();
+    $user = User::factory()->create();
+
+    $event->participants()->attach($user);
+    $event->participants()->attach($user);
+})->throws(UniqueConstraintViolationException::class);
+
+it('removes the sign-ups when an event is deleted', function (): void {
+    $event = Event::factory()->hasAttached(User::factory()->count(2), [], 'participants')->create();
+
+    $event->delete();
+
+    $this->assertDatabaseCount('event_user', 0);
 });
 
 it('removes the events a user organised when the account is deleted', function (): void {
