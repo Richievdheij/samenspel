@@ -4,8 +4,10 @@ Het datamodel van Samenspel: welke tabellen er zijn, welke kolommen ze hebben en
 hoe ze met elkaar verbonden zijn. GitHub tekent het diagram hieronder automatisch
 uit de Mermaid-code.
 
-Dit is het ontwerp waar de migrations naartoe gebouwd worden. Wijkt de code
-straks af, dan wint de code en wordt dit bestand in dezelfde commit bijgewerkt.
+De migrations in `database/migrations/` bouwen precies deze tabellen, en de
+models in `app/Models/` (`User`, `Game`, `Category`, `Event`) hebben de relaties
+die de lijnen tekenen. Wijkt de code af, dan wint de code en wordt dit bestand in
+dezelfde commit bijgewerkt.
 
 ## Het diagram
 
@@ -148,6 +150,12 @@ verschillende dingen: `events.user_id` is de **organisator**, `event_user` zijn 
 - Wordt een event verwijderd, dan verdwijnen de inschrijvingen mee
   (`cascadeOnDelete` op `event_user.event_id`). Een spel of categorie die nog bij
   een event hoort, kan niet verwijderd worden (`restrictOnDelete`).
+- Verwijdert iemand zijn account, dan verdwijnen de events die hij organiseerde
+  en zijn inschrijvingen mee (`cascadeOnDelete` op `events.user_id` en
+  `event_user.user_id`).
+- `role` en `events.user_id` kun je niet via een formulier invullen (ze staan niet
+  in `$fillable`). Zo kan niemand zichzelf admin maken of een event op naam van
+  een ander zetten.
 
 ## Gegenereerd schema
 
