@@ -26,12 +26,12 @@ it('serves the homepage in Dutch with its built assets and a clean console', fun
     $page
         // A browser exposes no status code, so 200 is asserted the way a browser
         // can: the real page is present and Laravel's error page is not.
-        // The Dutch button label rather than config('app.name'): the app name is
-        // whatever .env happens to say, while "Laravel-documentatie" (the source
-        // string has no hyphen) can only appear if lang/nl.json was actually
-        // loaded. It proves the locale end to end and it is a string rather than
-        // mixed, which the analyser is right to insist on.
-        ->assertSee('Laravel-documentatie')
+        // The Dutch lead sentence rather than config('app.name'): the app name is
+        // whatever .env happens to say, while this sentence (the source string is
+        // English) can only appear if lang/nl.json was actually loaded. It proves
+        // the locale end to end and it is a string rather than mixed, which the
+        // analyser is right to insist on.
+        ->assertSee('Organiseer game-avonden en LAN-sessies, en speel mee.')
         ->assertDontSee('Server Error')
         ->assertDontSee('Whoops')
 
@@ -46,7 +46,7 @@ it('serves the homepage in Dutch with its built assets and a clean console', fun
         // The compiled SCSS did not just get LINKED, it got APPLIED. A missing Vite
         // manifest entry renders a <link> to a 404 and every token falls back to
         // empty, which no server-side assertion and no HTML snapshot would notice.
-        ->assertScript("getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim()", '#2f6feb')
+        ->assertScript("getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim()", '#f0603a')
         ->assertScript('document.styleSheets.length > 0')
 
         // The header and the content fill the first screen and the footer starts

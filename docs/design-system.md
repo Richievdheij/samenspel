@@ -1,0 +1,235 @@
+# Samenspel design system
+
+Source of truth for the look of Samenspel (game-night planner). Direction: **speeltafel**. A warm paper background, deep green "table felt" as the dominant colour, one sharp coral accent for actions. Friendly and tactile, not a SaaS dashboard.
+
+All tokens live in [`resources/scss/abstracts/_tokens.scss`](../resources/scss/abstracts/_tokens.scss) as CSS custom properties on `:root`. Use them by name, for example `color: var(--color-felt)`.
+
+Rules for this document:
+
+- If the code and this document disagree, the code wins and this file is updated in the same commit.
+- A token is never overridden by a hand-written hex value in a component. Add or change the token instead.
+- UI copy is Dutch. Identifiers, comments and this document are English.
+
+## 1. Colour tokens
+
+Defined once as CSS custom properties on `:root`. There is no dark scheme: the brand has one light palette. WCAG AA is the floor: 4.5:1 for text, 3:1 for UI boundaries and focus indicators. Ratios below were calculated, not estimated.
+
+### Core
+
+| Token                  | Value     | Role                                        |
+| ---------------------- | --------- | ------------------------------------------- |
+| `--color-paper`        | `#F6F1E7` | Page background                             |
+| `--color-surface`      | `#FFFBF2` | Cards, inputs, table rows                   |
+| `--color-ink`          | `#1B1F1C` | Body text                                   |
+| `--color-muted`        | `#5A615B` | Secondary text                              |
+| `--color-line`         | `#D9D2C3` | Decorative dividers (not for input borders) |
+| `--color-line-strong`  | `#8C8472` | Input and control borders                   |
+| `--color-felt`         | `#1F4D3A` | Headings, nav, links, secondary buttons     |
+| `--color-felt-dark`    | `#143427` | Footer, hover on felt                       |
+| `--color-accent`       | `#F0603A` | Primary button fill                         |
+| `--color-accent-hover` | `#F47B58` | Primary button hover fill                   |
+
+### Semantic
+
+| Token                  | Value     | Role                                         |
+| ---------------------- | --------- | -------------------------------------------- |
+| `--color-felt-tint`    | `#DCE8DF` | Background of the "Open" pill, success flash |
+| `--color-neutral-tint` | `#E7E1D3` | Background of the "Gesloten" pill            |
+| `--color-neutral-ink`  | `#4A514B` | Text on `--color-neutral-tint`               |
+| `--color-warning-tint` | `#FBE9BD` | Background of the "Vol" pill, warning flash  |
+| `--color-warning-ink`  | `#7A4B00` | Text on `--color-warning-tint`               |
+| `--color-danger`       | `#B42318` | Error text and error borders on paper        |
+| `--color-danger-tint`  | `#FBE4DF` | Error flash and field-error background       |
+| `--color-danger-ink`   | `#8F1C13` | Text on `--color-danger-tint`                |
+
+### Verified contrast
+
+| Pair                                        | Ratio | Result  |
+| ------------------------------------------- | ----- | ------- |
+| ink on paper                                | 14.81 | AA, AAA |
+| ink on surface                              | 16.15 | AA, AAA |
+| muted on paper                              | 5.66  | AA      |
+| muted on surface                            | 6.17  | AA      |
+| felt on paper (links, headings)             | 8.55  | AA, AAA |
+| felt on surface                             | 9.32  | AA, AAA |
+| paper on felt                               | 8.55  | AA, AAA |
+| paper on felt-dark                          | 12.03 | AA, AAA |
+| ink on accent (primary button)              | 5.11  | AA      |
+| ink on accent-hover                         | 6.21  | AA      |
+| felt on felt-tint (Open pill)               | 7.64  | AA      |
+| neutral-ink on neutral-tint (Gesloten pill) | 6.27  | AA      |
+| warning-ink on warning-tint (Vol pill)      | 6.17  | AA      |
+| danger on paper                             | 5.84  | AA      |
+| danger-ink on danger-tint                   | 7.37  | AA      |
+| line-strong on paper (input border)         | 3.30  | AA UI   |
+| line-strong on surface (input border)       | 3.59  | AA UI   |
+
+### Hard constraints from those numbers
+
+- **Never put white text on `--color-accent`.** It measures 3.26 and fails AA. Accent buttons use `--color-ink` text.
+- **Never use `--color-accent` as text colour, or as the only indicator of a state, on paper.** It measures 2.90. It is a fill colour.
+- **On felt backgrounds the focus ring is `--color-paper`, not accent.** Accent on felt measures 2.95, just under 3:1.
+- `--color-line` is decorative only. Input borders use `--color-line-strong`.
+- State is never communicated by colour alone: pills carry a text label, errors carry a message.
+
+## 2. Typography
+
+| Role                                 | Family              | Fallback stack                                     |
+| ------------------------------------ | ------------------- | -------------------------------------------------- |
+| Display (h1 to h3, date stamp)       | Bricolage Grotesque | `"Helvetica Neue", Arial, sans-serif`              |
+| Body and UI                          | Hanken Grotesk      | `"Helvetica Neue", Arial, sans-serif`              |
+| Numbers (dates, counters, "2 van 3") | JetBrains Mono      | `ui-monospace, "SFMono-Regular", Menlo, monospace` |
+
+| Token            | Family                                 |
+| ---------------- | -------------------------------------- |
+| `--font-display` | Bricolage Grotesque, then the fallback |
+| `--font-body`    | Hanken Grotesk, then the fallback      |
+| `--font-mono`    | JetBrains Mono, then the fallback      |
+
+Fonts are self-hosted, not loaded from a third-party CDN, so no visitor IP goes to Google (AVG). Bricolage Grotesque is in `resources/fonts/bricolage-grotesque/` with its licence (SIL OFL) and is loaded by `base/_fonts.scss`. Hanken Grotesk and JetBrains Mono are not installed yet; until they are, the fallback stack renders. Adding them is a dependency change and needs approval first.
+
+Scale (ratio 1.25, base 1rem = 16px):
+
+| Token         | Size                     | Use                     |
+| ------------- | ------------------------ | ----------------------- |
+| `--text-xs`   | 0.8rem                   | Pill labels, captions   |
+| `--text-s`    | 0.9rem                   | Helper text, table body |
+| `--text-m`    | 1rem                     | Body                    |
+| `--text-l`    | 1.25rem                  | Lead text, card titles  |
+| `--text-xl`   | 1.563rem                 | h3                      |
+| `--text-2xl`  | 1.953rem                 | h2                      |
+| `--text-3xl`  | 2.441rem                 | h1                      |
+| `--text-hero` | clamp(2.6rem, 6vw, 4rem) | Home hero only          |
+
+| Token                | Value   | Use                                  |
+| -------------------- | ------- | ------------------------------------ |
+| `--leading-normal`   | 1.6     | Body                                 |
+| `--leading-tight`    | 1.15    | Display                              |
+| `--tracking-display` | -0.01em | Display headings                     |
+| `--weight-normal`    | 400     | Body                                 |
+| `--weight-semibold`  | 600     | UI labels, buttons                   |
+| `--weight-bold`      | 700     | Display                              |
+| `--measure`          | 70ch    | Maximum line length for running text |
+
+## 3. Spacing, shape, elevation
+
+Spacing is a 4px scale:
+
+| Token         | Value   |
+| ------------- | ------- |
+| `--space-3xs` | 0.25rem |
+| `--space-2xs` | 0.5rem  |
+| `--space-xs`  | 0.75rem |
+| `--space-s`   | 1rem    |
+| `--space-m`   | 1.5rem  |
+| `--space-l`   | 2rem    |
+| `--space-xl`  | 3rem    |
+| `--space-2xl` | 4rem    |
+
+- Two radii only: `--radius-s` 6px (inputs, buttons), `--radius-m` 14px (cards, flash messages, modal). `--radius-full` 999px for pills.
+- Hierarchy comes from borders (`1px solid var(--color-line)`) and surface contrast, not shadows. `--shadow-lift` (`0 6px 0 -2px var(--color-line)`, a hard offset like a card edge) is for card hover. `--shadow-s` and `--shadow-m` are only for what floats above the page: the dropdown and the modal.
+- Focus ring: `--focus-ring-width` 3px, `--focus-ring-offset` 2px.
+- Container: `--container-width` 72rem. Touch target: `--touch-target` 44px.
+
+Breakpoints are a Sass map in `abstracts/_breakpoints.scss` (custom properties do not work in media queries): `s` 30rem, `m` 48rem, `l` 64rem, `xl` 80rem. Mobile first: `@include from('m') { ... }`.
+
+## 4. Motion
+
+- Default transition `150ms ease-out` (`--duration-fast` and `--easing-standard`) on colour, background, border and transform only.
+- Card hover lifts 2px and shows `--shadow-lift`. Status toggle changes pill colour with the same 150ms transition.
+- Everything inside `@media (prefers-reduced-motion: reduce)` drops to no transition and no transform.
+- No page-load animations, no scroll animations.
+
+## 5. Components
+
+Each component has one SCSS partial and uses tokens only.
+
+**Button.** Base: 44px minimum height (touch target), `--radius-s`, weight 600, `--text-m`.
+
+- Primary: fill `--color-accent`, text `--color-ink`, hover fill `--color-accent-hover`.
+- Secondary: transparent, 2px `--color-felt` border, text `--color-felt`, hover fill `--color-felt` with `--color-paper` text.
+- Danger: fill `--color-danger` with `#FFFFFF` text (6.57), or an outline variant with `--color-danger` text on paper (5.84).
+- Ghost: text `--color-felt`, underline on hover, for low-priority actions.
+- Disabled: `--color-neutral-tint` fill, `--color-neutral-ink` text, `cursor: not-allowed`, `aria-disabled` set.
+
+**Form field.** Label above the field, 600 weight. Input on `--color-surface`, 1px `--color-line-strong` border, `--radius-s`, 44px minimum height. Helper text in `--color-muted`. Error state: border and message in `--color-danger`, field background `--color-danger-tint`, message linked with `aria-describedby`. Server-side messages render in this slot (client-side checks are an addition, never the only validation).
+
+**Event card.** `--color-surface`, 1px `--color-line` border, `--radius-m`. Left: date stamp (day in display face, month abbreviation in mono, `--color-felt` block with `--color-paper` text). Right: title (`--text-l`, display), game and category as text, location, participant counter in mono ("4 / 8"), status pill, primary action. Hover lifts as described in section 4. The whole title is the link; the card is not one big clickable area.
+
+**Status pill.** `--radius-full`, `--text-xs`, weight 600, uppercase label with a leading dot.
+
+- Open: `--color-felt` on `--color-felt-tint`
+- Gesloten: `--color-neutral-ink` on `--color-neutral-tint`
+- Vol: `--color-warning-ink` on `--color-warning-tint`
+
+"Vol" is derived (signups reached `max_participants`), "Open" and "Gesloten" come from the stored status. A closed event that is also full shows "Gesloten".
+
+**Status toggle button.** A small secondary button in the event list that posts to the toggle action. It lives in a `<form method="POST">` with the CSRF token, label switches between "Sluiten" and "Openen".
+
+**Navigation.** Top bar in `--color-felt` with `--color-paper` text, the logo as `<x-logo variant="dark" />` (section 8), links with a 2px `--color-accent` underline on the active item (a decorative accent on felt, the label itself stays paper). Collapses to a menu button below the `m` breakpoint. Admin link visible to admins only.
+
+**Flash message.** `--radius-m`, left 4px bar. Success: felt-tint with felt text. Warning: warning-tint. Error: danger-tint with danger-ink. Always has a text label ("Gelukt", "Let op", "Fout") and `role="status"` or `role="alert"`.
+
+**Table (admin).** Header row `--color-felt` with paper text, rows on `--color-surface` with `--color-line` dividers, row actions right-aligned. Scrolls horizontally inside its own container below the `m` breakpoint.
+
+**Pagination.** Buttons use the secondary style, current page filled `--color-felt`, previous and next carry text, not only arrows.
+
+**Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
+
+**Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen avonden gevonden. Pas je filters aan of organiseer er zelf een."
+
+**Footer.** `--color-felt-dark`, `--color-paper` text.
+
+## 6. Focus and accessibility
+
+- Every interactive element has a visible `:focus-visible` outline: 3px solid `--color-felt`, 2px offset, on paper and surface. On `--color-felt` and `--color-felt-dark` backgrounds the outline is `--color-paper`.
+- Minimum touch target 44 by 44px.
+- Form errors are announced (`role="alert"` on the summary, `aria-describedby` per field).
+- The page has one `h1`, a skip link to main content, and `lang="nl"` on `<html>`.
+- Icons are decorative unless they are the only content of a control, then they get an accessible label.
+
+## 7. Voice (Dutch UI copy)
+
+Informal ("je"), short, direct. Buttons use verbs: "Organiseer een avond", "Schrijf je in", "Schrijf je uit", "Opslaan". Error messages say what to fix, not what went wrong in code. The organiser rule is explained, never just blocked: "Je hebt je voor 1 van de 3 avonden ingeschreven. Schrijf je nog voor 2 avonden in om zelf te organiseren."
+
+## 8. Logo
+
+The logo files are in `public/brand/` and the browser icons in `public/`. In Blade, use the component rather than an `<img>` by hand:
+
+```blade
+<x-logo />                                  {{-- horizontal, light --}}
+<x-logo layout="stacked" />                 {{-- logo above the name --}}
+<x-logo layout="emblem" variant="dark" />   {{-- the S alone, on felt --}}
+```
+
+| Use                                        | `layout`     | `variant`                                             |
+| ------------------------------------------ | ------------ | ----------------------------------------------------- |
+| Paper or another light background          | `horizontal` | `light`                                               |
+| Felt navigation, footer or dark background | `horizontal` | `dark`                                                |
+| Square placement with the name             | `stacked`    | `light`/`dark`                                        |
+| Avatar or the mark on its own              | `emblem`     | `light`/`dark`                                        |
+| Only the name                              | `wordmark`   | `light`/`dark`                                        |
+| One colour                                 | any          | `mono-felt`, `mono-paper`, `mono-black`, `mono-white` |
+
+- Choose the variant by the background the logo sits on, not by the page. In the felt navigation it is always `dark`.
+- `samenspel-horizontal-auto.svg` follows the system colour scheme. The UI has no dark scheme, so it is kept for use outside the app.
+- Clear space around the logo: at least 20% of the emblem height. Minimum size: 180px wide for the horizontal logo, 32px high for the emblem; smaller than that, use the favicon.
+- Scale proportionally. Do not rotate, distort, outline, or add a shadow or gradient. The coral chip is decorative: never use coral as text or as the only sign of a state.
+- `public/brand/png/` holds transparent PNG exports for places that cannot take an SVG, such as a presentation or social image.
+- The favicon has a felt background on purpose, so it stays recognisable in a browser tab. `favicon.ico` carries 16, 32 and 48 pixels; `icon-192.png` and `icon-512.png` are for `site.webmanifest`.
+
+The wordmark is Bricolage Grotesque 700 with logo-specific letter spacing, drawn as vector paths, so the SVGs need no font installed. The emblem is an S of two opposing rounded shapes with a loose coral game chip: joining in and playing together.
+
+![Every logo variant on its intended background](brand/logo-overview.png)
+
+## 9. SCSS organisation
+
+`resources/scss/main.scss` is the only entry point, and its layers are the cascade order:
+
+- `abstracts/`: `_tokens.scss` (the `:root` custom properties), `_breakpoints.scss` (the breakpoint map, `from()` and `visually-hidden` mixins)
+- `base/`: `_fonts.scss`, `_reset.scss`, `_typography.scss`
+- `layout/`: container, site frame, guest layout, page layouts
+- `components/`: one partial per component, BEM-named (`.block__element--modifier`)
+- `utilities/`: the few single-purpose classes
+
+No component sets a raw hex value, font family or spacing literal. A value that has no token yet gets one in `_tokens.scss` first.

@@ -1,6 +1,6 @@
 {
   "$comment": "TOOLCHAIN-BOOTSTRAP.md §1. A second run reads this and asks nothing. Every value was verified against the machine during the §2 preflight probe; `verified` records what was actually observed, `answer` what the toolchain is pinned to.",
-  "project_name": "laravel-starter-template",
+  "project_name": "samenspel",
   "stack_profile": "php-laravel",
   "package_manager": "npm@11",
   "monorepo": "no",

@@ -1,9 +1,20 @@
 @use '../abstracts' as *;
 
-// The landing page: whatever it holds, centred in the screen's content area.
+// The landing page: logo, one sentence and one action, centred in the screen's
+// content area.
 
 .home {
-  display: grid;
+  display: flex;
   flex: 1;
-  place-items: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-m);
+  text-align: center;
+
+  &__lead {
+    max-inline-size: var(--measure);
+    color: var(--color-muted);
+    font-size: var(--text-l);
+  }
 }

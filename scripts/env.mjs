@@ -51,7 +51,7 @@ export const DERIVED = {
     // Recomputed only while it is still a plain loopback URL — which is what
     // makes it a calculation over APP_PORT rather than a value being taken away
     // from somebody. A developer serving through Herd at
-    // https://laravel-starter-template.test has CHOSEN that, and an
+    // https://samenspel.test has CHOSEN that, and an
     // unconditionally derived value would silently put it back to
     // http://localhost:8000 on every `make env`, breaking their site and
     // contradicting this file's own promise that nothing anyone typed is lost.

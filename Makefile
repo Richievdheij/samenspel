@@ -1,4 +1,4 @@
-# laravel-starter-template — the one front door for this repository.
+# samenspel — the one front door for this repository.
 #
 # `make` on its own prints the grouped help below. That list is derived from the
 # `##` docstrings on the targets themselves, so it cannot drift away from them.
@@ -90,7 +90,7 @@ err = printf "\033[1;31m✗\033[0m %s\n"
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*##"} \
 		NR == FNR {if ($$0 ~ /^[a-zA-Z0-9_-]+:.*##/ && length($$1) > w) w = length($$1); next} \
-		FNR == 1 {printf "\n\033[1mlaravel-starter-template\033[0m — make <target>\n"} \
+		FNR == 1 {printf "\n\033[1msamenspel\033[0m — make <target>\n"} \
 		/^##@/ {printf "\n\033[1m%s\033[0m\n", substr($$0, 5); next} \
 		/^[a-zA-Z0-9_-]+:.*##/ { \
 			text = $$2; sub(/^ /, "", text); detail = ""; \

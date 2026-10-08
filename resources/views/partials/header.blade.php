@@ -24,7 +24,7 @@
 <header class="site-header">
     <div class="container site-header__inner">
         <a class="site-header__brand" href="{{ route('home') }}">
-            {{ config('app.name') }}
+            <x-logo />
         </a>
 
         <nav class="site-header__nav" aria-label="{{ __('Main navigation') }}">

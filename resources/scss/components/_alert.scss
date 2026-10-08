@@ -2,18 +2,18 @@
 
 .alert {
   padding: var(--space-xs) var(--space-s);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-inline-start-width: 4px;
   border-radius: var(--radius-s);
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-paper);
   margin-block-end: var(--space-m);
 
   &__title {
-    font-weight: var(--weight-medium);
+    font-weight: var(--weight-semibold);
   }
 
   &__body {
-    color: var(--color-text-muted);
+    color: var(--color-muted);
     font-size: var(--text-s);
   }
 
@@ -21,7 +21,7 @@
   // role (status or alert) and a visible title, because a reader who cannot
   // distinguish the border colours gets nothing from the border alone.
   &--success {
-    border-inline-start-color: var(--color-success);
+    border-inline-start-color: var(--color-felt);
   }
 
   &--danger {
