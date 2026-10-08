@@ -54,17 +54,18 @@ hem dan één keer vanuit de projectmap:
 herd link --secure samenspel
 ```
 
-### Testaccount
+### Testaccounts
 
-`make fresh yes=1` leegt de database, migreert en seedt. Daarna kun je inloggen
-op `/login` met:
+`make fresh yes=1` leegt de database, migreert en seedt. De seed zet spellen,
+categorieën en een paar demo-avonden van andere gebruikers klaar, plus twee
+accounts om op `/login` mee in te loggen:
 
-```
-e-mail:     test@example.com
-wachtwoord: password
-```
+| Rol       | E-mail              | Wachtwoord |
+| --------- | ------------------- | ---------- |
+| Gebruiker | `test@example.com`  | `password` |
+| Admin     | `admin@example.com` | `password` |
 
-Dit account bestaat alleen in de lokale seed-data.
+Deze accounts bestaan alleen in de lokale seed-data.
 
 ## Dagelijks werk
 
