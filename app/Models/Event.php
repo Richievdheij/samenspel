@@ -39,6 +39,7 @@ use Illuminate\Support\Carbon;
  * @property-read Game $game
  * @property-read Category $category
  * @property-read Collection<int, User> $participants
+ * @property-read int|null $participants_count set by withCount('participants')
  */
 #[Fillable([
     'game_id',
@@ -87,6 +88,18 @@ class Event extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    /**
+     * Whether every place is taken. "Full" is derived, never stored: it follows
+     * from the sign-ups against max_participants. Uses the count from
+     * withCount('participants') when the query loaded it.
+     */
+    public function isFull(): bool
+    {
+        $signUps = $this->participants_count ?? $this->participants()->count();
+
+        return $signUps >= $this->max_participants;
     }
 
     /**

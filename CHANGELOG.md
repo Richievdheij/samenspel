@@ -14,6 +14,11 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - `CHANGELOG.md` om de voortgang bij te houden (US20).
 - Overzicht van komende events op `/events`, eerstvolgende bovenaan, ook voor
   gasten. Link "Events" in de navigatie (US4).
+- Elk event in het overzicht toont spel, categorie, plek, het aantal spelers
+  ("2 / 8 spelers") en een statuslabel: open, gesloten of vol (US4). Het spel
+  staat bovenaan met een icoon, de titel is de grootste tekst, en status en
+  spelers staan in een vaste kolom, op elke kaart op dezelfde plek. Bovenaan
+  staat hoeveel events er gepland staan.
 
 ### Gewijzigd
 

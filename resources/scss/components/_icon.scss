@@ -1,0 +1,14 @@
+@use '../abstracts' as *;
+
+// An inline line icon. It scales with the text it sits next to and takes its
+// colour, so a parent never has to size or colour the SVG itself.
+//
+// :where() gives this default no specificity, so a size set on the icon's own
+// class elsewhere (.alert__icon, .site-menu__close-icon) always wins, whichever
+// layer of the cascade it is written in.
+
+:where(.icon) {
+  flex: none;
+  inline-size: 1.1em;
+  block-size: 1.1em;
+}

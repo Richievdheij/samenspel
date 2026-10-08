@@ -1,0 +1,41 @@
+@use '../abstracts' as *;
+
+// Whether an event still takes sign-ups. The label is always text, so the
+// colour is never the only signal; the ink contour ties it to the line art.
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  padding: 0.15em var(--space-2xs);
+  border: var(--line);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    inline-size: 0.55em;
+    block-size: 0.55em;
+    border-radius: var(--radius-full);
+    background-color: currentcolor;
+  }
+
+  &--open {
+    background-color: var(--color-felt-tint);
+    color: var(--color-felt);
+  }
+
+  &--closed {
+    background-color: var(--color-neutral-tint);
+    color: var(--color-neutral-ink);
+  }
+
+  &--full {
+    background-color: var(--color-warning-tint);
+    color: var(--color-warning-ink);
+  }
+}

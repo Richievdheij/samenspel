@@ -48,10 +48,10 @@ Defined once as CSS custom properties on `:root`. There is no dark scheme: the b
 
 Memphis colours for shapes and accent labels only. Never text, never a state.
 
-| Token         | Value     | Role                              |
-| ------------- | --------- | --------------------------------- |
-| `--color-sun` | `#F6C445` | Memphis ring, accent labels       |
-| `--color-sky` | `#86CCCA` | Memphis dot, tags (with ink text) |
+| Token         | Value     | Role                                                   |
+| ------------- | --------- | ------------------------------------------------------ |
+| `--color-sun` | `#F6C445` | Memphis ring, accent labels                            |
+| `--color-sky` | `#86CCCA` | Memphis dot, category tag on the event card (ink text) |
 
 ### Verified contrast
 
@@ -155,7 +155,7 @@ All of it lives in the "Style" block of `_tokens.scss`. Change a value there and
 | `--depth-color`                          | ink                     | The colour of that offset                                                                  |
 | `--shadow-depth-s/m/none`                | composed                | The offsets as `box-shadow` values, so a component never writes the offset by hand         |
 | `--lift`                                 | half of `--depth-s`     | How far a control rises on hover                                                           |
-| `--tilt`                                 | -3deg                   | The Memphis tilt of accent labels                                                          |
+| `--tilt`                                 | -3deg                   | The Memphis tilt of the date stamp and accent labels                                       |
 | `--pattern-dot`, `--pattern-dot-size`    | 1.2px dots on 22px grid | The dot grid behind every page                                                             |
 | `--shape-*`                              | SVG masks               | Squiggle, triangle, ring, zigzag and cross, drawn by `<x-memphis>` in any colour token     |
 
@@ -189,9 +189,15 @@ Each component has one SCSS partial and uses tokens only.
 
 **Card.** `--color-surface`, the `--line` contour, `--radius-m`, a fixed `--shadow-depth-m`. A card footer is divided by a dashed `--color-line-strong` line.
 
-**Event card.** `--color-surface`, 1px `--color-line` border, `--radius-m`. Left: date stamp (day in display face, month abbreviation in mono, `--color-felt` block with `--color-paper` text). Right: title (`--text-l`, display), game and category as text, location, participant counter in mono ("4 / 8"), status pill, primary action. Hover lifts as described in section 4. The whole title is the link; the card is not one big clickable area.
+**Event card.** A card (above) with no hover. Three columns from the `m` breakpoint up:
 
-**Status pill.** `--radius-full`, `--text-xs`, weight 600, uppercase label with a leading dot.
+- Left: the date stamp, the Memphis accent of the card: a `--color-felt` block with `--color-paper` text and the ink contour, tilted by `--tilt` on an accent-coloured `--depth-s`. Weekday and month abbreviation in mono, the day in the display face.
+- Middle, in reading order: the game in `--color-felt`, bold and uppercase, with a gamepad icon, and the category as a `--color-sky` tag with the contour after it; the title (`--text-2xl` from `m`, `--text-xl` below), the largest text on the card; time and location in `--color-muted`, each with an icon.
+- Right: a column of fixed width (12rem) behind a dashed divider, left-aligned so the status pill and the player counter ("4 / 8 spelers", mono) start at the same x on every card.
+
+Below `m` the status and counter move under the details, behind a dashed divider. Once the detail page exists the title becomes the link; the card stays one block, not one big clickable area.
+
+**Status pill.** `--radius-full`, the `--line` contour, `--text-xs`, weight 700, uppercase label with a leading dot.
 
 - Open: `--color-felt` on `--color-felt-tint`
 - Gesloten: `--color-neutral-ink` on `--color-neutral-tint`
@@ -213,7 +219,7 @@ Each component has one SCSS partial and uses tokens only.
 
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
-**Page header.** The band under the navigation that holds a page's `h1` (`--text-3xl`): `--color-felt-tint` with a `--line` bottom edge and the `header` variant of `<x-memphis>` on the right.
+**Page header.** The band under the navigation that holds a page's `h1` (`--text-3xl`) and an intro line (`--text-l`): `--color-felt-tint` with a `--line` bottom edge and the `header` variant of `<x-memphis>` on the right.
 
 **Dropdown and modal.** `--color-surface`, the `--line` contour, `--radius-m`, `--shadow-depth-m`.
 

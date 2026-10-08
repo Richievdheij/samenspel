@@ -200,6 +200,12 @@
   h1 {
     font-size: var(--text-3xl);
   }
+
+  &__intro {
+    margin-block-start: var(--space-2xs);
+    color: var(--color-neutral-ink);
+    font-size: var(--text-l);
+  }
 }
 
 .site-footer {
