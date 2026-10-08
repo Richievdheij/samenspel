@@ -1,0 +1,27 @@
+@use '../abstracts' as *;
+
+// The logo is drawn at a fixed width per layout; the height follows from the
+// SVG's aspect ratio. The minimum sizes come from the brand guidelines: below
+// them the chip and the letters stop reading.
+
+.logo {
+  display: block;
+  block-size: auto;
+  max-inline-size: 100%;
+
+  &--horizontal {
+    inline-size: var(--logo-horizontal-width);
+  }
+
+  &--stacked {
+    inline-size: var(--logo-stacked-width);
+  }
+
+  &--emblem {
+    inline-size: var(--logo-emblem-width);
+  }
+
+  &--wordmark {
+    inline-size: var(--logo-horizontal-width);
+  }
+}

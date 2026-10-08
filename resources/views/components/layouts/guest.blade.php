@@ -1,7 +1,7 @@
 {{--
     The shell for the pages a signed-out visitor sees: login, registration, the
     password reset pair, and the two interstitials (verify email, confirm
-    password). One centred card under the app name, no navigation — the same
+    password). One centred card under the logo, no navigation — the same
     shape as Breeze's guest layout.
 
         <x-layouts.guest :title="__('Log in')">…form…</x-layouts.guest>
@@ -26,7 +26,7 @@
 
         <div class="guest">
             <a class="guest__brand" href="{{ route('home') }}">
-                {{ config('app.name') }}
+                <x-logo layout="stacked" />
             </a>
 
             <main class="guest__main card" id="main" tabindex="-1">
