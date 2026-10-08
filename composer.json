@@ -1,13 +1,13 @@
 {
   "$schema": "https://getcomposer.org/schema.json",
-  "name": "richievdheij/laravel-starter-template",
+  "name": "richievdheij/samenspel",
   "type": "project",
-  "description": "Private Laravel 13 starter template: one make front door, one gate list, a checked environment contract. All rights reserved.",
+  "description": "Samenspel: organise game nights and LAN sessions, and sign up for them. All rights reserved.",
   "keywords": [
     "laravel",
-    "starter",
-    "template",
-    "toolchain"
+    "game-night",
+    "lan-party",
+    "events"
   ],
   "license": "proprietary",
   "require": {

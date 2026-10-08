@@ -177,7 +177,7 @@ row('branch', mark.yes, `${branch}${dirty ? `, ${dirty} uncommitted change(s)` :
 
 // ─── Render ─────────────────────────────────────────────────────────────────
 const width = Math.max(...rows.map((r) => r.label.length))
-console.log(`\n${c.bold('laravel-starter-template')}\n`)
+console.log(`\n${c.bold('samenspel')}\n`)
 for (const { label, state, detail } of rows) {
   console.log(`  ${state} ${label.padEnd(width)}  ${c.dim(detail)}`)
 }

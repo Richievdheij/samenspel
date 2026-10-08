@@ -27,7 +27,7 @@
 # fails, then delete the plant before committing. gitleaks scans HISTORY, so a
 # committed plant makes the gate permanently red with no clean way back.
 
-title = "laravel-starter-template"
+title = "samenspel"
 
 [extend]
 useDefault = true
