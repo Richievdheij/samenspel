@@ -15,7 +15,7 @@
 
         <x-logo layout="stacked" />
 
-        <p class="home__lead">{{ __('Organise game nights and LAN sessions, and join in.') }}</p>
+        <p class="home__lead">{{ __('Organise gaming events and LAN parties, and join in.') }}</p>
 
         @auth
             <x-button variant="primary" :href="route('dashboard')">

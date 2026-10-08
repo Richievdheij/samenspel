@@ -31,7 +31,7 @@ it('serves the homepage in Dutch with its built assets and a clean console', fun
         // English) can only appear if lang/nl.json was actually loaded. It proves
         // the locale end to end and it is a string rather than mixed, which the
         // analyser is right to insist on.
-        ->assertSee('Organiseer game-avonden en LAN-sessies, en speel mee.')
+        ->assertSee("Organiseer gaming-events en LAN-party's, en doe mee.")
         ->assertDontSee('Server Error')
         ->assertDontSee('Whoops')
 

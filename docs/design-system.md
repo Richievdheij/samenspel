@@ -176,7 +176,7 @@ Each component has one SCSS partial and uses tokens only.
 
 **Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
 
-**Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen avonden gevonden. Pas je filters aan of organiseer er zelf een."
+**Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
 **Footer.** `--color-felt-dark`, `--color-paper` text.
 
@@ -190,7 +190,7 @@ Each component has one SCSS partial and uses tokens only.
 
 ## 7. Voice (Dutch UI copy)
 
-Informal ("je"), short, direct. Buttons use verbs: "Organiseer een avond", "Schrijf je in", "Schrijf je uit", "Opslaan". Error messages say what to fix, not what went wrong in code. The organiser rule is explained, never just blocked: "Je hebt je voor 1 van de 3 avonden ingeschreven. Schrijf je nog voor 2 avonden in om zelf te organiseren."
+Informal ("je"), short, direct. Buttons use verbs: "Organiseer een event", "Schrijf je in", "Schrijf je uit", "Opslaan". Error messages say what to fix, not what went wrong in code. The organiser rule is explained, never just blocked: "Je hebt je voor 1 van de 3 events ingeschreven. Schrijf je nog voor 2 events in om zelf te organiseren."
 
 ## 8. Logo
 

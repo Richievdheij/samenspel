@@ -69,7 +69,7 @@ it('opens a new event unless the organiser closes it', function (): void {
     $event = User::factory()->create()->organizedEvents()->create([
         'game_id' => Game::factory()->create()->id,
         'category_id' => Category::factory()->create()->id,
-        'title' => 'LAN-avond',
+        'title' => 'LAN-party',
         'description' => 'Neem je eigen pc mee.',
         'starts_at' => now()->addWeek(),
         'location' => 'Utrecht',

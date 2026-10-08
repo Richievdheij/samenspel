@@ -10,7 +10,7 @@ use function Pest\Laravel\get;
 it('introduces samenspel with the brand logo and icons', function (): void {
     get('/')
         ->assertOk()
-        ->assertSee('Organiseer game-avonden en LAN-sessies, en speel mee.')
+        ->assertSee("Organiseer gaming-events en LAN-party's, en doe mee.")
         ->assertSeeHtml(asset('brand/samenspel-stacked-light.svg'))
         ->assertSeeHtml(asset('brand/samenspel-horizontal-light.svg'))
         ->assertSeeHtml(asset('favicon.svg'))

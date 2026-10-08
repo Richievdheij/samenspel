@@ -105,13 +105,13 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 
 ## De tabellen
 
-| Tabel        | Wat erin staat                                                               |
-| ------------ | ---------------------------------------------------------------------------- |
-| `users`      | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin  |
-| `games`      | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike  |
-| `categories` | De soorten avonden die een admin beheert, bijvoorbeeld LAN, Online of Casual |
-| `events`     | Een game-avond of LAN-sessie, met spel, categorie, datum, plek en maximum    |
-| `event_user` | De inschrijvingen: welke user op welk event ingeschreven staat               |
+| Tabel        | Wat erin staat                                                              |
+| ------------ | --------------------------------------------------------------------------- |
+| `users`      | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin |
+| `games`      | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike |
+| `categories` | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual |
+| `events`     | Een gaming-event of LAN-party, met spel, categorie, datum, plek en maximum  |
+| `event_user` | De inschrijvingen: welke user op welk event ingeschreven staat              |
 
 ## Relaties
 

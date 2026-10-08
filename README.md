@@ -4,14 +4,14 @@
 
 # Samenspel
 
-Samenspel is een webapplicatie waarmee je game-avonden en LAN-sessies organiseert
+Samenspel is een webapplicatie waarmee je gaming-events en LAN-party's organiseert
 en eraan meedoet.
 
-- Gebruikers maken een avond aan met een spel, categorie, datum, plek en een
-  maximaal aantal deelnemers, en schrijven zich in op avonden van anderen.
+- Gebruikers maken een event aan met een spel, categorie, datum, plek en een
+  maximaal aantal deelnemers, en schrijven zich in op events van anderen.
 - Bezoekers zoeken op titel en beschrijving en filteren op spel en categorie.
-- Alleen de organisator kan zijn eigen avond wijzigen en openen of sluiten.
-- Wie zelf een avond wil organiseren, moet zich eerst voor minimaal drie avonden
+- Alleen de organisator kan zijn eigen event wijzigen en openen of sluiten.
+- Wie zelf een event wil organiseren, moet zich eerst voor minimaal drie events
   van anderen hebben ingeschreven.
 - Een admin beheert de spellen en categorieën.
 
@@ -57,7 +57,7 @@ herd link --secure samenspel
 ### Testaccounts
 
 `make fresh yes=1` leegt de database, migreert en seedt. De seed zet spellen,
-categorieën en een paar demo-avonden van andere gebruikers klaar, plus twee
+categorieën en een paar demo-events van andere gebruikers klaar, plus twee
 accounts om op `/login` mee in te loggen:
 
 | Rol       | E-mail              | Wachtwoord |
