@@ -251,6 +251,7 @@ erDiagram
         string remember_token "nullable"
         datetime created_at "nullable"
         datetime updated_at "nullable"
+        string role
     }
     "categories" ||--o{ "events" : "category_id"
     "games" ||--o{ "events" : "game_id"

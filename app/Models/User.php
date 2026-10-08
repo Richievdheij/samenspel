@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
+ * @property Role $role
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,6 +46,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|User whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ *
+ * `role` is deliberately not fillable: registration must never be able to make
+ * someone an admin.
  *
  * Email verification is one line away: remove the `//` before `implements` on
  * the class line below. Registration then mails a verification link, and the
@@ -76,6 +81,7 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => Role::class,
         ];
     }
 }

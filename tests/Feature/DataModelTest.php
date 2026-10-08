@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\EventStatus;
+use App\Enums\Role;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
@@ -54,4 +55,15 @@ it('opens a new event unless the organiser closes it', function (): void {
     ]);
 
     expect($event->refresh()->status)->toBe(EventStatus::Open);
+});
+
+it('never makes someone an admin through mass assignment', function (): void {
+    $user = User::query()->create([
+        'name' => 'Ada',
+        'email' => 'ada@example.com',
+        'password' => 'secret',
+        'role' => 'admin',
+    ]);
+
+    expect($user->refresh()->role)->toBe(Role::User);
 });
