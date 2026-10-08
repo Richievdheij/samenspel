@@ -26,11 +26,22 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([GameSeeder::class, CategorySeeder::class]);
+
         if (! User::query()->where('email', 'test@example.com')->exists()) {
             User::factory()->create([
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);
         }
+
+        if (! User::query()->where('email', 'admin@example.com')->exists()) {
+            User::factory()->admin()->create([
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
+            ]);
+        }
+
+        $this->call(EventSeeder::class);
     }
 }
