@@ -1,0 +1,20 @@
+@use '../abstracts' as *;
+
+// The list of upcoming events: one card per event, stacked.
+
+.event-list {
+  display: grid;
+  gap: var(--space-s);
+  padding: 0;
+  list-style: none;
+
+  &__title {
+    font-size: var(--text-l);
+  }
+
+  &__date {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-s);
+  }
+}

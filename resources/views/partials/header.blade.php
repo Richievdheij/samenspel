@@ -14,6 +14,7 @@
 @php
     $links = [
         ['route' => 'home', 'label' => __('Home')],
+        ['route' => 'events.index', 'label' => __('Events')],
     ];
 
     if (auth()->check()) {

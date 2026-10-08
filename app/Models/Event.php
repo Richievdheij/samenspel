@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Enums\EventStatus;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -85,6 +87,17 @@ class Event extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    /**
+     * Only events that have not started yet.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function upcoming(Builder $query): void
+    {
+        $query->where('starts_at', '>=', now());
     }
 
     /**
