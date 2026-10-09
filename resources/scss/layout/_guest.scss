@@ -17,10 +17,23 @@
     justify-content: center;
   }
 
+  &__back,
   &__brand,
   &__main {
     position: relative;
     z-index: 1;
+  }
+
+  // Top-left of the screen from `m` up; above the logo, at the card's left
+  // edge, on a narrow screen.
+  &__back {
+    align-self: flex-start;
+
+    @include from('m') {
+      position: absolute;
+      inset-block-start: var(--space-m);
+      inset-inline-start: var(--space-l);
+    }
   }
 
   &__brand {

@@ -21,7 +21,6 @@
         :label="__('Name')"
         :value="$user->name"
         required
-        autofocus
         autocomplete="name"
     />
 

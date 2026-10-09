@@ -1,7 +1,15 @@
 @use '../abstracts' as *;
 
+// A message: icon, text and, when it can be dismissed, a close button in the
+// top-right corner. The close button is a full touch target, pulled into the
+// corner with a negative margin so the box does not grow around it.
+
 .alert {
-  padding: var(--space-xs) var(--space-s);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--space-xs);
+  padding: var(--space-s);
   border: var(--line);
   border-inline-start-width: calc(3 * var(--line-width));
   border-radius: var(--radius-s);
@@ -9,25 +17,74 @@
   box-shadow: var(--shadow-depth-s);
   margin-block-end: var(--space-m);
 
+  &--dismissible {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  &__icon {
+    inline-size: 1.35rem;
+    block-size: 1.35rem;
+    // Sits on the title's first line, not above it.
+    margin-block-start: 0.1em;
+  }
+
+  &__content {
+    min-inline-size: 0;
+  }
+
   &__title {
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
   }
 
   &__body {
-    color: var(--color-muted);
+    color: var(--color-neutral-ink);
     font-size: var(--text-s);
   }
 
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--touch-target);
+    block-size: var(--touch-target);
+    margin: calc(-1 * var(--space-xs)) calc(-1 * var(--space-xs)) 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: none;
+    color: var(--color-ink);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--duration-fast) var(--easing-standard);
+
+    &:hover {
+      background-color: var(--color-surface);
+    }
+  }
+
+  &__close-icon {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
   // Colour is never the only signal. The flash partial pairs each variant with a
-  // role (status or alert) and a visible title, because a reader who cannot
-  // distinguish the border colours gets nothing from the border alone.
+  // role (status or alert) and a visible title, and the icon differs too, because
+  // a reader who cannot distinguish the colours gets nothing from them alone.
   &--success {
     border-inline-start-color: var(--color-felt);
     background-color: var(--color-felt-tint);
   }
 
+  &--success &__icon {
+    color: var(--color-felt);
+  }
+
   &--danger {
     border-inline-start-color: var(--color-danger);
     background-color: var(--color-danger-tint);
+  }
+
+  &--danger &__icon {
+    color: var(--color-danger);
   }
 }

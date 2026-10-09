@@ -27,9 +27,9 @@
 }
 
 .site-header {
-  // The containing block for the hamburger panel, which spans the full width.
+  // The containing block for the account menu, and above the page heading's
+  // Memphis shapes and the depth of the cards.
   position: relative;
-  // Above the page heading's Memphis shapes and the depth of the cards.
   z-index: var(--layer-dropdown);
   border-bottom: var(--line);
   background-color: var(--color-surface);
@@ -40,19 +40,25 @@
     justify-content: space-between;
     gap: var(--space-l);
     min-block-size: var(--header-height);
+
+    // Three columns, the outer two equally wide, so the navigation sits in the
+    // true centre whatever the logo and the account area measure.
+    @include from('m') {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+    }
   }
 
   &__brand {
     flex: none;
+    justify-self: start;
   }
 
-  // The inline navigation and the account area are the wide-screen layout; below
-  // `m` the hamburger menu carries the same links instead, exactly as Breeze's
-  // responsive menu does.
+  // The inline navigation and the account area are the wide-screen layout;
+  // below `m` the drawer carries the same links instead.
   &__nav,
   &__account {
     display: none;
-    gap: var(--space-m);
     align-items: center;
 
     @include from('m') {
@@ -60,57 +66,125 @@
     }
   }
 
+  // The main links as one line-art pill: a segmented control. The current
+  // page is the filled segment, so it reads without colour too.
   &__nav {
-    margin-inline-end: auto;
+    gap: var(--space-3xs);
+    padding: var(--space-3xs);
+    border: var(--line);
+    border-radius: var(--radius-full);
+    background-color: var(--color-paper);
   }
 
-  // Full header height, so the user menu opens from the header's bottom edge
-  // rather than from halfway down it.
-  &__account {
-    align-self: stretch;
-    align-items: stretch;
-  }
-
-  // Plain text: no background, no border, no radius. The current page is the
-  // one in the text colour and bold — weight, so colour is not the only signal.
   &__link {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-3xs);
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--color-muted);
-    font-size: var(--text-m);
-    font-weight: var(--weight-normal);
-    line-height: var(--leading-tight);
+    min-block-size: calc(var(--touch-target) - 2 * var(--space-3xs));
+    padding-inline: var(--space-s);
+    border-radius: var(--radius-full);
+    color: var(--color-ink);
+    font-weight: var(--weight-semibold);
     text-decoration: none;
-    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--duration-fast) var(--easing-standard),
+      color var(--duration-fast) var(--easing-standard);
 
     &:hover {
-      color: var(--color-ink);
+      background-color: var(--color-felt-tint);
     }
 
     &[aria-current='page'] {
-      color: var(--color-ink);
-      font-weight: var(--weight-bold);
+      background-color: var(--color-felt);
+      color: var(--color-paper);
+    }
+  }
+
+  &__account {
+    justify-self: end;
+    gap: var(--space-m);
+  }
+
+  &__login {
+    color: var(--color-ink);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    user-select: none;
+
+    &:hover {
+      color: var(--color-felt);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
     }
   }
 }
 
-// The hamburger menu: a <details>, so it opens without JavaScript. The panel
-// drops below the header bar and spans the viewport.
+// The menu below the `m` breakpoint: a <details>, so it opens without
+// JavaScript. Its panel covers the screen, sliding in from the left as it fades
+// up; the links follow one after another. The menu button stays above the
+// panel, so without JavaScript the menu closes from where it opened; with it,
+// the panel's own close button takes that place.
 .site-menu {
   @include from('m') {
     display: none;
   }
 
   &__toggle {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--touch-target);
+    block-size: var(--touch-target);
+    border: var(--line);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-depth-s);
+    color: var(--color-ink);
     list-style: none;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--duration-menu) var(--easing-menu),
+      color var(--duration-menu) var(--easing-menu),
+      box-shadow var(--duration-menu) var(--easing-menu),
+      transform var(--duration-menu) var(--easing-menu),
+      opacity var(--duration-menu) var(--easing-menu),
+      visibility 0s;
 
     &::-webkit-details-marker {
       display: none;
     }
+
+    &:hover {
+      background-color: var(--color-felt-tint);
+    }
+  }
+
+  // Open, the button is pressed into its depth and filled felt. While the menu
+  // closes (`data-closing`) it already rises again, in step with the drawer.
+  &[open]:not([data-closing]) &__toggle {
+    background-color: var(--color-felt);
+    box-shadow: var(--shadow-depth-none);
+    color: var(--color-paper);
+    transform: translate(var(--depth-s), var(--depth-s));
+  }
+
+  // With JavaScript the drawer has its own close button, so the outer toggle
+  // fades out while the drawer slides in, and fades back while it slides out.
+  // `visibility` follows the fade, so the hidden button cannot be clicked.
+  // Without JavaScript it stays: it is then the only way to close the menu.
+  &[data-enhanced][open]:not([data-closing]) &__toggle {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      background-color var(--duration-menu) var(--easing-menu),
+      color var(--duration-menu) var(--easing-menu),
+      box-shadow var(--duration-menu) var(--easing-menu),
+      transform var(--duration-menu) var(--easing-menu),
+      opacity var(--duration-menu) var(--easing-menu),
+      visibility 0s linear var(--duration-menu);
   }
 
   &__icon {
@@ -118,68 +192,262 @@
     block-size: 1.5rem;
   }
 
-  &__close,
-  &[open] &__open {
-    display: none;
+  // The three bars turn about the icon's centre: the outer two slide to the
+  // middle and cross, the middle one shrinks away.
+  &__bar {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+    transition:
+      transform var(--duration-menu) var(--easing-menu),
+      opacity var(--duration-menu) var(--easing-menu);
   }
 
-  &[open] &__close {
-    display: inline;
+  &[open]:not([data-closing]) &__bar--top {
+    transform: rotate(45deg) translateY(6px);
   }
 
+  &[open]:not([data-closing]) &__bar--middle {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  &[open]:not([data-closing]) &__bar--bottom {
+    transform: rotate(-45deg) translateY(-6px);
+  }
+
+  // The whole screen. It slides in from the left and fades up as it comes,
+  // and leaves the same way.
   &__panel {
-    position: absolute;
-    inset-block-start: 100%;
-    inset-inline: 0;
-    z-index: var(--layer-dropdown);
-    border-block-end: var(--line);
-    background-color: var(--color-surface);
-  }
-
-  &__section {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    padding-block: var(--space-2xs);
+    overflow-y: auto;
+    background-color: var(--color-surface);
+    animation: drawer-in var(--duration-menu) var(--easing-menu);
+  }
 
-    & + & {
-      border-block-start: 1px solid var(--color-line);
+  // Set by app.js while the menu closes: the panel slides back out, then
+  // <details> closes. Without JavaScript it simply closes.
+  &[data-closing] &__panel {
+    animation: drawer-out var(--duration-menu) var(--easing-menu) forwards;
+  }
+
+  &__top,
+  &__body {
+    position: relative;
+    z-index: 1;
+  }
+
+  // Built like the header row: same height, same container, same bottom line,
+  // so the logo and the close button land exactly on the logo and the menu
+  // button of the header beneath.
+  &__top {
+    border-bottom: var(--line);
+  }
+
+  &__top-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-l);
+    min-block-size: var(--header-height);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+    padding-block: var(--space-l) var(--space-2xl);
+  }
+
+  // The menu button as it looks once pressed: felt, flat in its depth, in the
+  // same place. Hover darkens it; that is all it needs to do.
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--touch-target);
+    block-size: var(--touch-target);
+    padding: 0;
+    border: var(--line);
+    border-radius: var(--radius-s);
+    background-color: var(--color-felt);
+    box-shadow: var(--shadow-depth-none);
+    color: var(--color-paper);
+    cursor: pointer;
+    transform: translate(var(--depth-s), var(--depth-s));
+    transition: background-color var(--duration-fast) var(--easing-standard);
+
+    &[hidden] {
+      display: none;
+    }
+
+    &:hover {
+      background-color: var(--color-felt-dark);
     }
   }
 
-  &__meta {
+  // The size of the menu button's own icon, so the cross does not change.
+  &__close-icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  &__nav {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  &__heading {
+    margin-block-end: var(--space-3xs);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  // One row per page: icon, label in the display face, and an arrow that
+  // slides in on hover. The current page is filled felt. Each row arrives a
+  // beat after the one above it (--item, set in the markup).
+  &__link,
+  &__account {
+    animation: rise-in var(--duration-menu) var(--easing-menu) both;
+    animation-delay: calc(var(--item, 0) * var(--stagger));
+  }
+
+  &__link {
     display: flex;
-    flex-direction: column;
-    padding: var(--space-2xs) var(--space-s);
+    align-items: center;
+    gap: var(--space-xs);
+    min-block-size: calc(var(--touch-target) + var(--space-2xs));
+    padding-inline: var(--space-s);
+    border: var(--line);
+    border-radius: var(--radius-s);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-l);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    user-select: none;
+    transition:
+      background-color var(--duration-fast) var(--easing-standard),
+      color var(--duration-fast) var(--easing-standard);
+
+    &:hover {
+      background-color: var(--color-felt-tint);
+    }
+
+    &[aria-current='page'] {
+      background-color: var(--color-felt);
+      box-shadow: var(--depth-s) var(--depth-s) 0 0 var(--color-accent);
+      color: var(--color-paper);
+    }
+  }
+
+  &__link-icon {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  &__link-label {
+    flex: 1;
+  }
+
+  &__link-arrow {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--space-2xs)));
+    transition:
+      opacity var(--duration-fast) var(--easing-standard),
+      transform var(--duration-fast) var(--easing-standard);
+  }
+
+  &__link:hover &__link-arrow,
+  &__link[aria-current='page'] &__link-arrow {
+    opacity: 1;
+    transform: none;
+  }
+
+  &__account {
+    display: grid;
+    gap: var(--space-s);
+    padding-block-start: var(--space-m);
+    border-block-start: 2px dashed var(--color-line-strong);
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  &__who {
+    display: grid;
+    min-inline-size: 0;
   }
 
   &__name {
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-bold);
   }
 
   &__email {
     color: var(--color-muted);
     font-size: var(--text-s);
+    overflow-wrap: anywhere;
   }
 
-  &__link {
-    display: block;
-    inline-size: 100%;
-    padding: var(--space-2xs) var(--space-s);
-    border: 0;
-    background: none;
-    color: var(--color-muted);
-    text-align: start;
-    text-decoration: none;
-    cursor: pointer;
+  &__actions {
+    display: grid;
+    gap: var(--space-s);
+  }
+}
 
-    &:hover {
-      color: var(--color-ink);
-    }
+// While the drawer is open the page behind it stays put.
+@media (width < 48rem) {
+  body:has(.site-menu[open]) {
+    overflow: hidden;
+  }
+}
 
-    &[aria-current='page'] {
-      color: var(--color-ink);
-      font-weight: var(--weight-bold);
-    }
+// The menu motion, shared by the drawer and the user dropdown, all on
+// --duration-menu and --easing-menu. Reduced motion shortens the duration and
+// the stagger to nothing (abstracts/_tokens.scss).
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes drawer-out {
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2xs));
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-2xs)));
+  }
+}
+
+@keyframes menu-out {
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-2xs)));
   }
 }
 
@@ -195,6 +463,10 @@
   &__inner {
     position: relative;
     z-index: 1;
+  }
+
+  &__back {
+    margin-block-end: var(--space-2xs);
   }
 
   h1 {

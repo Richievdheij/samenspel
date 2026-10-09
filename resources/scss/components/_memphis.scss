@@ -165,6 +165,33 @@
     inset-inline-end: 0;
   }
 
+  // ─── drawer: along the bottom of the mobile menu ───────────────────────
+  &--drawer &__shape--squiggle {
+    inset-block-end: 6%;
+    inset-inline-start: 8%;
+  }
+
+  &--drawer &__shape--ring {
+    inset-block-end: 14%;
+    inset-inline-end: 12%;
+  }
+
+  &--drawer &__shape--zigzag {
+    inset-block-end: 3%;
+    inset-inline-end: 6%;
+  }
+
+  &--drawer &__shape--dots {
+    inset-block-end: 0;
+    inset-inline-start: 38%;
+  }
+
+  &--drawer &__shape--triangle,
+  &--drawer &__shape--cross,
+  &--drawer &__shape--dot {
+    display: none;
+  }
+
   // ─── guest: in the corners of the sign-in screens ─────────────────────
   &--guest &__shape--squiggle {
     inset-block-start: 12%;

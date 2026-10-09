@@ -17,6 +17,15 @@ it('displays the profile page', function (): void {
     actingAs($user)->get('/profile')->assertOk()->assertSeeHtml('value="Ada Lovelace"')->assertSeeHtml('id="confirm-user-deletion"')->assertDontSeeHtml('data-modal-show');
 });
 
+it('opens the profile without focusing a field', function (): void {
+    $html = actingAs(User::factory()->create())->get('/profile')->assertOk()->getContent();
+
+    // The one autofocus left is the password inside the delete dialog, which
+    // only receives focus when the dialog opens.
+    expect(preg_match_all('#<input\b[^>]*\bautofocus\b[^>]*>#', (string) $html, $inputs))->toBe(1)
+        ->and($inputs[0][0])->toContain('name="password"');
+});
+
 it('updates the profile information and withdraws the verification of a new address', function (): void {
     $user = User::factory()->create();
 

@@ -35,3 +35,13 @@ it('casts the password so it is never stored in clear', function (): void {
         ->not->toBe('a-plain-password')
         ->toStartWith('$');
 });
+
+it('abbreviates the name to at most two initials for the avatar', function (string $name, string $initials): void {
+    expect(new User(['name' => $name])->initials())->toBe($initials);
+})->with([
+    'two names' => ['Ada Lovelace', 'AL'],
+    'three names' => ['Richie van der Heij', 'RV'],
+    'one name' => ['ada', 'A'],
+    'extra spaces' => ['  Grace   Hopper ', 'GH'],
+    'accented' => ['Émile Zola', 'ÉZ'],
+]);

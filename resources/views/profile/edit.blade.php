@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Profile')">
+<x-layouts.app :title="__('Profile')" :back="route('dashboard')" :back-label="__('Back to dashboard')">
     <x-slot:header>
         <h1>{{ __('Profile') }}</h1>
     </x-slot:header>

@@ -46,7 +46,7 @@ Defined once as CSS custom properties on `:root`. There is no dark scheme: the b
 
 ### Decoration
 
-Memphis colours for shapes and accent labels only. Never text, never a state.
+Memphis colours for shapes, tags and the illustration only. Never text, never a state.
 
 | Token         | Value     | Role                                                   |
 | ------------- | --------- | ------------------------------------------------------ |
@@ -169,6 +169,7 @@ All of it lives in the "Style" block of `_tokens.scss`. Change a value there and
 
 - Default transition `150ms ease-out` (`--duration-fast` and `--easing-standard`) on colour, background, border colour, box-shadow and transform only. Never on a border width.
 - Only what acts on a click has a hover state. A card that is not a link does not move or change on hover: a hover on something that does nothing is a promise the page cannot keep. Controls rise on hover and sink when pressed (section 3b). Status toggle changes pill colour with the same 150ms transition.
+- Menus have one tempo of their own: `--duration-menu` (280ms) on `--easing-menu`, for every part of opening and closing alike — the pressed toggle, the chevron, the menu button's bars, the panel and the menu rows. A toggle starts rising again the moment its menu starts closing, so the two move together. Hover feedback stays on `--duration-fast`.
 - Everything inside `@media (prefers-reduced-motion: reduce)` drops to no transition and no transform.
 - No page-load animations, no scroll animations.
 
@@ -207,17 +208,20 @@ Below `m` the status and counter move under the details, behind a dashed divider
 
 **Status toggle button.** A small secondary button in the event list that posts to the toggle action. It lives in a `<form method="POST">` with the CSRF token, label switches between "Sluiten" and "Openen".
 
-**Navigation.** Top bar in `--color-felt` with `--color-paper` text, the logo as `<x-logo variant="dark" />` (section 8), links with a 2px `--color-accent` underline on the active item (a decorative accent on felt, the label itself stays paper). Collapses to a menu button below the `m` breakpoint. Admin link visible to admins only.
+**Navigation.** Top bar in `--color-surface` with a `--line` bottom edge.
 
-**Flash message.** `--radius-s`, the `--line` contour with a left bar three times as wide, on `--shadow-depth-s`. Success: felt-tint with a felt bar. Error: danger-tint with a danger bar. Always has a text label ("Gelukt", "Fout") and `role="status"` or `role="alert"`.
+- From the `m` breakpoint up: the horizontal logo on the left; the main links in the true centre as one line-art pill, a segmented control on `--color-paper` where the current page is the filled `--color-felt` segment with paper text and a hover is `--color-felt-tint`; the account area on the right. A guest sees "Inloggen" as a text link and "Registreren" as a primary button. Someone signed in sees a chip in the button style: their initials in an `.avatar` (sun circle with the contour), their name and a chevron. Open, the chip is pressed into its depth and the menu drops in (`menu-in`) with the name, the email and icon rows for Profiel and Uitloggen; it leaves the same way (`menu-out`).
+- Below `m`: the logo and a square menu button in the button style. It opens a full-screen menu that slides in from the left as it fades up. Its top row is built like the header row — same height, same container, same bottom line — so the logo lands exactly on the header's logo and the close button exactly on the menu button, drawn as that button looks once pressed (felt, flat in its depth). Below it: a mono "Menu" label, one row per page (icon, label in the display face, an arrow that slides in on hover; the current page filled felt on an accent depth), and below a dashed line the account part: avatar, name and email with Profiel and Uitloggen as block buttons, or Inloggen and Registreren for a guest. Memphis shapes (`drawer` variant) along the bottom. The rows arrive one after another, `--stagger` apart. The page behind does not scroll while the menu is open.
+- Both menus are `<details>` and work without JavaScript. JavaScript adds the way out (the menu slides back out as it fades), Escape with focus returning to the toggle, closing on a click outside, and the close button inside the menu, which is hidden until then; with it, the outer menu button fades out while the menu slides in and fades back while it slides out. Without JavaScript the outer button stays on top, in the same place, and closes the menu. Reduced motion shortens every duration and the stagger to nothing.
+- Admin link visible to admins only.
+
+**Flash message.** `--radius-s`, the `--line` contour with a left bar three times as wide, on `--shadow-depth-s`. Three columns: an icon for the kind of message (check for success, triangle for an error, info otherwise), the title and text, and the close button in the top-right corner: a full 44px touch target with an ✕ icon and the label "Sluiten" for screen readers. Success: felt-tint with a felt bar and icon. Error: danger-tint with a danger bar and icon. Always has a text label ("Gelukt", "Fout") and `role="status"` or `role="alert"`.
+
+**Back link.** `<x-back-link>`: an arrow and a label in `--color-felt`, the arrow sliding a step left on hover. Always a link to a named route, never `history.back()`. On the sign-in pages it sits top-left ("Terug naar home"); on an app page it sits above the `h1` through the layout's `back` and `backLabel` props, as on the profile ("Terug naar dashboard").
 
 **Table (admin).** Header row `--color-felt` with paper text, rows on `--color-surface` with `--color-line` dividers, row actions right-aligned. Scrolls horizontally inside its own container below the `m` breakpoint.
 
 **Pagination.** Each link is a small block in the button style: contour, `--shadow-depth-s`, rising on hover. The current page is filled `--color-felt` and pressed flat. Previous and next carry text, not only arrows.
-
-**Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
-
-**Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
 **Page header.** The band under the navigation that holds a page's `h1` (`--text-3xl`) and an intro line (`--text-l`): `--color-felt-tint` with a `--line` bottom edge and the `header` variant of `<x-memphis>` on the right.
 
@@ -225,13 +229,18 @@ Below `m` the status and counter move under the details, behind a dashed divider
 
 **Dropdown and modal.** `--color-surface`, the `--line` contour, `--radius-m`, `--shadow-depth-m`.
 
+**Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
+
+**Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
+
 **Footer.** `--color-felt-dark`, `--color-paper` text.
 
 ## 6. Focus and accessibility
 
 - Every interactive element has a visible `:focus-visible` outline: 3px solid `--color-felt`, 2px offset, on paper and surface. Form fields replace it with the felt border and felt depth of section 5, which is at least as visible.
 - Focus from a mouse click or a tap draws no ring, and touch screens get no grey tap flash: the pointer already shows where it is. The keyboard ring is never removed. `<main tabindex="-1">` is a landmark, not a control, so it never draws one.
-- Buttons are not text-selectable, so a quick double click never highlights a label.
+- Controls (buttons, menu links, toggles, page links) are not text-selectable, so a quick double click never highlights a label.
+- No page focuses a field on arrival except a single-purpose form (log in, register, the password pages) and a dialog as it opens. An edit page such as the profile opens with nothing selected. On `--color-felt` and `--color-felt-dark` backgrounds the outline is `--color-paper`.
 - Minimum touch target 44 by 44px.
 - Form errors are announced (`role="alert"` on the summary, `aria-describedby` per field).
 - The page has one `h1`, a skip link to main content, and `lang="nl"` on `<html>`.

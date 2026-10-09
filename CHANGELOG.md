@@ -45,6 +45,24 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
   dobbelstenen en een pion, tussen Memphis-vormen.
 - Dashboard: een welkomstregel en een verwijzing naar de events in plaats van
   "Je bent ingelogd!".
+- Header vernieuwd. Op desktop staan de links in een omlijnde pil met de
+  huidige pagina groen gevuld, en het accountmenu is een chip met je initialen
+  die indrukt als je hem opent. Het menu heeft iconen en schuift in en uit.
+- Mobiel menu vernieuwd: schermbreed, het schuift van links in terwijl het
+  infadet, met de links één voor één en een accountblok. Het logo en de
+  sluitknop staan op precies dezelfde plek als het logo en de menuknop in de
+  header. Sluiten kan ook met Escape, en de pagina erachter scrollt niet mee.
+  Zonder JavaScript werkt het menu nog steeds.
+- Menu's openen en sluiten in één vast tempo (280ms, token `--duration-menu`),
+  heen en terug gelijk. De menuknop en de profielchip bewegen mee met hun menu.
+- Meldingen (zoals na het versturen van een resetlink): de sluitknop staat
+  rechtsboven in plaats van onder de tekst, met een icoon per soort melding.
+- Een terug-link: "Terug naar home" op inloggen, registreren en de
+  wachtwoordpagina's, en "Terug naar dashboard" op het profiel.
+- De profielpagina selecteert bij openen niet meer automatisch het naamveld.
+- Knoppen, links en menu's selecteren geen tekst meer bij snel klikken.
+- Op mobiel staan de Memphis-vormen niet meer over het logo van de
+  inlogpagina's.
 
 ## 2026-10-08: Datamodel
 

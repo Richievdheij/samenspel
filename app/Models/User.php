@@ -84,6 +84,21 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
     }
 
     /**
+     * The first letters of the first two words of the name, upper case, for the
+     * avatar in the user menu: "Ada Lovelace" becomes "AL", "ada" becomes "A".
+     * Multibyte-safe, so "Émile Zola" keeps its accent.
+     */
+    public function initials(): string
+    {
+        $words = preg_split('/\s+/u', trim($this->name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        return mb_strtoupper(implode('', array_map(
+            fn (string $word): string => mb_substr($word, 0, 1),
+            array_slice($words, 0, 2),
+        )));
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

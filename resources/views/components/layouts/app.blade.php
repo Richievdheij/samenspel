@@ -10,8 +10,12 @@
     Props — Blade has no typed props, so this block IS the contract. `@props`
     carries names and defaults only; the compiler never checks a type.
 
-      string|null $title   prepended to the app name in <title>; omit for the
-                           app name alone
+      string|null $title      prepended to the app name in <title>; omit for the
+                              app name alone
+      string|null $back       URL of the page one level up; renders a back link
+                              above the page heading. Needs the header slot.
+      string|null $backLabel  the text of that link, for example
+                              __('Back to dashboard')
 
     Slots
 
@@ -20,7 +24,7 @@
 
     Styles: resources/scss/layout/_site.scss (frame) and _container.scss (width)
 --}}
-@props(['title' => null])
+@props(['title' => null, 'back' => null, 'backLabel' => null])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -46,6 +50,10 @@
                             <x-memphis variant="header" />
 
                             <div class="container page-header__inner">
+                                @if ($back)
+                                    <x-back-link class="page-header__back" :href="$back">{{ $backLabel }}</x-back-link>
+                                @endif
+
                                 {{ $header }}
                             </div>
                         </div>

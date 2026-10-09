@@ -26,11 +26,14 @@ function initialiseDismissibleAlerts() {
 }
 
 /**
- * The user menu and the hamburger menu, both <details>.
+ * The user menu and the menu drawer, both <details>.
  *
  * <details> already opens and closes from the keyboard. What it lacks is what a
  * menu is expected to do besides: Escape closes it and puts focus back on its
- * toggle, and a click anywhere else closes it.
+ * toggle, a click anywhere else closes it, and the full-screen menu's own close
+ * button works. Closing also plays the way out: the
+ * menu gets `data-closing`, the stylesheet animates its panel away, and only
+ * then does <details> close. Without JavaScript it simply closes at once.
  */
 function initialiseDisclosures() {
   const disclosures = [...document.querySelectorAll('[data-disclosure]')]
@@ -39,23 +42,75 @@ function initialiseDisclosures() {
     return
   }
 
+  const close = (disclosure, { returnFocus = false } = {}) => {
+    if (!disclosure.open || disclosure.hasAttribute('data-closing')) {
+      return
+    }
+
+    const panel = disclosure.querySelector('[data-disclosure-panel]')
+    let finished = false
+
+    const finish = () => {
+      if (finished) {
+        return
+      }
+
+      finished = true
+      disclosure.removeAttribute('data-closing')
+      disclosure.open = false
+
+      if (returnFocus) {
+        disclosure.querySelector('summary')?.focus()
+      }
+    }
+
+    disclosure.setAttribute('data-closing', '')
+
+    // The panel's own animation ends the close; the links inside it animate
+    // too, so their events are ignored. The timeout, the panel's own duration
+    // plus a margin, covers a panel that has no animation to end.
+    panel?.addEventListener('animationend', function onEnd(event) {
+      if (event.target === panel) {
+        panel.removeEventListener('animationend', onEnd)
+        finish()
+      }
+    })
+    const duration = panel ? Number.parseFloat(getComputedStyle(panel).animationDuration) * 1000 : 0
+    setTimeout(finish, (Number.isFinite(duration) ? duration : 0) + 100)
+  }
+
+  for (const disclosure of disclosures) {
+    disclosure.querySelector('summary')?.addEventListener('click', (event) => {
+      if (disclosure.open) {
+        event.preventDefault()
+        close(disclosure)
+      }
+    })
+
+    // Shown only now: without JavaScript there is nothing to make it work.
+    // `data-enhanced` lets the stylesheet hide the outer toggle while the
+    // drawer is open, so there is one close button on screen, not two.
+    for (const button of disclosure.querySelectorAll('[data-disclosure-close]')) {
+      button.hidden = false
+      disclosure.setAttribute('data-enhanced', '')
+      button.addEventListener('click', () => close(disclosure, { returnFocus: true }))
+    }
+  }
+
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') {
       return
     }
 
     for (const disclosure of disclosures) {
-      if (disclosure.open) {
-        disclosure.open = false
-        disclosure.querySelector('summary')?.focus()
-      }
+      close(disclosure, { returnFocus: true })
     }
   })
 
   document.addEventListener('click', (event) => {
     for (const disclosure of disclosures) {
-      if (disclosure.open && !disclosure.contains(event.target)) {
-        disclosure.open = false
+      if (!disclosure.contains(event.target)) {
+        close(disclosure)
       }
     }
   })

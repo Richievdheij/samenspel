@@ -1,0 +1,28 @@
+@use '../abstracts' as *;
+
+// A person's initials in a sun-coloured circle with a line-art contour. Always
+// beside the name it abbreviates, so it is hidden from screen readers.
+
+.avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.1rem;
+  block-size: 2.1rem;
+  border: var(--line);
+  border-radius: var(--radius-full);
+  background-color: var(--color-sun);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+
+  &--large {
+    inline-size: 3rem;
+    block-size: 3rem;
+    box-shadow: var(--shadow-depth-s);
+    font-size: var(--text-m);
+  }
+}

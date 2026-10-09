@@ -130,7 +130,7 @@
   --header-height: 4rem;
   --footer-height: 6rem;
   --card-width: 28rem;
-  --dropdown-width: 14rem;
+  --dropdown-width: 15rem;
   --modal-width: 36rem;
   --touch-target: 44px;
 
@@ -152,6 +152,14 @@
   --duration-fast: 150ms;
   --duration-slow: 400ms;
   --easing-standard: ease-out;
+  // Every part of a menu opening or closing — the toggle being pressed, the
+  // chevron, the bars of the menu button, the panel — moves on
+  // this one duration and curve, in and out alike. One tempo is what makes a
+  // menu feel the same every time it opens.
+  --duration-menu: 280ms;
+  --easing-menu: cubic-bezier(0.4, 0, 0.2, 1);
+  // The beat between items that arrive one after another, as in the menu drawer.
+  --stagger: 35ms;
 }
 
 // The brand has one light scheme and no dark one, so there is no
@@ -161,5 +169,7 @@
   :root {
     --duration-fast: 1ms;
     --duration-slow: 1ms;
+    --duration-menu: 1ms;
+    --stagger: 0ms;
   }
 }

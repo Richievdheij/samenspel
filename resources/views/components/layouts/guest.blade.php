@@ -1,8 +1,8 @@
 {{--
     The shell for the pages a signed-out visitor sees: login, registration, the
     password reset pair, and the two interstitials (verify email, confirm
-    password). One centred card under the logo, no navigation — the same
-    shape as Breeze's guest layout.
+    password). One centred card under the logo, and a link back to the site
+    above it.
 
         <x-layouts.guest :title="__('Log in')">…form…</x-layouts.guest>
 
@@ -26,6 +26,8 @@
 
         <div class="guest">
             <x-memphis variant="guest" />
+
+            <x-back-link class="guest__back" :href="route('home')">{{ __('Back to home') }}</x-back-link>
 
             <a class="guest__brand" href="{{ route('home') }}">
                 <x-logo layout="stacked" />
