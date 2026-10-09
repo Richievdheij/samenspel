@@ -62,3 +62,14 @@ it('labels an event open, closed or full', function (EventStatus $status, int $s
     'full' => [EventStatus::Open, 2, 'full', 'Vol'],
     'closed and full' => [EventStatus::Closed, 2, 'closed', 'Gesloten'],
 ]);
+
+it('spreads the events over pages of ten', function (): void {
+    Event::factory()->count(10)->sequence(fn ($sequence): array => [
+        'title' => 'Event '.($sequence->index + 1),
+        'starts_at' => now()->addDays($sequence->index + 1),
+    ])->create();
+    Event::factory()->create(['title' => 'Elfde event', 'starts_at' => now()->addMonths(3)]);
+
+    get(route('events.index'))->assertDontSee('Elfde event')->assertSee('Volgende');
+    get(route('events.index', ['page' => 2]))->assertSee('Elfde event')->assertSee('Vorige');
+});

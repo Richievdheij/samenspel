@@ -10,7 +10,7 @@ use Illuminate\View\View;
 class EventController extends Controller
 {
     /**
-     * The upcoming events, soonest first. Open to guests.
+     * The upcoming events, soonest first, ten to a page. Open to guests.
      *
      * The game, category and sign-up count come along in the same few queries,
      * not one extra query per card.
@@ -23,7 +23,7 @@ class EventController extends Controller
                 ->with(['game', 'category'])
                 ->withCount('participants')
                 ->oldest('starts_at')
-                ->get(),
+                ->paginate(10),
         ]);
     }
 }

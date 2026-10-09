@@ -19,6 +19,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
   staat bovenaan met een icoon, de titel is de grootste tekst, en status en
   spelers staan in een vaste kolom, op elke kaart op dezelfde plek. Bovenaan
   staat hoeveel events er gepland staan.
+- Paginering per tien events, met een eigen paginaweergave zonder Tailwind (US4).
+  Elk paginanummer is een blokje in de knopstijl; de huidige pagina is groen
+  en ingedrukt.
 
 ### Gewijzigd
 

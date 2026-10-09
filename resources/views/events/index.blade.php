@@ -1,5 +1,5 @@
 {{--
-    The upcoming events, soonest first. Open to guests, so anyone
+    The upcoming events, soonest first, ten to a page. Open to guests, so anyone
     can see what is being played before they make an account.
 
     Each card reads in the order a player decides: which game, what the event is
@@ -10,7 +10,7 @@
     <x-slot:header>
         <h1>{{ __('Upcoming events') }}</h1>
         <p class="page-header__intro">
-            {{ trans_choice('One event is coming up.|:count events are coming up.', $events->count()) }}
+            {{ trans_choice('One event is coming up.|:count events are coming up.', $events->total()) }}
         </p>
     </x-slot:header>
 
@@ -58,5 +58,7 @@
                 </li>
             @endforeach
         </ul>
+
+        {{ $events->links() }}
     @endif
 </x-layouts.app>

@@ -1,0 +1,72 @@
+@use '../abstracts' as *;
+
+// The page links under a paginated list. Each link is a small block in the
+// button's style: contour, depth, rising on hover. The current page is filled
+// felt and pressed flat, because clicking it would go nowhere.
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+
+  &__pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--touch-target);
+    min-block-size: var(--touch-target);
+    padding-inline: var(--space-xs);
+    border: var(--line);
+    border-radius: var(--radius-s);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-depth-s);
+    color: var(--color-ink);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    user-select: none;
+    transition:
+      background-color var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard),
+      transform var(--duration-fast) var(--easing-standard);
+
+    &:hover {
+      background-color: var(--color-felt-tint);
+      box-shadow: var(--shadow-depth-m);
+      transform: translate(var(--lift), var(--lift));
+    }
+
+    &--current,
+    &--current:hover {
+      background-color: var(--color-felt);
+      box-shadow: var(--shadow-depth-none);
+      color: var(--color-paper);
+      transform: translate(var(--depth-s), var(--depth-s));
+    }
+
+    &--disabled,
+    &--disabled:hover {
+      border-color: var(--color-line-strong);
+      background-color: var(--color-neutral-tint);
+      box-shadow: var(--shadow-depth-none);
+      color: var(--color-neutral-ink);
+      transform: none;
+      cursor: not-allowed;
+    }
+  }
+
+  &__gap {
+    padding-inline: var(--space-2xs);
+    color: var(--color-muted);
+  }
+}

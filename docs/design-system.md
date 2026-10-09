@@ -213,7 +213,7 @@ Below `m` the status and counter move under the details, behind a dashed divider
 
 **Table (admin).** Header row `--color-felt` with paper text, rows on `--color-surface` with `--color-line` dividers, row actions right-aligned. Scrolls horizontally inside its own container below the `m` breakpoint.
 
-**Pagination.** Buttons use the secondary style, current page filled `--color-felt`, previous and next carry text, not only arrows.
+**Pagination.** Each link is a small block in the button style: contour, `--shadow-depth-s`, rising on hover. The current page is filled `--color-felt` and pressed flat. Previous and next carry text, not only arrows.
 
 **Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
 

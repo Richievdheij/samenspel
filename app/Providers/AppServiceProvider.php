@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Support\Herd;
 use Illuminate\Foundation\DevCommands;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->leaveServingToHerd();
+
+        // Laravel's own pagination views are written for Tailwind, which this
+        // project does not use.
+        Paginator::defaultView('partials.pagination');
     }
 
     /**
