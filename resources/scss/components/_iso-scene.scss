@@ -1,0 +1,94 @@
+@use '../abstracts' as *;
+
+// The isometric line-art scene on the home page. Every face has an ink
+// contour; the three visible faces of a box take a light, middle and dark tone
+// of one colour, which is what makes a flat drawing read as a block.
+
+.iso-scene {
+  inline-size: 100%;
+  block-size: auto;
+  overflow: visible;
+
+  path,
+  circle {
+    stroke: var(--line-color);
+    stroke-width: var(--line-width);
+    stroke-linejoin: round;
+  }
+
+  .iso__top {
+    fill: var(--color-surface);
+  }
+
+  .iso__left {
+    fill: var(--color-neutral-tint);
+  }
+
+  .iso__right {
+    fill: var(--color-line);
+  }
+
+  .iso__top-dark {
+    fill: var(--color-felt-tint);
+  }
+
+  .iso__left-dark {
+    fill: var(--color-felt);
+  }
+
+  .iso__right-dark {
+    fill: var(--color-felt-dark);
+  }
+
+  .iso__screen {
+    fill: var(--color-felt-dark);
+  }
+
+  .iso__squiggle {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 0.18;
+    stroke-linecap: round;
+  }
+
+  .iso__die-top {
+    fill: var(--color-surface);
+  }
+
+  .iso__die-left {
+    fill: var(--color-paper);
+  }
+
+  .iso__die-right {
+    fill: var(--color-neutral-tint);
+  }
+
+  .iso__accent-top {
+    fill: var(--color-accent-hover);
+  }
+
+  .iso__accent-left {
+    fill: var(--color-accent);
+  }
+
+  .iso__accent-right {
+    fill: var(--color-danger);
+  }
+
+  .iso__sun-top {
+    fill: var(--color-warning-tint);
+  }
+
+  .iso__sun-left {
+    fill: var(--color-sun);
+  }
+
+  .iso__sun-right {
+    fill: var(--color-warning-ink);
+  }
+
+  .iso__pip {
+    fill: var(--color-ink);
+    stroke: none;
+  }
+}

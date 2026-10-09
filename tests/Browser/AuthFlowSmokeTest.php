@@ -22,7 +22,7 @@ it('registers, logs out, logs back in and opens the profile', function (): void 
         ->type('password_confirmation', 'a-long-password')
         ->click('main form button[type="submit"]')
         ->assertPathIs('/dashboard')
-        ->assertSee('Je bent ingelogd!')
+        ->assertSee('Welkom terug')
 
         ->click('.dropdown__toggle')
         ->assertSee('ada@example.com')

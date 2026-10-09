@@ -11,7 +11,7 @@
 
     Props — Blade has no typed props, so this block IS the contract.
 
-      string $variant  header | guest
+      string $variant  header | hero | guest
 
     Styles: resources/scss/components/_memphis.scss
 --}}

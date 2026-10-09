@@ -15,7 +15,7 @@ it('shows a signed-in user the dashboard link and the user menu', function (): v
     $user = User::factory()->create(['name' => 'Ada Lovelace', 'email' => 'ada@example.com']);
 
     actingAs($user)->get('/dashboard')
-        ->assertSee('Je bent ingelogd!')
+        ->assertSee('Welkom terug, Ada Lovelace.')
         ->assertSee('Ada Lovelace')->assertSee('ada@example.com')->assertSeeHtml(route('profile.edit'))->assertSeeHtml(route('logout'))->assertDontSeeHtml(route('register'));
 });
 

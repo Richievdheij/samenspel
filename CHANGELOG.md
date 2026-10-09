@@ -39,6 +39,12 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
   groen met een groene diepte eronder, met een vloeiende overgang.
 - Klikken of tikken geeft geen focusrand of grijze tikflits meer. Met het
   toetsenbord blijft de focusrand zichtbaar.
+- Home: een echte kop ("Vind je volgende LAN-party."), een gekanteld label en
+  twee knoppen (events bekijken, account maken) in plaats van een tweede groot
+  logo. Ernaast een isometrische speltafel in line art, met scherm,
+  dobbelstenen en een pion, tussen Memphis-vormen.
+- Dashboard: een welkomstregel en een verwijzing naar de events in plaats van
+  "Je bent ingelogd!".
 
 ## 2026-10-08: Datamodel
 

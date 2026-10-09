@@ -50,7 +50,7 @@ Memphis colours for shapes and accent labels only. Never text, never a state.
 
 | Token         | Value     | Role                                                   |
 | ------------- | --------- | ------------------------------------------------------ |
-| `--color-sun` | `#F6C445` | Memphis ring, accent labels                            |
+| `--color-sun` | `#F6C445` | Memphis ring, home eyebrow label, pawn in the scene    |
 | `--color-sky` | `#86CCCA` | Memphis dot, category tag on the event card (ink text) |
 
 ### Verified contrast
@@ -155,15 +155,15 @@ All of it lives in the "Style" block of `_tokens.scss`. Change a value there and
 | `--depth-color`                          | ink                     | The colour of that offset                                                                  |
 | `--shadow-depth-s/m/none`                | composed                | The offsets as `box-shadow` values, so a component never writes the offset by hand         |
 | `--lift`                                 | half of `--depth-s`     | How far a control rises on hover                                                           |
-| `--tilt`                                 | -3deg                   | The Memphis tilt of the date stamp and accent labels                                       |
+| `--tilt`                                 | -3deg                   | The Memphis tilt of the date stamp and the home eyebrow                                    |
 | `--pattern-dot`, `--pattern-dot-size`    | 1.2px dots on 22px grid | The dot grid behind every page                                                             |
 | `--shape-*`                              | SVG masks               | Squiggle, triangle, ring, zigzag and cross, drawn by `<x-memphis>` in any colour token     |
 
 **Line art.** Every surface and control has one ink contour of `--line-width`. The width never changes with state, so nothing grows a thicker edge on hover or focus; state shows as colour and depth.
 
-**Isometric.** Surfaces sit on a hard, unblurred offset down and to the right, as if lit from the top left. Cards keep a fixed `--shadow-depth-m` and never move. Controls (buttons, pagination) rest on `--shadow-depth-s`, rise by `--lift` onto `--shadow-depth-m` on hover, and sink flat into their depth when pressed.
+**Isometric.** Surfaces sit on a hard, unblurred offset down and to the right, as if lit from the top left. Cards keep a fixed `--shadow-depth-m` and never move. Controls (buttons, pagination) rest on `--shadow-depth-s`, rise by `--lift` onto `--shadow-depth-m` on hover, and sink flat into their depth when pressed. The home illustration, `<x-iso-scene>`, is projected from 3D boxes on a true 30° grid, with a light, middle and dark tone per box.
 
-**Memphis.** A dot grid behind the page, loose shapes from `<x-memphis>` (variants `header` and `guest`) and labels tilted by `--tilt`. Shapes are decoration: `aria-hidden`, no pointer events, and most step aside below the `m` breakpoint so they never crowd a heading. Their colours are accent, felt, sun, sky and ink.
+**Memphis.** A dot grid behind the page, loose shapes from `<x-memphis>` (variants `header`, `hero`, `guest`) and labels tilted by `--tilt`. Shapes are decoration: `aria-hidden`, no pointer events, and most step aside below the `m` breakpoint so they never crowd a heading. Their colours are accent, felt, sun, sky and ink.
 
 ## 4. Motion
 
@@ -220,6 +220,8 @@ Below `m` the status and counter move under the details, behind a dashed divider
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
 **Page header.** The band under the navigation that holds a page's `h1` (`--text-3xl`) and an intro line (`--text-l`): `--color-felt-tint` with a `--line` bottom edge and the `header` variant of `<x-memphis>` on the right.
+
+**Home.** A tilted `--color-sun` eyebrow label, the `--text-hero` heading in felt, one sentence, two buttons, and beside it `<x-iso-scene>` with the `hero` shapes. Side by side from `l`, stacked and centred below.
 
 **Dropdown and modal.** `--color-surface`, the `--line` contour, `--radius-m`, `--shadow-depth-m`.
 

@@ -10,8 +10,9 @@ use function Pest\Laravel\get;
 it('introduces samenspel with the brand logo and icons', function (): void {
     get('/')
         ->assertOk()
+        ->assertSee('Vind je volgende LAN-party.')
         ->assertSee("Organiseer gaming-events en LAN-party's, en doe mee.")
-        ->assertSeeHtml(asset('brand/samenspel-stacked-light.svg'))
+        ->assertSeeHtml(route('events.index'))
         ->assertSeeHtml(asset('brand/samenspel-horizontal-light.svg'))
         ->assertSeeHtml(asset('favicon.svg'))
         ->assertSeeHtml(asset('site.webmanifest'))
@@ -31,3 +32,10 @@ it('ships every logo file the logo component can ask for', function (string $lay
     ['horizontal', 'stacked', 'emblem', 'wordmark'],
     ['light', 'dark', 'mono-felt', 'mono-paper', 'mono-black', 'mono-white'],
 );
+
+it('draws the isometric scene and the memphis shapes as decoration only', function (): void {
+    get('/')
+        ->assertOk()
+        ->assertSeeHtml('<svg class="iso-scene home__scene" viewBox="125 66 312 262" aria-hidden="true"')
+        ->assertSeeHtml('<div class="memphis memphis--hero" aria-hidden="true">');
+});

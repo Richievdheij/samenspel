@@ -129,6 +129,42 @@
     inset-inline-end: 14%;
   }
 
+  // ─── hero: around the home page scene ─────────────────────────────────
+  &--hero &__shape--squiggle {
+    inset-block-start: 4%;
+    inset-inline-start: 6%;
+  }
+
+  &--hero &__shape--triangle {
+    inset-block-start: 10%;
+    inset-inline-end: 8%;
+  }
+
+  &--hero &__shape--ring {
+    inset-block-end: 8%;
+    inset-inline-start: 2%;
+  }
+
+  &--hero &__shape--zigzag {
+    inset-block-end: 2%;
+    inset-inline-end: 10%;
+  }
+
+  &--hero &__shape--cross {
+    inset-block-start: 40%;
+    inset-inline-end: 2%;
+  }
+
+  &--hero &__shape--dot {
+    inset-block-start: 2%;
+    inset-inline-end: 34%;
+  }
+
+  &--hero &__shape--dots {
+    inset-block-end: 12%;
+    inset-inline-end: 0;
+  }
+
   // ─── guest: in the corners of the sign-in screens ─────────────────────
   &--guest &__shape--squiggle {
     inset-block-start: 12%;
