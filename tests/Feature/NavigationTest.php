@@ -37,6 +37,12 @@ it('leads from the profile back to the dashboard', function (): void {
         ->assertSeeHtml('class="back-link page-header__back" href="'.route('dashboard').'"');
 });
 
+it('ends every page with a footer whose account links follow the visitor', function (): void {
+    get('/')->assertSeeHtmlInOrder(['Ontdekken', route('events.index'), 'Account', route('login'), route('register'), 'Alle rechten voorbehouden.']);
+
+    actingAs(User::factory()->create())->get('/events')->assertSeeHtmlInOrder(['Ontdekken', 'Account', route('dashboard'), route('profile.edit'), 'Alle rechten voorbehouden.']);
+});
+
 it('shows a signed-in user their initials in the user menu', function (): void {
     actingAs(User::factory()->create(['name' => 'Ada Lovelace']))->get('/dashboard')
         ->assertSeeHtml('<span class="avatar" aria-hidden="true">AL</span>');

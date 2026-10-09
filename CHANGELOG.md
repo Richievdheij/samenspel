@@ -63,6 +63,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - Knoppen, links en menu's selecteren geen tekst meer bij snel klikken.
 - Op mobiel staan de Memphis-vormen niet meer over het logo van de
   inlogpagina's.
+- Een volledige footer op elke pagina, ook op de inlogpagina's: logo,
+  omschrijving, de kolommen Ontdekken en Account met werkende links, en een
+  copyrightregel.
 
 ## 2026-10-08: Datamodel
 

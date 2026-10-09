@@ -1,8 +1,8 @@
 {{--
     The shell for the pages a signed-out visitor sees: login, registration, the
     password reset pair, and the two interstitials (verify email, confirm
-    password). One centred card under the logo, and a link back to the site
-    above it.
+    password). One centred card under the logo, a link back to the site above
+    it, and the site footer below the fold.
 
         <x-layouts.guest :title="__('Log in')">…form…</x-layouts.guest>
 
@@ -43,5 +43,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        @include('partials.footer')
     </body>
 </html>

@@ -233,7 +233,7 @@ Below `m` the status and counter move under the details, behind a dashed divider
 
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
-**Footer.** `--color-felt-dark`, `--color-paper` text.
+**Footer.** On every page, app and guest, below the fold. `--color-felt-dark` with a `--line` top edge and `--color-paper` text. Left: the dark horizontal logo and the tagline in `--color-felt-tint`. Right: two link columns under `--color-sun` mono headings, "Ontdekken" (Home, Events) and "Account" (Inloggen and Registreren for a guest, Dashboard and Profiel when signed in). Links turn sun and underlined on hover, and focus draws a paper ring, because a felt ring would vanish on felt. A bottom bar carries "© year Samenspel. Alle rechten voorbehouden." Every link is a route that exists.
 
 ## 6. Focus and accessibility
 
