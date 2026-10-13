@@ -3,10 +3,10 @@
     can see what is being played before they make an account.
 
     Each card reads in the order a player decides: which game, what the event is
-    called, when and where, and whether there is still room. The entire card
+    called, when, and whether there is still room. The entire card
     opens the detail page.
 --}}
-<x-layouts.app :title="__('Events')">
+<x-layouts.app :title="__('Events')" :description="__('Discover upcoming gaming events on Samenspel. Sign in for locations and participant details.')" :canonical="route('events.index')" :robots="request()->query() === [] ? null : 'noindex, follow'">
     <x-slot:header>
         <h1>{{ __('Upcoming events') }}</h1>
         <p class="page-header__intro">
@@ -26,14 +26,13 @@
                     :label="__('Search events')"
                     :value="$search"
                     type="search"
-                    :placeholder="__('Search by title or description')"
+                    :placeholder="__('Search by title')"
                     enterkeyhint="search"
+                    data-search-input
                 />
-                @if ($search !== '')
-                    <a class="event-search__reset" href="{{ route('events.index', array_filter(['game' => $gameId, 'category' => $categoryIds])) }}" aria-label="{{ __('Clear search') }}">
-                        <x-icon name="x" />
-                    </a>
-                @endif
+                <a class="event-search__reset" href="{{ route('events.index', array_filter(['game' => $gameId, 'category' => $categoryIds])) }}" aria-label="{{ __('Clear search') }}" data-search-reset @if ($search === '') hidden @endif>
+                    <x-icon name="x" />
+                </a>
             </div>
             <button class="button event-search__filter" type="button" aria-label="{{ __('Filters') }}" aria-controls="event-filters-panel" aria-expanded="false" data-filter-toggle hidden>
                 <x-icon name="sliders-horizontal" class="button__icon" />
@@ -156,11 +155,16 @@
                                 <li class="event-card__fact">
                                     <x-icon name="clock" />
                                     {{ $event->starts_at->translatedFormat('H:i') }}
+                                    @if ($event->durationInMinutes() !== null)
+                                        – {{ $event->ends_at->isSameDay($event->starts_at) ? $event->ends_at->translatedFormat('H:i') : $event->ends_at->translatedFormat('j M H:i') }}
+                                    @endif
                                 </li>
-                                <li class="event-card__fact">
-                                    <x-icon name="map-pin" />
-                                    {{ $event->location }}
-                                </li>
+                                @auth
+                                    <li class="event-card__fact">
+                                        <x-icon name="map-pin" />
+                                        {{ $event->location }}
+                                    </li>
+                                @endauth
                             </ul>
                         </div>
 

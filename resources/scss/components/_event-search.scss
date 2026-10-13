@@ -66,6 +66,10 @@
     min-block-size: var(--touch-target);
     color: var(--color-felt);
 
+    &[hidden] {
+      display: none;
+    }
+
     &:hover {
       color: var(--color-ink);
     }

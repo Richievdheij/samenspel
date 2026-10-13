@@ -10,6 +10,8 @@ use App\Models\Event;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 /**
  * An open event in the coming weeks. Choose the organiser with
@@ -31,6 +33,7 @@ class EventFactory extends Factory
             'title' => rtrim(fake()->sentence(3), '.'),
             'description' => fake()->paragraph(),
             'starts_at' => fake()->dateTimeBetween('+1 day', '+2 months'),
+            'ends_at' => fn (array $attributes): Carbon => Date::parse($attributes['starts_at'])->addHours(3),
             'location' => fake()->city(),
             'max_participants' => fake()->numberBetween(4, 16),
             'status' => EventStatus::Open,

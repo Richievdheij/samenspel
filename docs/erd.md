@@ -207,6 +207,7 @@ erDiagram
         string status
         datetime created_at "nullable"
         datetime updated_at "nullable"
+        datetime ends_at "nullable"
     }
     "failed_jobs" {
         int id PK

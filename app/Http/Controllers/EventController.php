@@ -56,16 +56,20 @@ class EventController extends Controller
         ]);
     }
 
-    /** Show one event, its organiser, a small avatar preview and one page of participants. */
-    public function show(Event $event): View
+    /** Show public event facts, and private details only to signed-in users. */
+    public function show(Request $request, Event $event): View
     {
-        $event->load(['game', 'category', 'organizer'])
+        $event->load(['game', 'category'])
             ->loadCount('participants');
+
+        if ($request->user() !== null) {
+            $event->load('organizer');
+        }
 
         return view('events.show', [
             'event' => $event,
-            'participantPreview' => $event->participants()->orderBy('users.name')->limit(4)->get(['users.id', 'users.name']),
-            'participants' => $event->participants()
+            'participantPreview' => $request->user() === null ? null : $event->participants()->orderBy('users.name')->limit(4)->get(['users.id', 'users.name']),
+            'participants' => $request->user() === null ? null : $event->participants()
                 ->orderBy('users.name')
                 ->paginate(8, ['users.id', 'users.name'], 'participants_page')
                 ->fragment('event-participants'),

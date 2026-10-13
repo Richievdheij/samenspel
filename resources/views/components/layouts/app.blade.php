@@ -16,6 +16,9 @@
                               above the page heading. Needs the header slot.
       string|null $backLabel  the text of that link, for example
                               __('Back to dashboard')
+      string|null $description  public summary for the meta description
+      string|null $canonical    preferred public URL for search engines
+      string|null $robots       indexing instruction for filtered pages
 
     Slots
 
@@ -24,12 +27,12 @@
 
     Styles: resources/scss/layout/_site.scss (frame) and _container.scss (width)
 --}}
-@props(['title' => null, 'back' => null, 'backLabel' => null])
+@props(['title' => null, 'back' => null, 'backLabel' => null, 'description' => null, 'canonical' => null, 'robots' => null])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @include('partials.head', ['title' => $title])
+        @include('partials.head', ['title' => $title, 'description' => $description, 'canonical' => $canonical, 'robots' => $robots])
     </head>
 
     <body>

@@ -30,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $description
  * @property Carbon $starts_at
+ * @property Carbon|null $ends_at
  * @property string $location
  * @property int $max_participants
  * @property EventStatus $status
@@ -47,6 +48,7 @@ use Illuminate\Support\Carbon;
     'title',
     'description',
     'starts_at',
+    'ends_at',
     'location',
     'max_participants',
     'status',
@@ -102,6 +104,16 @@ class Event extends Model
         return $signUps >= $this->max_participants;
     }
 
+    /** Duration is unknown for events created before an end time was recorded. */
+    public function durationInMinutes(): ?int
+    {
+        if ($this->ends_at === null || $this->ends_at->lessThanOrEqualTo($this->starts_at)) {
+            return null;
+        }
+
+        return (int) $this->starts_at->diffInMinutes($this->ends_at);
+    }
+
     /**
      * Only events that have not started yet.
      *
@@ -114,7 +126,7 @@ class Event extends Model
     }
 
     /**
-     * Match a keyword in the event title or description.
+     * Match public event titles. Descriptions may contain private details.
      *
      * @param  Builder<self>  $query
      */
@@ -125,10 +137,7 @@ class Event extends Model
             return;
         }
 
-        $query->where(function (Builder $matches) use ($keyword): void {
-            $matches->where('title', 'like', '%'.$keyword.'%')
-                ->orWhere('description', 'like', '%'.$keyword.'%');
-        });
+        $query->where('title', 'like', '%'.$keyword.'%');
     }
 
     /**
@@ -138,6 +147,7 @@ class Event extends Model
     {
         return [
             'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
             'max_participants' => 'integer',
             'status' => EventStatus::class,
         ];

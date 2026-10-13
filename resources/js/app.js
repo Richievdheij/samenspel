@@ -25,6 +25,38 @@ function initialiseDismissibleAlerts() {
   }
 }
 
+/** Show the search reset as soon as text is entered, before the form submits. */
+function initialiseEventSearchReset() {
+  const input = document.querySelector('[data-search-input]')
+  const reset = document.querySelector('[data-search-reset]')
+  if (!input || !reset) {
+    return
+  }
+
+  const sync = () => {
+    const hasText = input.value.length > 0
+    reset.hidden = !hasText
+    input
+      .closest('.event-search__field')
+      ?.classList.toggle('event-search__field--has-reset', hasText)
+  }
+
+  input.addEventListener('input', sync)
+  window.addEventListener('pageshow', sync)
+  sync()
+
+  reset.addEventListener('click', (event) => {
+    if (new URL(window.location.href).searchParams.has('q')) {
+      return
+    }
+
+    event.preventDefault()
+    input.value = ''
+    sync()
+    input.focus()
+  })
+}
+
 /**
  * The user menu and the menu drawer, both <details>.
  *
@@ -377,6 +409,7 @@ function initialiseParticipantPagination() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initialiseDismissibleAlerts()
+  initialiseEventSearchReset()
   initialiseDisclosures()
   initialiseEventFilters()
   initialiseFilterSelects()

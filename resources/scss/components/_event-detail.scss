@@ -35,6 +35,13 @@
     overflow-wrap: anywhere;
   }
 
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    margin-block-start: var(--space-l);
+  }
+
   &__summary {
     display: grid;
     justify-items: start;

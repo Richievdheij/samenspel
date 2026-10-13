@@ -30,19 +30,23 @@ Als gebruiker wil ik mijn naam en e-mail wijzigen in mijn eigen afgeschermde dee
 **US4 Events bekijken (M)**
 Als gast wil ik alle komende events zien zodat ik kan ontdekken wat er speelt.
 
-- Lijst met titel, spel, categorie, datum, plek, status en aantal inschrijvingen
+- Lijst met titel, spel, categorie, begin- en eindtijd (indien bekend), status en aantal inschrijvingen
+- Exacte locatie alleen zichtbaar voor ingelogde gebruikers
 - Gepagineerd
 
 **US5 Eventdetails bekijken (M)**
-Als gast wil ik de details van een event zien.
+Als gast wil ik een event kunnen ontdekken en na inloggen de privégegevens zien.
 
-- Beschrijving, organisator, deelnemerslijst en vrije plekken zichtbaar
+- Openbaar: titel, spel, categorie, begin- en eindtijd (indien bekend), tijdzone, duur (indien bekend), status en vrije plekken
+- Beschrijving, locatie, organisator en deelnemerslijst alleen zichtbaar na inloggen
+- Onbekende eindtijd wordt expliciet getoond; bestaande events krijgen geen verzonnen eindtijd
 
 **US6 Zoeken (M, zoeken en filteren)**
 Als bezoeker wil ik op trefwoord zoeken zodat ik snel een event vind.
 
-- Zoekt in titel en beschrijving
+- Zoekt in openbare titels; privébeschrijvingen worden niet doorzocht
 - Zoekterm blijft zichtbaar in het veld na zoeken
+- De wis-knop verschijnt direct bij het typen
 
 **US7 Filteren op spel en categorie (M, zoeken en filteren)**
 Als bezoeker wil ik filteren met dropdowns op spel en categorie.

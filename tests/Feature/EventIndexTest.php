@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Game;
 use App\Models\User;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('shows a guest the upcoming events, soonest first', function (): void {
@@ -20,6 +21,25 @@ it('shows a guest the upcoming events, soonest first', function (): void {
         ->assertSeeInOrder(['Eerste event', 'Later event']);
 });
 
+it('shows the start and end time on a card, including the end date when it crosses midnight', function (): void {
+    $startsAt = now()->addWeek()->setTime(22, 30);
+    $endsAt = $startsAt->copy()->addHours(3);
+    Event::factory()->create(['starts_at' => $startsAt, 'ends_at' => $endsAt]);
+
+    get(route('events.index'))
+        ->assertOk()
+        ->assertSeeText('22:30')
+        ->assertSeeText($endsAt->translatedFormat('j M H:i'));
+});
+
+it('provides a search reset before a query is submitted', function (): void {
+    $response = get(route('events.index'))
+        ->assertOk()
+        ->assertSeeHtml('data-search-input');
+
+    expect($response->getContent())->toMatch('/data-search-reset\s+hidden/');
+});
+
 it('leaves out events that have already started', function (): void {
     Event::factory()->create(['title' => 'Voorbij event', 'starts_at' => now()->subDay()]);
 
@@ -29,7 +49,7 @@ it('leaves out events that have already started', function (): void {
         ->assertSee('Er zijn nog geen komende events.');
 });
 
-it('shows the game, category, location and sign-ups of each event', function (): void {
+it('shows guests the game, category and sign-ups without the location', function (): void {
     Event::factory()
         ->for(Game::factory()->state(['name' => 'Mario Kart']))
         ->for(Category::factory()->state(['name' => 'Casual']))
@@ -40,8 +60,16 @@ it('shows the game, category, location and sign-ups of each event', function ():
         ->assertOk()
         ->assertSee('Mario Kart')
         ->assertSee('Casual')
-        ->assertSee('Utrecht')
+        ->assertDontSee('Utrecht')
         ->assertSee('2 / 8 spelers');
+});
+
+it('shows the location in the list to a signed-in user', function (): void {
+    Event::factory()->create(['location' => 'Utrecht']);
+
+    actingAs(User::factory()->create())->get(route('events.index'))
+        ->assertOk()
+        ->assertSeeText('Utrecht');
 });
 
 it('labels an event open, closed or full', function (EventStatus $status, int $signUps, string $state, string $label): void {
@@ -74,7 +102,7 @@ it('spreads the events over pages of ten', function (): void {
     get(route('events.index', ['page' => 2]))->assertSee('Elfde event')->assertSee('Vorige');
 });
 
-it('searches upcoming event titles and descriptions and keeps the term in the field', function (): void {
+it('searches public event titles and keeps the term in the field', function (): void {
     Event::factory()->create(['title' => 'Mario Kart avond', 'description' => 'Samen racen.']);
     Event::factory()->create(['title' => 'Raceavond', 'description' => 'Neem je Mario controller mee.']);
     Event::factory()->create(['title' => 'Schaakavond', 'description' => 'Samen schaken.']);
@@ -83,10 +111,12 @@ it('searches upcoming event titles and descriptions and keeps the term in the fi
     get(route('events.index', ['q' => '  Mario  ']))
         ->assertOk()
         ->assertSeeText('Mario Kart avond')
-        ->assertSeeText('Raceavond')
+        ->assertDontSeeText('Raceavond')
         ->assertDontSeeText('Schaakavond')
         ->assertDontSeeText('Mario van gisteren')
-        ->assertSeeText('Zoekresultaten voor "Mario" (2)')
+        ->assertSeeText('Zoekresultaten voor "Mario" (1)')
+        ->assertSeeHtml('content="noindex, follow"')
+        ->assertSeeHtml('rel="canonical" href="'.route('events.index').'"')
         ->assertSeeHtml('aria-label="Zoekopdracht wissen"')
         ->assertSeeHtml('href="'.route('events.index').'"')
         ->assertSeeHtml('value="Mario"');

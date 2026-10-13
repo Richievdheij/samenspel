@@ -2,13 +2,22 @@
     The <head> both layouts share, so the guest pages and the app pages cannot
     drift apart on the viewport, the CSRF meta tag or the asset entry points.
 
-    Expects $title (string|null) from the including layout.
+    Expects $title, $description, $canonical and $robots from the layout.
 --}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <title>{{ $title ? $title.' — '.config('app.name') : config('app.name') }}</title>
+@if ($description ?? null)
+    <meta name="description" content="{{ $description }}">
+@endif
+@if ($canonical ?? null)
+    <link rel="canonical" href="{{ $canonical }}">
+@endif
+@if ($robots ?? null)
+    <meta name="robots" content="{{ $robots }}">
+@endif
 
 {{-- The brand icons from public/. The SVG favicon is preferred; the ICO
      carries 16, 32 and 48 pixels for browsers without SVG favicons. The
