@@ -20,7 +20,7 @@
 @php
     $links = [
         ['route' => 'home', 'label' => __('Home'), 'icon' => 'home'],
-        ['route' => 'events.index', 'label' => __('Events'), 'icon' => 'calendar'],
+        ['route' => 'events.index', 'active' => 'events.*', 'label' => __('Events'), 'icon' => 'calendar'],
     ];
 
     if (auth()->check()) {
@@ -39,7 +39,7 @@
                 <a
                     class="site-header__link"
                     href="{{ route($link['route']) }}"
-                    @if (request()->routeIs($link['route'])) aria-current="page" @endif
+                    @if (request()->routeIs($link['active'] ?? $link['route'])) aria-current="page" @endif
                 >
                     {{ $link['label'] }}
                 </a>
@@ -126,7 +126,7 @@
                                 class="site-menu__link"
                                 href="{{ route($link['route']) }}"
                                 style="--item: {{ $loop->iteration }}"
-                                @if (request()->routeIs($link['route'])) aria-current="page" @endif
+                                @if (request()->routeIs($link['active'] ?? $link['route'])) aria-current="page" @endif
                             >
                                 <x-icon :name="$link['icon']" class="site-menu__link-icon" />
                                 <span class="site-menu__link-label">{{ $link['label'] }}</span>

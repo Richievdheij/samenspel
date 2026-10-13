@@ -9,9 +9,7 @@
 //
 // Style: the card is a line-art block with isometric depth, like every surface.
 // The date stamp is the Memphis accent: tilted, with an accent-coloured depth.
-// The card is not a link (the detail page does not exist yet), so it does not
-// move on hover. A hover on something that does nothing on click is a promise
-// the page cannot keep.
+// The whole card links to the detail page.
 
 .event-list {
   display: grid;
@@ -30,6 +28,13 @@
   border-radius: var(--radius-m);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-depth-m);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--easing-standard);
+
+  &:hover {
+    background-color: var(--color-felt-tint);
+  }
 
   @include from('m') {
     grid-template-columns: auto 1fr 12rem;
@@ -91,18 +96,6 @@
     font-weight: var(--weight-bold);
     letter-spacing: 0.02em;
     text-transform: uppercase;
-  }
-
-  &__category {
-    padding: 0.05em var(--space-2xs);
-    border: var(--line);
-    border-radius: var(--radius-full);
-    background-color: var(--color-sky);
-    color: var(--color-ink);
-    font-size: var(--text-xs);
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0;
-    text-transform: none;
   }
 
   &__title {

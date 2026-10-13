@@ -26,4 +26,20 @@ class EventController extends Controller
                 ->paginate(10),
         ]);
     }
+
+    /** Show one event, its organiser, a small avatar preview and one page of participants. */
+    public function show(Event $event): View
+    {
+        $event->load(['game', 'category', 'organizer'])
+            ->loadCount('participants');
+
+        return view('events.show', [
+            'event' => $event,
+            'participantPreview' => $event->participants()->orderBy('users.name')->limit(4)->get(['users.id', 'users.name']),
+            'participants' => $event->participants()
+                ->orderBy('users.name')
+                ->paginate(8, ['users.id', 'users.name'], 'participants_page')
+                ->fragment('event-participants'),
+        ]);
+    }
 }
