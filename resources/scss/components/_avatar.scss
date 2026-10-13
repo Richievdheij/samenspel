@@ -8,8 +8,8 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  inline-size: 2.1rem;
-  block-size: 2.1rem;
+  inline-size: var(--avatar-size);
+  block-size: var(--avatar-size);
   border: var(--line);
   border-radius: var(--radius-full);
   background-color: var(--color-sun);

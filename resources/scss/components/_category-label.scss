@@ -1,0 +1,18 @@
+.category-label {
+  display: inline-flex;
+  align-items: center;
+  max-inline-size: 100%;
+  padding: var(--space-3xs) var(--space-2xs);
+  border: var(--line);
+  border-radius: var(--radius-s);
+  background-color: var(--color-sky);
+  box-shadow: var(--shadow-depth-s);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  line-height: var(--leading-tight);
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
