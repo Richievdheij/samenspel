@@ -179,9 +179,93 @@ function initialiseTransientMessages() {
   }
 }
 
+/**
+ * Update only the participant list when its page changes. The links still work
+ * normally without JavaScript and carry a fragment back to the list.
+ */
+function initialiseParticipantPagination() {
+  if (!document.querySelector('[data-participants]')) {
+    return
+  }
+
+  const pagePath = window.location.pathname
+  let pendingRequest
+
+  const showPage = async (url, addHistory) => {
+    pendingRequest?.abort()
+    const request = new AbortController()
+    pendingRequest = request
+    document.querySelector('[data-participants]')?.setAttribute('aria-busy', 'true')
+
+    try {
+      const response = await fetch(url, { signal: request.signal })
+      if (!response.ok) {
+        throw new Error('Could not load participants')
+      }
+
+      const page = new DOMParser().parseFromString(await response.text(), 'text/html')
+      const current = document.querySelector('[data-participants]')
+      const next = page.querySelector('[data-participants]')
+      if (!current || !next) {
+        throw new Error('The participant list is missing')
+      }
+
+      current.replaceWith(next)
+      if (addHistory) {
+        window.history.pushState(null, '', url)
+      }
+
+      next.querySelector('[data-participants-heading]')?.focus({ preventScroll: true })
+      next.scrollIntoView({ block: 'nearest' })
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        if (addHistory) {
+          window.location.assign(url)
+        } else {
+          window.location.reload()
+        }
+      }
+    } finally {
+      if (pendingRequest === request) {
+        pendingRequest = undefined
+        document.querySelector('[data-participants]')?.removeAttribute('aria-busy')
+      }
+    }
+  }
+
+  document.addEventListener('click', (event) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      !(event.target instanceof Element)
+    ) {
+      return
+    }
+
+    const link = event.target.closest('[data-participant-pages] a')
+    if (!link) {
+      return
+    }
+
+    event.preventDefault()
+    showPage(link.href, true)
+  })
+
+  window.addEventListener('popstate', () => {
+    if (window.location.pathname === pagePath) {
+      showPage(window.location.href, false)
+    }
+  })
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initialiseDismissibleAlerts()
   initialiseDisclosures()
   initialiseModals()
   initialiseTransientMessages()
+  initialiseParticipantPagination()
 })

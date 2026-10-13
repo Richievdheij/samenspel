@@ -9,12 +9,12 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
+  gap: var(--space-2xs);
 
   &__pages {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
+    gap: var(--space-2xs);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -24,14 +24,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-inline-size: var(--touch-target);
-    min-block-size: var(--touch-target);
-    padding-inline: var(--space-xs);
+    min-inline-size: calc(var(--touch-target) - var(--space-3xs));
+    min-block-size: calc(var(--touch-target) - var(--space-3xs));
+    padding-inline: var(--space-2xs);
     border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
     box-shadow: var(--shadow-depth-s);
     color: var(--color-ink);
+    font-size: var(--text-s);
     font-weight: var(--weight-semibold);
     text-decoration: none;
     user-select: none;
@@ -51,7 +52,7 @@
       background-color: var(--color-felt);
       box-shadow: var(--shadow-depth-none);
       color: var(--color-paper);
-      transform: translate(var(--depth-s), var(--depth-s));
+      transform: none;
     }
 
     &--disabled,
