@@ -114,6 +114,24 @@ class Event extends Model
     }
 
     /**
+     * Match a keyword in the event title or description.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function matchingKeyword(Builder $query, string $keyword): void
+    {
+        if ($keyword === '') {
+            return;
+        }
+
+        $query->where(function (Builder $matches) use ($keyword): void {
+            $matches->where('title', 'like', '%'.$keyword.'%')
+                ->orWhere('description', 'like', '%'.$keyword.'%');
+        });
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array

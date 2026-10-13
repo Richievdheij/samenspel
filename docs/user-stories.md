@@ -47,6 +47,7 @@ Als bezoeker wil ik op trefwoord zoeken zodat ik snel een event vind.
 **US7 Filteren op spel en categorie (M, zoeken en filteren)**
 Als bezoeker wil ik filteren met dropdowns op spel en categorie.
 
+- Meerdere categorieën tegelijk selecteerbaar in de categoriedropdown
 - Te combineren met de zoekterm in een enkele query
 - Filters blijven behouden bij pagineren
 

@@ -116,6 +116,119 @@ function initialiseDisclosures() {
   })
 }
 
+/** The filter fields remain visible without JavaScript; the button adds a compact, animated panel. */
+function initialiseEventFilters() {
+  const button = document.querySelector('[data-filter-toggle]')
+  const panel = document.querySelector('[data-filter-panel]')
+  if (!button || !panel) {
+    return
+  }
+
+  panel.hidden = true
+  button.hidden = false
+  let animation
+  let closing = false
+
+  const toggle = () => {
+    const opening = panel.hidden || closing
+    const start = animation
+      ? panel.getBoundingClientRect().height
+      : panel.hidden
+        ? 0
+        : panel.scrollHeight
+    animation?.cancel()
+
+    const durationToken = getComputedStyle(panel).getPropertyValue('--duration-menu').trim()
+    const duration = matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 0
+      : Number.parseFloat(durationToken) * (durationToken.endsWith('ms') ? 1 : 1000)
+
+    if (opening) {
+      panel.hidden = false
+    }
+    closing = !opening
+    button.setAttribute('aria-expanded', String(opening))
+
+    if (duration === 0) {
+      panel.hidden = !opening
+      panel.removeAttribute('data-filter-animating')
+      closing = false
+      animation = undefined
+      return
+    }
+
+    panel.setAttribute('data-filter-animating', '')
+    animation = panel.animate(
+      [{ height: `${start}px` }, { height: `${opening ? panel.scrollHeight : 0}px` }],
+      {
+        duration,
+        easing: getComputedStyle(panel).getPropertyValue('--easing-menu').trim(),
+        fill: 'forwards',
+      },
+    )
+
+    animation.onfinish = () => {
+      if (!opening) {
+        panel.hidden = true
+      }
+      panel.removeAttribute('data-filter-animating')
+      animation.cancel()
+      animation = undefined
+      closing = false
+    }
+  }
+
+  button.addEventListener('click', toggle)
+
+  panel.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden && !closing) {
+      toggle()
+      button.focus()
+    }
+  })
+}
+
+/** Keep custom filter summaries current and close their menus predictably. */
+function initialiseFilterSelects() {
+  const selects = [...document.querySelectorAll('[data-filter-select]')]
+
+  for (const select of selects) {
+    const summary = select.querySelector('[data-filter-summary]')
+    if (!summary) {
+      continue
+    }
+
+    select.addEventListener('change', () => {
+      const checked = [...select.querySelectorAll('input:checked')]
+      if (select.hasAttribute('data-single-select')) {
+        summary.textContent = checked[0]?.closest('label')?.textContent.trim()
+        select.open = false
+      } else if (checked.length === 0) {
+        summary.textContent = select.dataset.allLabel
+      } else if (checked.length === 1) {
+        summary.textContent = checked[0].closest('label')?.textContent.trim()
+      } else {
+        summary.textContent = `${checked.length} ${select.dataset.multipleLabel}`
+      }
+    })
+
+    select.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        select.open = false
+        select.querySelector('summary')?.focus()
+      }
+    })
+  }
+
+  document.addEventListener('click', (event) => {
+    for (const select of selects) {
+      if (!select.contains(event.target)) {
+        select.open = false
+      }
+    }
+  })
+}
+
 /**
  * Modals: native <dialog>, opened by `command="show-modal"` buttons.
  *
@@ -265,6 +378,8 @@ function initialiseParticipantPagination() {
 document.addEventListener('DOMContentLoaded', () => {
   initialiseDismissibleAlerts()
   initialiseDisclosures()
+  initialiseEventFilters()
+  initialiseFilterSelects()
   initialiseModals()
   initialiseTransientMessages()
   initialiseParticipantPagination()
