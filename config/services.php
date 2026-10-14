@@ -20,6 +20,10 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'pdok' => [
+        'base_url' => 'https://api.pdok.nl/bzk/locatieserver/search/v3_1',
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
