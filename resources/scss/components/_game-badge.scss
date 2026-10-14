@@ -1,0 +1,25 @@
+@use '../abstracts' as *;
+
+.game-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-inline-size: 0;
+  color: var(--color-felt);
+  font-weight: var(--weight-bold);
+}
+
+.game-badge__logo {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  flex: none;
+  border-radius: var(--radius-s);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-depth-s);
+}
+
+.game-badge__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
