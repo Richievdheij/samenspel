@@ -11,6 +11,8 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Datumkiezer voor eventaanmaak met snelle toekomstige periodes, twee maanden op
+  desktop en één maand op mobiel, plus toepassen en annuleren (US8).
 - `CHANGELOG.md` om de voortgang bij te houden (US20).
 - Overzicht van komende events op `/events`, eerstvolgende bovenaan, ook voor
   gasten. Link "Events" in de navigatie (US4).
@@ -25,6 +27,8 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- Locatiekeuzes bij eventaanmaak tonen weer een selectiecirkel en een korte
+  uitleg bij adres en online (US8).
 - De teksten spreken van gaming-events en LAN-party's in plaats van
   game-avonden en LAN-sessies.
 - Nieuwe stijl voor de hele site: Memphis, line art en isometrisch. Elk vlak

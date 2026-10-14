@@ -12,7 +12,9 @@
  * whole POST half of the suite fails with 419, for a reason that has nothing to
  * do with the database the gate was meant to test.
  *
- * So: five keys, and nothing else crosses over.
+ * So: database credentials and test database assertions cross over, but no
+ * application settings do. Feature tests rebuild their schema, so they must
+ * never receive the schema used by the running application.
  *
  * Precedence is process environment first, then the local env file, then a
  * default. That one order serves both callers — CI supplies DB_* through the
@@ -33,14 +35,18 @@ const resolve = (key, fallback) => {
 /** Single-quote for the shell, escaping any embedded quote. A password may contain anything. */
 const quote = (value) => `'${String(value).replace(/'/g, `'\\''`)}'`
 
+const applicationDatabase = resolve('DB_DATABASE', 'samenspel')
+const testDatabase = `${applicationDatabase}_test`
+
 const values = {
   // Read by tests/Feature/DatabaseConnectionTest.php. Deliberately not declared
   // in phpunit.xml, so it arrives from here and nowhere else.
   EXPECTED_DB_DRIVER: 'mysql',
+  APPLICATION_DB_DATABASE: applicationDatabase,
   DB_CONNECTION: 'mysql',
   DB_HOST: resolve('DB_HOST', '127.0.0.1'),
   DB_PORT: resolve('DB_PORT', '3306'),
-  DB_DATABASE: resolve('DB_DATABASE', 'samenspel'),
+  DB_DATABASE: testDatabase,
   DB_USERNAME: resolve('DB_USERNAME', 'root'),
   DB_PASSWORD: resolve('DB_PASSWORD', ''),
 }

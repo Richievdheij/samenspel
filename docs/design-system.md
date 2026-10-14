@@ -204,7 +204,7 @@ Below `m` the status and counter move under the details, behind a dashed divider
 - Gesloten: `--color-neutral-ink` on `--color-neutral-tint`
 - Vol: `--color-warning-ink` on `--color-warning-tint`
 
-"Vol" is derived (signups reached `max_participants`), "Open" and "Gesloten" come from the stored status. A closed event that is also full shows "Gesloten".
+"Vol" is derived when signups reach a finite `max_participants`; events without a maximum never become full. "Open" and "Gesloten" come from the stored status. A closed event that is also full shows "Gesloten".
 
 **Status toggle button.** A small secondary button in the event list that posts to the toggle action. It lives in a `<form method="POST">` with the CSRF token, label switches between "Sluiten" and "Openen".
 
@@ -230,6 +230,8 @@ Below `m` the status and counter move under the details, behind a dashed divider
 **Dropdown and modal.** `--color-surface`, the `--line` contour, `--radius-m`, `--shadow-depth-m`.
 
 **Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
+
+**Event schedule picker.** A single full-width date and time field opens a bordered, hard-shadowed panel. The layout follows the [Untitled UI date picker reference](https://dribbble.com/shots/27034829-Date-picker-Untitled-UI): quick periods at the left and two side-by-side months on wide screens; one month with horizontally scrollable quick periods on mobile. Event presets only offer future dates. Start and optional end are separate, clearly labelled selectors above the calendars, and the active selector determines which date and time the calendar edits. The footer holds Cancel and Apply; Cancel, Escape and clicking outside restore the last applied values. The component uses Samenspel's felt selection, paper surface, ink contour, hard depth and existing focus styles. The native date-time inputs remain as the fallback without JavaScript. Location mode buttons keep a visible selection circle and a short explanation for each choice.
 
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 
