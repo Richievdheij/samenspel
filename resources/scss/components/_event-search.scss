@@ -167,6 +167,14 @@
 }
 
 .event-filters {
+  .js & {
+    display: none;
+  }
+
+  .js &[data-filter-open] {
+    display: block;
+  }
+
   &[data-filter-animating] {
     overflow: hidden;
   }

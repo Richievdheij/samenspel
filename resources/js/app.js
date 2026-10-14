@@ -157,6 +157,7 @@ function initialiseEventFilters() {
   }
 
   panel.hidden = true
+  panel.removeAttribute('data-filter-open')
   button.hidden = false
   let animation
   let closing = false
@@ -177,12 +178,16 @@ function initialiseEventFilters() {
 
     if (opening) {
       panel.hidden = false
+      panel.setAttribute('data-filter-open', '')
     }
     closing = !opening
     button.setAttribute('aria-expanded', String(opening))
 
     if (duration === 0) {
       panel.hidden = !opening
+      if (!opening) {
+        panel.removeAttribute('data-filter-open')
+      }
       panel.removeAttribute('data-filter-animating')
       closing = false
       animation = undefined
@@ -202,6 +207,7 @@ function initialiseEventFilters() {
     animation.onfinish = () => {
       if (!opening) {
         panel.hidden = true
+        panel.removeAttribute('data-filter-open')
       }
       panel.removeAttribute('data-filter-animating')
       animation.cancel()

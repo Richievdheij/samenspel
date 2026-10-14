@@ -2,7 +2,7 @@
     The signed-in start page. For now it points at the one thing to do next:
     find an event to join.
 --}}
-<x-layouts.app :title="__('Dashboard')">
+<x-layouts.app :title="__('Dashboard')" robots="noindex, follow">
     <x-slot:header>
         <h1>{{ __('Dashboard') }}</h1>
         <p class="page-header__intro">{{ __('Welcome back, :name.', ['name' => auth()->user()->name]) }}</p>

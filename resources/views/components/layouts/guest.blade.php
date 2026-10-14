@@ -18,7 +18,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        @include('partials.head', ['title' => $title])
+        @include('partials.head', [
+            'title' => $title,
+            'description' => __('Bring players together for gaming events and LAN parties on Samenspel.'),
+            'canonical' => null,
+            'robots' => 'noindex, follow',
+        ])
     </head>
 
     <body>
