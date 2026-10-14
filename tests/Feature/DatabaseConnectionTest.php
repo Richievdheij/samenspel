@@ -42,6 +42,8 @@ it('never runs against the developer database', function (): void {
     if ($connection->getDriverName() === 'sqlite') {
         expect($connection->getDatabaseName())->toBe(':memory:');
     } else {
-        expect($connection->getDatabaseName())->not->toBe(database_path('database.sqlite'));
+        expect($connection->getDatabaseName())
+            ->not->toBe(database_path('database.sqlite'))
+            ->toBe(getenv('APPLICATION_DB_DATABASE').'_test');
     }
 });

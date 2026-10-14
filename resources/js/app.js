@@ -1,3 +1,5 @@
+import { initialiseLocationSearch, initialiseSchedulePicker } from './event-create.js'
+
 /**
  * The application entry point Vite bundles.
  *
@@ -246,9 +248,28 @@ function initialiseFilterSelects() {
       } else if (checked.length === 1) {
         summary.textContent = checked[0].closest('label')?.textContent.trim()
       } else {
-        summary.textContent = `${checked.length} ${select.dataset.multipleLabel}`
+        const label = select.dataset.multipleLabel
+        summary.textContent = label.includes(':count')
+          ? label.replace(':count', checked.length)
+          : `${checked.length} ${label}`
       }
     })
+
+    const search = select.querySelector('[data-option-search]')
+    if (search) {
+      const rows = [...select.querySelectorAll('[data-option-row]')]
+      const empty = select.querySelector('[data-option-empty]')
+      search.addEventListener('input', () => {
+        const term = search.value.trim().toLocaleLowerCase()
+        let visible = 0
+        for (const row of rows) {
+          const matches = row.textContent.trim().toLocaleLowerCase().includes(term)
+          row.hidden = !matches
+          visible += Number(matches)
+        }
+        if (empty) empty.hidden = visible > 0
+      })
+    }
 
     select.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
@@ -265,6 +286,86 @@ function initialiseFilterSelects() {
       }
     }
   })
+}
+
+/** Keep the event form's selected games and categories, capacity and date controls in sync. */
+function initialiseEventCreateForm() {
+  const form = document.querySelector('[data-event-create]')
+  if (!form) {
+    return
+  }
+
+  const title = form.querySelector('#title')
+  const titleCount = form.querySelector('[data-title-count]')
+  if (title && titleCount) {
+    const updateTitleCount = () => {
+      titleCount.textContent = titleCount.dataset.countLabel
+        .replace(':count', String(title.value.length))
+        .replace(':max', String(title.maxLength))
+    }
+    title.addEventListener('input', updateTitleCount)
+    updateTitleCount()
+  }
+
+  const chipTemplate = form.querySelector('[data-event-chip-template]')
+  for (const [selectAttribute, chipAttribute, kind] of [
+    ['data-event-games', 'data-event-game-chips', 'game'],
+    ['data-event-categories', 'data-event-category-chips', 'category'],
+  ]) {
+    const select = form.querySelector(`[${selectAttribute}]`)
+    const chips = form.querySelector(`[${chipAttribute}]`)
+    if (!select || !chips || !chipTemplate) continue
+
+    const syncChips = () => {
+      const buttons = [...select.querySelectorAll('input:checked')].map((input) => {
+        const name =
+          input.closest('label')?.querySelector('span:last-child')?.textContent.trim() ?? ''
+        const button = chipTemplate.content.firstElementChild.cloneNode(true)
+        button.dataset[`remove${kind[0].toUpperCase()}${kind.slice(1)}`] = input.value
+        button.setAttribute('aria-label', select.dataset.removeLabel.replace(':name', name))
+        button.querySelector('[data-chip-name]').textContent = name
+        const logo = button.querySelector('[data-chip-logo]')
+        if (logo) logo.hidden = kind !== 'game'
+        return button
+      })
+      chips.replaceChildren(...buttons)
+      chips.hidden = buttons.length === 0
+    }
+
+    select.addEventListener('change', syncChips)
+    chips.addEventListener('click', (event) => {
+      const button = event.target.closest(`[data-remove-${kind}]`)
+      if (!button) return
+      const input = [...select.querySelectorAll('input')].find(
+        (option) =>
+          option.value === button.dataset[`remove${kind[0].toUpperCase()}${kind.slice(1)}`],
+      )
+      if (!input) return
+      input.checked = false
+      input.dispatchEvent(new Event('change', { bubbles: true }))
+      select.querySelector('summary')?.focus()
+    })
+    syncChips()
+  }
+
+  const capacityFields = form.querySelector('[data-capacity-fields]')
+  const syncCapacity = () => {
+    const unlimited = form.querySelector('[data-capacity-mode]:checked')?.value === 'unlimited'
+    capacityFields.hidden = unlimited
+    for (const input of capacityFields.querySelectorAll('input')) {
+      input.disabled = unlimited
+      input.required = !unlimited
+    }
+  }
+  form.addEventListener('change', (event) => {
+    if (event.target.matches('[data-capacity-mode]')) {
+      syncCapacity()
+    }
+  })
+  syncCapacity()
+
+  initialiseLocationSearch(form)
+  initialiseSchedulePicker(form)
 }
 
 /**
@@ -419,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseDisclosures()
   initialiseEventFilters()
   initialiseFilterSelects()
+  initialiseEventCreateForm()
   initialiseModals()
   initialiseTransientMessages()
   initialiseParticipantPagination()

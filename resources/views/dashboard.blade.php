@@ -18,4 +18,10 @@
             {{ __('View the events') }}
         </x-button>
     </section>
+
+    <section class="card event-create__dashboard-card">
+        <h2 class="card__title">{{ __('Organise an event') }}</h2>
+        <p class="card__intro">{{ __('Create a gaming event and invite other players to join.') }}</p>
+        <x-button :href="route('events.create')">{{ __('Create an event') }}</x-button>
+    </section>
 </x-layouts.app>

@@ -4,14 +4,44 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEventRequest;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class EventController extends Controller
 {
+    /** Show the creation form and the organiser eligibility progress. */
+    public function create(Request $request): View
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $signUpsCount = $user->signUpsForOtherOrganisersCount();
+
+        return view('events.create', [
+            'games' => Game::query()->orderBy('name')->get(['id', 'name']),
+            'categories' => Category::query()->orderBy('name')->get(['id', 'name']),
+            'signUpsCount' => $signUpsCount,
+            'signUpsRemaining' => max(0, 3 - $signUpsCount),
+            'canOrganize' => $user->canOrganizeEvents(),
+        ]);
+    }
+
+    /** Persist a validated event under the signed-in organiser. */
+    public function store(StoreEventRequest $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $event = $user->organizeEvent($request->eventAttributes(), $request->categoryIds(), $request->gameIds());
+
+        return to_route('events.show', $event)
+            ->with('status', __('Your event has been created.'));
+    }
+
     /**
      * The upcoming events, soonest first, ten to a page. Open to guests.
      *
@@ -46,9 +76,9 @@ class EventController extends Controller
             'events' => Event::query()
                 ->upcoming()
                 ->matchingKeyword($search)
-                ->when($gameId !== null, fn ($query) => $query->where('game_id', $gameId))
-                ->when($categoryIds !== [], fn ($query) => $query->whereIn('category_id', $categoryIds))
-                ->with(['game', 'category'])
+                ->when($gameId !== null, fn ($query) => $query->whereHas('games', fn ($games) => $games->where('games.id', $gameId)))
+                ->when($categoryIds !== [], fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $categoryIds)))
+                ->with(['games', 'categories'])
                 ->withCount('participants')
                 ->oldest('starts_at')
                 ->paginate(10)
@@ -59,7 +89,7 @@ class EventController extends Controller
     /** Show public event facts, and private details only to signed-in users. */
     public function show(Request $request, Event $event): View
     {
-        $event->load(['game', 'category'])
+        $event->load(['games', 'categories'])
             ->loadCount('participants');
 
         if ($request->user() !== null) {

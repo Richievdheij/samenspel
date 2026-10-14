@@ -21,6 +21,14 @@ use Illuminate\Support\Facades\Date;
  */
 class EventFactory extends Factory
 {
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Event $event): void {
+            $event->categories()->syncWithoutDetaching([$event->category_id]);
+            $event->games()->syncWithoutDetaching([$event->game_id]);
+        });
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -35,6 +43,7 @@ class EventFactory extends Factory
             'starts_at' => fake()->dateTimeBetween('+1 day', '+2 months'),
             'ends_at' => fn (array $attributes): Carbon => Date::parse($attributes['starts_at'])->addHours(3),
             'location' => fake()->city(),
+            'min_participants' => 1,
             'max_participants' => fake()->numberBetween(4, 16),
             'status' => EventStatus::Open,
         ];
