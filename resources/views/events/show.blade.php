@@ -1,9 +1,13 @@
-<x-layouts.app :title="$event->title" :description="__('Discover :game events on Samenspel. Sign in for locations and participant details.', ['game' => $event->game->name])" :canonical="route('events.show', $event)" :back="route('events.index')" :back-label="__('Back to events')">
+<x-layouts.app :title="$event->title" :description="__('Discover :game events on Samenspel. Sign in for locations and participant details.', ['game' => $event->games->pluck('name')->implode(', ')])" :canonical="route('events.show', $event)" :back="route('events.index')" :back-label="__('Back to events')">
     <x-slot:header>
         <h1>{{ $event->title }}</h1>
         <div class="event-detail__classification">
-            <p class="event-detail__game"><x-icon name="gamepad" /> {{ $event->game->name }}</p>
-            <x-category-label :name="$event->category->name" />
+            @foreach ($event->games as $game)
+                <x-game-badge :game="$game" />
+            @endforeach
+            @foreach ($event->categories as $category)
+                <x-category-label :name="$category->name" />
+            @endforeach
         </div>
     </x-slot:header>
 
@@ -55,17 +59,29 @@
                 @auth
                     <div>
                         <dt>{{ __('Location') }}</dt>
-                        <dd>{{ $event->location }}</dd>
+                        <dd>{{ $event->is_online ? __('Online') : ($event->location ?? __('Location not announced yet')) }}</dd>
                     </div>
                     <div>
                         <dt>{{ __('Organiser') }}</dt>
                         <dd>{{ $event->organizer->name }}</dd>
                     </div>
                 @endauth
+                @if ($event->min_participants !== null)
+                    <div>
+                        <dt>{{ __('Minimum participants') }}</dt>
+                        <dd>{{ $event->min_participants }}</dd>
+                    </div>
+                @endif
                 <div>
-                    <dt>{{ __('Available places') }}</dt>
+                    <dt>{{ $event->max_participants === null ? __('Participants') : __('Available places') }}</dt>
                     <dd class="event-detail__availability">
-                        <span>{{ max(0, $event->max_participants - $event->participants_count) }} / {{ $event->max_participants }}</span>
+                        <span>
+                            @if ($event->max_participants === null)
+                                {{ trans_choice(':count player · no limit|:count players · no limit', $event->participants_count) }}
+                            @else
+                                {{ max(0, $event->max_participants - $event->participants_count) }} / {{ $event->max_participants }}
+                            @endif
+                        </span>
                         @auth
                             @if ($event->participants_count > 0)
                                 <a

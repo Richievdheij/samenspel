@@ -144,9 +144,12 @@
 
                         <div class="event-card__body">
                             <p class="event-card__game">
-                                <x-icon name="gamepad" />
-                                {{ $event->game->name }}
-                                <x-category-label :name="$event->category->name" />
+                                @foreach ($event->games as $game)
+                                    <x-game-badge :game="$game" />
+                                @endforeach
+                                @foreach ($event->categories as $category)
+                                    <x-category-label :name="$category->name" />
+                                @endforeach
                             </p>
 
                             <h2 class="event-card__title" id="event-title-{{ $event->id }}">{{ $event->title }}</h2>
@@ -162,7 +165,7 @@
                                 @auth
                                     <li class="event-card__fact">
                                         <x-icon name="map-pin" />
-                                        {{ $event->location }}
+                                        {{ $event->is_online ? __('Online') : ($event->location ?? __('Location not announced yet')) }}
                                     </li>
                                 @endauth
                             </ul>
@@ -173,7 +176,11 @@
 
                             <p class="event-card__count">
                                 <x-icon name="users" />
-                                {{ __(':count / :max players', ['count' => $event->participants_count, 'max' => $event->max_participants]) }}
+                                @if ($event->max_participants === null)
+                                    {{ trans_choice(':count player · no limit|:count players · no limit', $event->participants_count) }}
+                                @else
+                                    {{ __(':count / :max players', ['count' => $event->participants_count, 'max' => $event->max_participants]) }}
+                                @endif
                             </p>
                         </div>
                     </a>
