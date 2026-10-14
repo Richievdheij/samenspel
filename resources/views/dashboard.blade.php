@@ -2,7 +2,7 @@
     The signed-in start page. For now it points at the one thing to do next:
     find an event to join.
 --}}
-<x-layouts.app :title="__('Dashboard')">
+<x-layouts.app :title="__('Dashboard')" robots="noindex, follow">
     <x-slot:header>
         <h1>{{ __('Dashboard') }}</h1>
         <p class="page-header__intro">{{ __('Welcome back, :name.', ['name' => auth()->user()->name]) }}</p>
@@ -17,5 +17,11 @@
         <x-button variant="primary" :href="route('events.index')">
             {{ __('View the events') }}
         </x-button>
+    </section>
+
+    <section class="card event-create__dashboard-card">
+        <h2 class="card__title">{{ __('Organise an event') }}</h2>
+        <p class="card__intro">{{ __('Create a gaming event and invite other players to join.') }}</p>
+        <x-button :href="route('events.create')">{{ __('Create an event') }}</x-button>
     </section>
 </x-layouts.app>

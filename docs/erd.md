@@ -14,8 +14,12 @@ dezelfde commit bijgewerkt.
 ```mermaid
 erDiagram
     users ||--o{ events : "organiseert"
-    games ||--o{ events : "wordt gespeeld op"
-    categories ||--o{ events : "hoort bij"
+    games ||--o{ event_game : "wordt gekozen"
+    events ||--o{ event_game : "heeft spellen"
+    games ||--o{ events : "primair spel"
+    categories ||--o{ events : "hoofdcategorie"
+    categories ||--o{ category_event : "labelt"
+    events ||--o{ category_event : "heeft categorieen"
     users ||--o{ event_user : "schrijft zich in"
     events ||--o{ event_user : "heeft inschrijvingen"
 
@@ -53,8 +57,11 @@ erDiagram
         string title
         text description
         datetime starts_at
-        string location
-        smallint max_participants
+        datetime ends_at "nullable"
+        string location "nullable, onbekend mogelijk"
+        string location_reference "nullable, PDOK adres-ID"
+        smallint min_participants "nullable"
+        smallint max_participants "nullable, geen limiet"
         string status "open of closed"
         timestamp created_at
         timestamp updated_at
@@ -66,6 +73,16 @@ erDiagram
         bigint user_id FK
         timestamp created_at "moment van inschrijven"
         timestamp updated_at
+    }
+
+    category_event {
+        bigint event_id PK,FK
+        bigint category_id PK,FK
+    }
+
+    event_game {
+        bigint event_id PK,FK
+        bigint game_id PK,FK
     }
 ```
 
@@ -105,13 +122,14 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 
 ## De tabellen
 
-| Tabel        | Wat erin staat                                                              |
-| ------------ | --------------------------------------------------------------------------- |
-| `users`      | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin |
-| `games`      | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike |
-| `categories` | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual |
-| `events`     | Een gaming-event of LAN-party, met spel, categorie, datum, plek en maximum  |
-| `event_user` | De inschrijvingen: welke user op welk event ingeschreven staat              |
+| Tabel            | Wat erin staat                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `users`          | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin                        |
+| `games`          | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike                        |
+| `categories`     | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual                        |
+| `events`         | Een gaming-event of LAN-party, met spel, hoofdcategorie, tijd, plek en optionele deelnemersgrenzen |
+| `category_event` | Alle categorieën die bij een event horen                                                           |
+| `event_user`     | De inschrijvingen: welke user op welk event ingeschreven staat                                     |
 
 ## Relaties
 
@@ -119,7 +137,8 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 | ------------ | -------- | ------------ | ------------------------------------------------------------------------------------------------------ |
 | `users`      | `events` | één-op-veel  | Een user organiseert meerdere events, een event heeft één organisator                                  |
 | `games`      | `events` | één-op-veel  | Een spel kan op meerdere events gespeeld worden, een event heeft één spel                              |
-| `categories` | `events` | één-op-veel  | Een categorie hoort bij meerdere events, een event heeft één categorie                                 |
+| `categories` | `events` | één-op-veel  | Een event bewaart één hoofdcategorie voor bestaande gegevens en code                                   |
+| `categories` | `events` | veel-op-veel | Via `category_event`: een event kan meerdere categorielabels dragen                                    |
 | `users`      | `events` | veel-op-veel | Via `event_user`: een user schrijft zich in op meerdere events, en een event heeft meerdere deelnemers |
 
 ### Waarom een tussentabel?
@@ -135,11 +154,20 @@ terug als twee lijnen naar `event_user`.
 verschillende dingen: `events.user_id` is de **organisator**, `event_user` zijn de
 **deelnemers**.
 
+Voor categorieën bestaat daarnaast `category_event`. Bestaande events zijn bij de
+migratie met hun oorspronkelijke categorie aan deze tabel toegevoegd. De
+`category_id` in `events` blijft hun hoofdcategorie; de labels en filters lezen
+alle categorieën uit de tussentabel.
+
 ## Ontwerpkeuzes
 
 - `event_user` heeft een unieke index op de combinatie (`event_id`, `user_id`),
   zodat iemand zich niet twee keer op hetzelfde event kan inschrijven, ook niet als
   de validatie wordt omzeild.
+- `category_event` heeft een samengestelde primaire sleutel, zodat hetzelfde
+  categorielabel niet dubbel op een event kan staan.
+- `min_participants` en `max_participants` zijn bij oude events onbekend. Een
+  event zonder grenzen bewaart voor beide `null`; zonder maximum wordt het niet vol.
 - Er is geen kolom die bijhoudt op hoeveel events iemand ingeschreven staat. De
   regel "eerst op minimaal drie events van anderen ingeschreven voordat je zelf
   organiseert" telt dat met een query op `event_user`.
@@ -187,6 +215,14 @@ erDiagram
         datetime created_at "nullable"
         datetime updated_at "nullable"
     }
+    "category_event" {
+        int event_id PK, FK
+        int category_id PK, FK
+    }
+    "event_game" {
+        int event_id PK, FK
+        int game_id PK, FK
+    }
     "event_user" {
         int id PK
         int event_id FK
@@ -202,11 +238,15 @@ erDiagram
         string title
         text description
         datetime starts_at
-        string location
-        int max_participants
+        string location "nullable"
+        int max_participants "nullable"
         string status
         datetime created_at "nullable"
         datetime updated_at "nullable"
+        datetime ends_at "nullable"
+        int min_participants "nullable"
+        string location_reference "nullable"
+        bool is_online
     }
     "failed_jobs" {
         int id PK
@@ -222,6 +262,8 @@ erDiagram
         string name UK
         datetime created_at "nullable"
         datetime updated_at "nullable"
+        string cover_image_path "nullable"
+        string logo_image_path "nullable"
     }
     "job_batches" {
         string id PK
@@ -268,8 +310,12 @@ erDiagram
         datetime updated_at "nullable"
         string role
     }
+    "categories" ||--o{ "category_event" : "category_id"
     "categories" ||--o{ "events" : "category_id"
+    "events" ||--o{ "category_event" : "event_id"
+    "events" ||--o{ "event_game" : "event_id"
     "events" ||--o{ "event_user" : "event_id"
+    "games" ||--o{ "event_game" : "game_id"
     "games" ||--o{ "events" : "game_id"
     "users" |o..o{ "sessions" : "user_id"
     "users" ||--o{ "event_user" : "user_id"

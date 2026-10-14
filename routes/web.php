@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AddressSearchController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home')->name('home');
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::middleware('auth')->group(function (): void {
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::get('/events/addresses/search', AddressSearchController::class)->middleware('throttle:30,1')->name('events.addresses.search');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+});
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 Route::view('/dashboard', 'dashboard')

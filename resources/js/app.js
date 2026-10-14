@@ -1,3 +1,5 @@
+import { initialiseLocationSearch, initialiseSchedulePicker } from './event-create.js'
+
 /**
  * The application entry point Vite bundles.
  *
@@ -23,6 +25,38 @@ function initialiseDismissibleAlerts() {
       button.closest('.alert')?.remove()
     })
   }
+}
+
+/** Show the search reset as soon as text is entered, before the form submits. */
+function initialiseEventSearchReset() {
+  const input = document.querySelector('[data-search-input]')
+  const reset = document.querySelector('[data-search-reset]')
+  if (!input || !reset) {
+    return
+  }
+
+  const sync = () => {
+    const hasText = input.value.length > 0
+    reset.hidden = !hasText
+    input
+      .closest('.event-search__field')
+      ?.classList.toggle('event-search__field--has-reset', hasText)
+  }
+
+  input.addEventListener('input', sync)
+  window.addEventListener('pageshow', sync)
+  sync()
+
+  reset.addEventListener('click', (event) => {
+    if (new URL(window.location.href).searchParams.has('q')) {
+      return
+    }
+
+    event.preventDefault()
+    input.value = ''
+    sync()
+    input.focus()
+  })
 }
 
 /**
@@ -114,6 +148,224 @@ function initialiseDisclosures() {
       }
     }
   })
+}
+
+/** The filter fields remain visible without JavaScript; the button adds a compact, animated panel. */
+function initialiseEventFilters() {
+  const button = document.querySelector('[data-filter-toggle]')
+  const panel = document.querySelector('[data-filter-panel]')
+  if (!button || !panel) {
+    return
+  }
+
+  panel.hidden = true
+  panel.removeAttribute('data-filter-open')
+  button.hidden = false
+  let animation
+  let closing = false
+
+  const toggle = () => {
+    const opening = panel.hidden || closing
+    const start = animation
+      ? panel.getBoundingClientRect().height
+      : panel.hidden
+        ? 0
+        : panel.scrollHeight
+    animation?.cancel()
+
+    const durationToken = getComputedStyle(panel).getPropertyValue('--duration-menu').trim()
+    const duration = matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 0
+      : Number.parseFloat(durationToken) * (durationToken.endsWith('ms') ? 1 : 1000)
+
+    if (opening) {
+      panel.hidden = false
+      panel.setAttribute('data-filter-open', '')
+    }
+    closing = !opening
+    button.setAttribute('aria-expanded', String(opening))
+
+    if (duration === 0) {
+      panel.hidden = !opening
+      if (!opening) {
+        panel.removeAttribute('data-filter-open')
+      }
+      panel.removeAttribute('data-filter-animating')
+      closing = false
+      animation = undefined
+      return
+    }
+
+    panel.setAttribute('data-filter-animating', '')
+    animation = panel.animate(
+      [{ height: `${start}px` }, { height: `${opening ? panel.scrollHeight : 0}px` }],
+      {
+        duration,
+        easing: getComputedStyle(panel).getPropertyValue('--easing-menu').trim(),
+        fill: 'forwards',
+      },
+    )
+
+    animation.onfinish = () => {
+      if (!opening) {
+        panel.hidden = true
+        panel.removeAttribute('data-filter-open')
+      }
+      panel.removeAttribute('data-filter-animating')
+      animation.cancel()
+      animation = undefined
+      closing = false
+    }
+  }
+
+  button.addEventListener('click', toggle)
+
+  panel.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden && !closing) {
+      toggle()
+      button.focus()
+    }
+  })
+}
+
+/** Keep custom filter summaries current and close their menus predictably. */
+function initialiseFilterSelects() {
+  const selects = [...document.querySelectorAll('[data-filter-select]')]
+
+  for (const select of selects) {
+    const summary = select.querySelector('[data-filter-summary]')
+    if (!summary) {
+      continue
+    }
+
+    select.addEventListener('change', () => {
+      const checked = [...select.querySelectorAll('input:checked')]
+      if (select.hasAttribute('data-single-select')) {
+        summary.textContent = checked[0]?.closest('label')?.textContent.trim()
+        select.open = false
+      } else if (checked.length === 0) {
+        summary.textContent = select.dataset.allLabel
+      } else if (checked.length === 1) {
+        summary.textContent = checked[0].closest('label')?.textContent.trim()
+      } else {
+        const label = select.dataset.multipleLabel
+        summary.textContent = label.includes(':count')
+          ? label.replace(':count', checked.length)
+          : `${checked.length} ${label}`
+      }
+    })
+
+    const search = select.querySelector('[data-option-search]')
+    if (search) {
+      const rows = [...select.querySelectorAll('[data-option-row]')]
+      const empty = select.querySelector('[data-option-empty]')
+      search.addEventListener('input', () => {
+        const term = search.value.trim().toLocaleLowerCase()
+        let visible = 0
+        for (const row of rows) {
+          const matches = row.textContent.trim().toLocaleLowerCase().includes(term)
+          row.hidden = !matches
+          visible += Number(matches)
+        }
+        if (empty) empty.hidden = visible > 0
+      })
+    }
+
+    select.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        select.open = false
+        select.querySelector('summary')?.focus()
+      }
+    })
+  }
+
+  document.addEventListener('click', (event) => {
+    for (const select of selects) {
+      if (!select.contains(event.target)) {
+        select.open = false
+      }
+    }
+  })
+}
+
+/** Keep the event form's selected games and categories, capacity and date controls in sync. */
+function initialiseEventCreateForm() {
+  const form = document.querySelector('[data-event-create]')
+  if (!form) {
+    return
+  }
+
+  const title = form.querySelector('#title')
+  const titleCount = form.querySelector('[data-title-count]')
+  if (title && titleCount) {
+    const updateTitleCount = () => {
+      titleCount.textContent = titleCount.dataset.countLabel
+        .replace(':count', String(title.value.length))
+        .replace(':max', String(title.maxLength))
+    }
+    title.addEventListener('input', updateTitleCount)
+    updateTitleCount()
+  }
+
+  const chipTemplate = form.querySelector('[data-event-chip-template]')
+  for (const [selectAttribute, chipAttribute, kind] of [
+    ['data-event-games', 'data-event-game-chips', 'game'],
+    ['data-event-categories', 'data-event-category-chips', 'category'],
+  ]) {
+    const select = form.querySelector(`[${selectAttribute}]`)
+    const chips = form.querySelector(`[${chipAttribute}]`)
+    if (!select || !chips || !chipTemplate) continue
+
+    const syncChips = () => {
+      const buttons = [...select.querySelectorAll('input:checked')].map((input) => {
+        const name =
+          input.closest('label')?.querySelector('span:last-child')?.textContent.trim() ?? ''
+        const button = chipTemplate.content.firstElementChild.cloneNode(true)
+        button.dataset[`remove${kind[0].toUpperCase()}${kind.slice(1)}`] = input.value
+        button.setAttribute('aria-label', select.dataset.removeLabel.replace(':name', name))
+        button.querySelector('[data-chip-name]').textContent = name
+        const logo = button.querySelector('[data-chip-logo]')
+        if (logo) logo.hidden = kind !== 'game'
+        return button
+      })
+      chips.replaceChildren(...buttons)
+      chips.hidden = buttons.length === 0
+    }
+
+    select.addEventListener('change', syncChips)
+    chips.addEventListener('click', (event) => {
+      const button = event.target.closest(`[data-remove-${kind}]`)
+      if (!button) return
+      const input = [...select.querySelectorAll('input')].find(
+        (option) =>
+          option.value === button.dataset[`remove${kind[0].toUpperCase()}${kind.slice(1)}`],
+      )
+      if (!input) return
+      input.checked = false
+      input.dispatchEvent(new Event('change', { bubbles: true }))
+      select.querySelector('summary')?.focus()
+    })
+    syncChips()
+  }
+
+  const capacityFields = form.querySelector('[data-capacity-fields]')
+  const syncCapacity = () => {
+    const unlimited = form.querySelector('[data-capacity-mode]:checked')?.value === 'unlimited'
+    capacityFields.hidden = unlimited
+    for (const input of capacityFields.querySelectorAll('input')) {
+      input.disabled = unlimited
+      input.required = !unlimited
+    }
+  }
+  form.addEventListener('change', (event) => {
+    if (event.target.matches('[data-capacity-mode]')) {
+      syncCapacity()
+    }
+  })
+  syncCapacity()
+
+  initialiseLocationSearch(form)
+  initialiseSchedulePicker(form)
 }
 
 /**
@@ -264,7 +516,11 @@ function initialiseParticipantPagination() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initialiseDismissibleAlerts()
+  initialiseEventSearchReset()
   initialiseDisclosures()
+  initialiseEventFilters()
+  initialiseFilterSelects()
+  initialiseEventCreateForm()
   initialiseModals()
   initialiseTransientMessages()
   initialiseParticipantPagination()

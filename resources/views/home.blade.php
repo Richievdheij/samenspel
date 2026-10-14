@@ -8,7 +8,10 @@
     keeps the layout, the SCSS layers and the Vite manifest exercised by a real
     request, which the browser smoke test relies on.
 --}}
-<x-layouts.app>
+<x-layouts.app
+    :description="__('Find gaming events and LAN parties, meet other players, and join in on Samenspel.')"
+    :canonical="route('home')"
+>
     <div class="home">
         <div class="home__text">
             <p class="home__eyebrow">{{ __('Gaming events and LAN parties') }}</p>

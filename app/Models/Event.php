@@ -30,14 +30,20 @@ use Illuminate\Support\Carbon;
  * @property string $title
  * @property string $description
  * @property Carbon $starts_at
- * @property string $location
- * @property int $max_participants
+ * @property Carbon|null $ends_at
+ * @property string|null $location
+ * @property string|null $location_reference
+ * @property bool $is_online
+ * @property int|null $min_participants
+ * @property int|null $max_participants
  * @property EventStatus $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $organizer
  * @property-read Game $game
+ * @property-read Collection<int, Game> $games
  * @property-read Category $category
+ * @property-read Collection<int, Category> $categories
  * @property-read Collection<int, User> $participants
  * @property-read int|null $participants_count set by withCount('participants')
  */
@@ -47,7 +53,11 @@ use Illuminate\Support\Carbon;
     'title',
     'description',
     'starts_at',
+    'ends_at',
     'location',
+    'location_reference',
+    'is_online',
+    'min_participants',
     'max_participants',
     'status',
 ])]
@@ -73,11 +83,31 @@ class Event extends Model
     }
 
     /**
+     * Every game in this event. game_id remains its primary game.
+     *
+     * @return BelongsToMany<Game, $this>
+     */
+    public function games(): BelongsToMany
+    {
+        return $this->belongsToMany(Game::class);
+    }
+
+    /**
      * @return BelongsTo<Category, $this>
      */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Every category shown on the event. category_id remains its primary category.
+     *
+     * @return BelongsToMany<Category, $this>
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 
     /**
@@ -97,9 +127,23 @@ class Event extends Model
      */
     public function isFull(): bool
     {
+        if ($this->max_participants === null) {
+            return false;
+        }
+
         $signUps = $this->participants_count ?? $this->participants()->count();
 
         return $signUps >= $this->max_participants;
+    }
+
+    /** Duration is unknown for events created before an end time was recorded. */
+    public function durationInMinutes(): ?int
+    {
+        if ($this->ends_at === null || $this->ends_at->lessThanOrEqualTo($this->starts_at)) {
+            return null;
+        }
+
+        return (int) $this->starts_at->diffInMinutes($this->ends_at);
     }
 
     /**
@@ -114,12 +158,30 @@ class Event extends Model
     }
 
     /**
+     * Match public event titles. Descriptions may contain private details.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function matchingKeyword(Builder $query, string $keyword): void
+    {
+        if ($keyword === '') {
+            return;
+        }
+
+        $query->where('title', 'like', '%'.$keyword.'%');
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
             'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
+            'is_online' => 'boolean',
+            'min_participants' => 'integer',
             'max_participants' => 'integer',
             'status' => EventStatus::class,
         ];

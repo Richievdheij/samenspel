@@ -1,74 +1,138 @@
-<x-layouts.app :title="$event->title" :back="route('events.index')" :back-label="__('Back to events')">
+<x-layouts.app :title="$event->title" :description="__('Discover :game events on Samenspel. Sign in for locations and participant details.', ['game' => $event->games->pluck('name')->implode(', ')])" :canonical="route('events.show', $event)" :back="route('events.index')" :back-label="__('Back to events')">
     <x-slot:header>
         <h1>{{ $event->title }}</h1>
         <div class="event-detail__classification">
-            <p class="event-detail__game"><x-icon name="gamepad" /> {{ $event->game->name }}</p>
-            <x-category-label :name="$event->category->name" />
+            @if ($event->games->count() > 3)
+                <details class="event-detail__games">
+                    <summary class="event-detail__games-toggle">{{ __('View all :count games', ['count' => $event->games->count()]) }} <x-icon name="chevron-down" /></summary>
+                    <div class="event-detail__games-list">
+                        @foreach ($event->games as $game)
+                            <x-game-badge :game="$game" />
+                        @endforeach
+                    </div>
+                </details>
+            @else
+                @foreach ($event->games as $game)
+                    <x-game-badge :game="$game" />
+                @endforeach
+            @endif
+            @foreach ($event->categories as $category)
+                <x-category-label :name="$category->name" />
+            @endforeach
         </div>
     </x-slot:header>
 
     <div class="event-detail">
-        <section class="card event-detail__description" aria-labelledby="event-description">
-            <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
-            <p class="event-detail__text">{{ $event->description }}</p>
-        </section>
+        @auth
+            <section class="card event-detail__description" aria-labelledby="event-description">
+                <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
+                <p class="event-detail__text">{{ $event->description }}</p>
+            </section>
+        @else
+            <section class="card event-detail__description" aria-labelledby="event-description">
+                <h2 class="card__title" id="event-description">{{ __('Event details are private') }}</h2>
+                <p>{{ __('Sign in to see the description, location, organiser and participants. This protects the privacy of everyone attending.') }}</p>
+                <div class="event-detail__actions">
+                    <x-button variant="primary" :href="route('login')">{{ __('Log in') }}</x-button>
+                    <x-button :href="route('register')">{{ __('Create an account') }}</x-button>
+                </div>
+            </section>
+        @endauth
 
         <aside class="card event-detail__summary" aria-label="{{ __('Event information') }}">
             <x-status-pill :event="$event" />
 
             <dl class="event-detail__facts">
                 <div>
-                    <dt>{{ __('Date and time') }}</dt>
+                    <dt>{{ __('Starts') }}</dt>
                     <dd><time datetime="{{ $event->starts_at->toIso8601String() }}">{{ $event->starts_at->translatedFormat('l j F Y, H:i') }}</time></dd>
                 </div>
                 <div>
-                    <dt>{{ __('Location') }}</dt>
-                    <dd>{{ $event->location }}</dd>
-                </div>
-                <div>
-                    <dt>{{ __('Organiser') }}</dt>
-                    <dd>{{ $event->organizer->name }}</dd>
-                </div>
-                <div>
-                    <dt>{{ __('Available places') }}</dt>
-                    <dd class="event-detail__availability">
-                        <span>{{ max(0, $event->max_participants - $event->participants_count) }} / {{ $event->max_participants }}</span>
-                        @if ($event->participants_count > 0)
-                            <a
-                                class="event-detail__preview"
-                                href="#event-participants"
-                                aria-label="{{ __('View participants (:count)', ['count' => $event->participants_count]) }}"
-                            >
-                                @foreach ($participantPreview as $participant)
-                                    <span class="avatar event-detail__preview-avatar" title="{{ $participant->name }}" aria-hidden="true">{{ $participant->initials() }}</span>
-                                @endforeach
-                                @if ($event->participants_count > 4)
-                                    <span class="event-detail__preview-more" aria-hidden="true">+{{ $event->participants_count - 4 }}</span>
-                                @endif
-                            </a>
+                    <dt>{{ __('Ends') }}</dt>
+                    <dd>
+                        @if ($event->durationInMinutes() !== null)
+                            <time datetime="{{ $event->ends_at->toIso8601String() }}">{{ $event->ends_at->translatedFormat('l j F Y, H:i') }}</time>
+                        @else
+                            {{ __('End time not announced yet') }}
                         @endif
+                    </dd>
+                </div>
+                @if ($event->durationInMinutes() !== null)
+                    <div>
+                        <dt>{{ __('Duration') }}</dt>
+                        <dd>{{ __(':hours h :minutes min', ['hours' => intdiv($event->durationInMinutes(), 60), 'minutes' => $event->durationInMinutes() % 60]) }}</dd>
+                    </div>
+                @endif
+                <div>
+                    <dt>{{ __('Time zone') }}</dt>
+                    <dd>{{ __('Amsterdam time') }}</dd>
+                </div>
+                @auth
+                    <div>
+                        <dt>{{ __('Location') }}</dt>
+                        <dd>{{ $event->is_online ? __('Online') : ($event->location ?? __('Location not announced yet')) }}</dd>
+                    </div>
+                    <div>
+                        <dt>{{ __('Organiser') }}</dt>
+                        <dd>{{ $event->organizer->name }}</dd>
+                    </div>
+                @endauth
+                @if ($event->min_participants !== null)
+                    <div>
+                        <dt>{{ __('Minimum participants') }}</dt>
+                        <dd>{{ $event->min_participants }}</dd>
+                    </div>
+                @endif
+                <div>
+                    <dt>{{ $event->max_participants === null ? __('Participants') : __('Available places') }}</dt>
+                    <dd class="event-detail__availability">
+                        <span>
+                            @if ($event->max_participants === null)
+                                {{ trans_choice(':count player · no limit|:count players · no limit', $event->participants_count) }}
+                            @else
+                                {{ max(0, $event->max_participants - $event->participants_count) }} / {{ $event->max_participants }}
+                            @endif
+                        </span>
+                        @auth
+                            @if ($event->participants_count > 0)
+                                <a
+                                    class="event-detail__preview"
+                                    href="#event-participants"
+                                    aria-label="{{ __('View participants (:count)', ['count' => $event->participants_count]) }}"
+                                >
+                                    @foreach ($participantPreview as $participant)
+                                        <span class="avatar event-detail__preview-avatar" title="{{ $participant->name }}" aria-hidden="true">{{ $participant->initials() }}</span>
+                                    @endforeach
+                                    @if ($event->participants_count > 4)
+                                        <span class="event-detail__preview-more" aria-hidden="true">+{{ $event->participants_count - 4 }}</span>
+                                    @endif
+                                </a>
+                            @endif
+                        @endauth
                     </dd>
                 </div>
             </dl>
         </aside>
 
-        <section class="card event-detail__participants" aria-labelledby="event-participants" data-participants>
-            <h2 class="card__title" id="event-participants" tabindex="-1" data-participants-heading>{{ __('Participants (:count)', ['count' => $event->participants_count]) }}</h2>
-            @if ($participants->total() === 0)
-                <p>{{ __('No participants have signed up yet.') }}</p>
-            @else
-                <ul class="event-detail__people">
-                    @foreach ($participants as $participant)
-                        <li class="event-detail__person">
-                            <span class="avatar" aria-hidden="true">{{ $participant->initials() }}</span>
-                            <span>{{ $participant->name }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-                <div class="event-detail__pagination" data-participant-pages>
-                    {{ $participants->links() }}
-                </div>
-            @endif
-        </section>
+        @auth
+            <section class="card event-detail__participants" aria-labelledby="event-participants" data-participants>
+                <h2 class="card__title" id="event-participants" tabindex="-1" data-participants-heading>{{ __('Participants (:count)', ['count' => $event->participants_count]) }}</h2>
+                @if ($participants->total() === 0)
+                    <p>{{ __('No participants have signed up yet.') }}</p>
+                @else
+                    <ul class="event-detail__people">
+                        @foreach ($participants as $participant)
+                            <li class="event-detail__person">
+                                <span class="avatar" aria-hidden="true">{{ $participant->initials() }}</span>
+                                <span>{{ $participant->name }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="event-detail__pagination" data-participant-pages>
+                        {{ $participants->links() }}
+                    </div>
+                @endif
+            </section>
+        @endauth
     </div>
 </x-layouts.app>

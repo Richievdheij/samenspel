@@ -30,30 +30,39 @@ Als gebruiker wil ik mijn naam en e-mail wijzigen in mijn eigen afgeschermde dee
 **US4 Events bekijken (M)**
 Als gast wil ik alle komende events zien zodat ik kan ontdekken wat er speelt.
 
-- Lijst met titel, spel, categorie, datum, plek, status en aantal inschrijvingen
+- Lijst met titel, spellen, categorieën, begin- en eindtijd (indien bekend), status en aantal inschrijvingen
+- Exacte locatie alleen zichtbaar voor ingelogde gebruikers
 - Gepagineerd
 
 **US5 Eventdetails bekijken (M)**
-Als gast wil ik de details van een event zien.
+Als gast wil ik een event kunnen ontdekken en na inloggen de privégegevens zien.
 
-- Beschrijving, organisator, deelnemerslijst en vrije plekken zichtbaar
+- Openbaar: titel, spellen, categorieën, begin- en eindtijd (indien bekend), tijdzone, duur (indien bekend), status en vrije plekken
+- Beschrijving, locatie, organisator en deelnemerslijst alleen zichtbaar na inloggen
+- Onbekende eindtijd wordt expliciet getoond; bestaande events krijgen geen verzonnen eindtijd
 
 **US6 Zoeken (M, zoeken en filteren)**
 Als bezoeker wil ik op trefwoord zoeken zodat ik snel een event vind.
 
-- Zoekt in titel en beschrijving
+- Zoekt in openbare titels; privébeschrijvingen worden niet doorzocht
 - Zoekterm blijft zichtbaar in het veld na zoeken
+- De wis-knop verschijnt direct bij het typen
 
 **US7 Filteren op spel en categorie (M, zoeken en filteren)**
 Als bezoeker wil ik filteren met dropdowns op spel en categorie.
 
+- Meerdere categorieën tegelijk selecteerbaar in de categoriedropdown
 - Te combineren met de zoekterm in een enkele query
 - Filters blijven behouden bij pagineren
 
 **US8 Event organiseren (M, validatie, diepere validatie)**
-Als gebruiker wil ik een event aanmaken met spel, categorie, datum, plek en maximaal aantal deelnemers.
+Als gebruiker wil ik een event aanmaken met doorzoekbare spellen en categorieën, datum, plek en deelnemersinstellingen.
 
-- Alle velden verplicht, datum ligt in de toekomst, maximum is een positief getal
+- Titel, beschrijving, minimaal één spel en categorie en een toekomstige starttijd zijn verplicht; eindtijd is optioneel en ligt na de start
+- Begin en optioneel einde worden in één toegankelijke, responsieve datumkiezer gekozen: op desktop twee maanden met toekomstige snelle periodes, op mobiel één maand. De eerste klik kiest het begin, de tweede het einde; de tussenliggende dagen blijven zichtbaar. Pas bij toepassen worden de formulierwaarden veranderd; annuleren laat de vorige keuze staan
+- Kies met de locatieknoppen een bestaand Nederlands adres via PDOK of online. Adresvelden inclusief postcode worden automatisch ingevuld; een leeg adres betekent dat de locatie nog niet bekend is
+- Kies een minimum en maximum (beide positief, maximum minstens het minimum), of geen minimum en maximum
+- Gekozen spellen en categorieën verschijnen als verwijderbare chips en labels op het event. De eventkaart combineert de beschikbare covers van alle spellen in één beeldvlak; ontbrekende beelden krijgen placeholders. Bij veel spellen toont de kaart enkele logomarkeringen en `+N`; op de detailpagina kan de volledige spellenlijst worden uitgeklapt. Lange kaarttitels tonen maximaal drie regels; de volledige titel staat op de detailpagina
 - Alleen toegestaan als ik me eerder voor minimaal 3 events van anderen heb ingeschreven, geteld met een Eloquent-query op `event_user`
 - Anders zie ik een uitleg hoeveel inschrijvingen nog nodig zijn
 - Ook afgedwongen op de server, niet alleen door een verborgen knop

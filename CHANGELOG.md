@@ -11,6 +11,10 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Datumkiezer voor eventaanmaak met snelle toekomstige periodes, twee maanden op
+  desktop en één maand op mobiel, plus toepassen en annuleren (US8).
+- Gamecovers en logo's kunnen als lokale afbeeldingen aan een spel worden
+  gekoppeld; eventkaarten hebben passende placeholders zolang die ontbreken (US8).
 - `CHANGELOG.md` om de voortgang bij te houden (US20).
 - Overzicht van komende events op `/events`, eerstvolgende bovenaan, ook voor
   gasten. Link "Events" in de navigatie (US4).
@@ -25,6 +29,20 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- Eventkaarten combineren de covers van alle gekozen spellen, tonen bij veel
+  spellen een `+N`-markering en begrenzen titels tot drie regels; op de
+  eventpagina kan de volledige spellenlijst worden uitgeklapt (US8).
+- De datumstempel gebruikt weer de groene achtergrond en de spelersteller en
+  andere kaarticonen zijn gecentreerd (US8).
+- Eventkaarten hebben een beeldvlak met datum en status, informatie en een
+  duidelijke detailactie; op desktop staan ze in twee kolommen en op mobiel in
+  één kolom (US8).
+- Locatiekeuzes bij eventaanmaak tonen weer een selectiecirkel en een korte
+  uitleg bij adres en online (US8).
+- De datumkiezer houdt begin en einde als concept zichtbaar en bewaart ze pas
+  bij toepassen; de kalender navigeert met correct uitgelijnde weken (US8).
+- Eventkaarten tonen één spel als brede gamekop en meerdere spellen als compacte
+  logomarkeringen. Categorieën staan op een eigen regel onder de titel (US8).
 - De teksten spreken van gaming-events en LAN-party's in plaats van
   game-avonden en LAN-sessies.
 - Nieuwe stijl voor de hele site: Memphis, line art en isometrisch. Elk vlak

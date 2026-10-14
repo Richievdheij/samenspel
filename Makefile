@@ -54,9 +54,9 @@ BUILD_ENV := APP_ENV=production APP_DEBUG=false \
              APP_KEY=$${APP_KEY:-base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=} \
              DB_CONNECTION=$${DB_CONNECTION:-sqlite}
 
-# `make integration` runs against MySQL, and receives ONLY the five database
-# variables — never the whole env file. scripts/db-env.mjs explains why at
-# length; the short version is that PHPUnit does not overwrite a variable the
+# `make integration` runs against a separate MySQL test schema, and receives
+# only database credentials and assertions — never the whole env file.
+# scripts/db-env.mjs explains why at length; PHPUnit does not overwrite a variable the
 # process already has, so sourcing .env would silently defeat every test setting
 # in phpunit.xml and the POST half of the suite would fail with 419.
 #

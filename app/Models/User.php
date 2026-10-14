@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\EventStatus;
 use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,6 +19,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -81,6 +83,41 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
     public function joinedEvents(): BelongsToMany
     {
         return $this->belongsToMany(Event::class)->withTimestamps();
+    }
+
+    /** Count sign-ups for events organised by someone else. */
+    public function signUpsForOtherOrganisersCount(): int
+    {
+        return $this->joinedEvents()
+            ->where('events.user_id', '<>', $this->getKey())
+            ->count();
+    }
+
+    /** Admins may organise immediately; other users need three sign-ups. */
+    public function canOrganizeEvents(): bool
+    {
+        return $this->role === Role::Admin || $this->signUpsForOtherOrganisersCount() >= 3;
+    }
+
+    /**
+     * Create the event and its game and category labels as one database change.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @param  list<int>  $categoryIds
+     * @param  list<int>  $gameIds
+     */
+    public function organizeEvent(array $attributes, array $categoryIds, array $gameIds): Event
+    {
+        return DB::transaction(function () use ($attributes, $categoryIds, $gameIds): Event {
+            $event = $this->organizedEvents()->create([
+                ...$attributes,
+                'status' => EventStatus::Open,
+            ]);
+            $event->categories()->sync($categoryIds);
+            $event->games()->sync($gameIds);
+
+            return $event;
+        });
     }
 
     /**

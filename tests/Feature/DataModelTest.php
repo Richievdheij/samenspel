@@ -31,6 +31,7 @@ it('connects an event to its organiser and its participants', function (): void 
 
     expect($event->organizer->is($organiser))->toBeTrue()
         ->and($organiser->organizedEvents->modelKeys())->toBe([$event->id])
+        ->and($event->categories->modelKeys())->toBe([$event->category_id])
         ->and($participant->joinedEvents->modelKeys())->toBe([$event->id])
         ->and(DB::table('event_user')->whereNotNull('created_at')->count())->toBe(1);
 });
@@ -49,7 +50,16 @@ it('removes the sign-ups when an event is deleted', function (): void {
     $event->delete();
 
     $this->assertDatabaseCount('event_user', 0);
+    $this->assertDatabaseCount('category_event', 0);
 });
+
+it('keeps a category that still labels an event', function (): void {
+    $event = Event::factory()->create();
+    $secondary = Category::factory()->create();
+    $event->categories()->attach($secondary);
+
+    $secondary->delete();
+})->throws(QueryException::class);
 
 it('removes the events a user organised when the account is deleted', function (): void {
     $event = Event::factory()->create();
