@@ -181,9 +181,9 @@
                                     <div class="event-create__schedule-calendars">
                                         <div class="event-create__schedule-calendar">
                                             <div class="event-create__calendar-head">
-                                                <button type="button" data-calendar-previous aria-label="{{ __('Previous month') }}"><x-icon name="arrow-left" /></button>
+                                                <button type="button" data-calendar-previous aria-label="{{ __('Previous month') }}"><x-icon name="chevron-left" /></button>
                                                 <strong data-calendar-month="0"></strong>
-                                                <span aria-hidden="true"></span>
+                                                <button type="button" class="event-create__calendar-mobile-next" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="chevron-right" /></button>
                                             </div>
                                             <div class="event-create__calendar-weekdays" data-calendar-weekdays="0" aria-hidden="true"></div>
                                             <div class="event-create__calendar-days" data-calendar-days="0"></div>
@@ -192,12 +192,11 @@
                                             <div class="event-create__calendar-head">
                                                 <span aria-hidden="true"></span>
                                                 <strong data-calendar-month="1"></strong>
-                                                <button type="button" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="arrow-right" /></button>
+                                                <button type="button" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="chevron-right" /></button>
                                             </div>
                                             <div class="event-create__calendar-weekdays" data-calendar-weekdays="1" aria-hidden="true"></div>
                                             <div class="event-create__calendar-days" data-calendar-days="1"></div>
                                         </div>
-                                        <button type="button" class="event-create__calendar-mobile-next" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="arrow-right" /></button>
                                     </div>
                                     <div class="event-create__schedule-time">
                                         <span class="field__label">{{ __('Time') }}</span>

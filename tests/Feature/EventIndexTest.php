@@ -72,6 +72,23 @@ it('shows the location in the list to a signed-in user', function (): void {
         ->assertSeeText('Utrecht');
 });
 
+it('combines game art and keeps overflow games available on the event page', function (): void {
+    $firstGame = Game::factory()->create(['cover_image_path' => 'covers/first.jpg']);
+    $middleGames = Game::factory()->count(4)->create(['cover_image_path' => 'covers/middle.jpg']);
+    $lastGame = Game::factory()->create(['cover_image_path' => 'covers/last.jpg']);
+    $event = Event::factory()->create(['game_id' => $firstGame->id]);
+    $event->games()->sync([$firstGame->id, ...$middleGames->modelKeys(), $lastGame->id]);
+
+    $index = get(route('events.index'))->assertOk();
+
+    $index->assertSeeHtml('class="event-card__game-tile"')->assertSee('covers/last.jpg')->assertSeeHtml('aria-label="3 spellen meer"')->assertSeeHtml('aria-label="1 spel meer"');
+
+    get(route('events.show', $event))
+        ->assertOk()
+        ->assertSeeText('Bekijk alle 6 spellen')
+        ->assertSeeText($lastGame->name);
+});
+
 it('labels an event open, closed or full', function (EventStatus $status, int $signUps, string $state, string $label): void {
     Event::factory()
         ->hasAttached(User::factory()->count($signUps), [], 'participants')

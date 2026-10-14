@@ -228,7 +228,7 @@ it('stores an unlimited event without a minimum or maximum', function (): void {
         ->and($event->max_participants)->toBeNull()
         ->and($event->isFull())->toBeFalse();
 
-    get(route('events.index'))->assertOk()->assertSeeText('20 spelers · geen limiet')->assertDontSeeText('Vol');
+    get(route('events.index'))->assertOk()->assertSeeText('20 spelers · geen limiet')->assertDontSee('status-pill--full');
     get(route('events.show', $event))->assertOk()->assertSeeText('20 spelers · geen limiet');
 });
 

@@ -190,13 +190,14 @@ Each component has one SCSS partial and uses tokens only.
 
 **Card.** `--color-surface`, the `--line` contour, `--radius-m`, a fixed `--shadow-depth-m`. A card footer is divided by a dashed `--color-line-strong` line.
 
-**Event card.** A card (above) with no hover. Three columns from the `m` breakpoint up:
+**Event card.** A portrait card in a single column through `m`, and a two-column grid from `l`. The whole card is one link with a visible keyboard focus ring and a slight lift on hover. Each card has the same reading order:
 
-- Left: the date stamp, the Memphis accent of the card: a `--color-felt` block with `--color-paper` text and the ink contour, tilted by `--tilt` on an accent-coloured `--depth-s`. Weekday and month abbreviation in mono, the day in the display face.
-- Middle, in reading order: the game in `--color-felt`, bold and uppercase, with a gamepad icon, and the category as a `--color-sky` tag with the contour after it; the title (`--text-2xl` from `m`, `--text-xl` below), the largest text on the card; time and location in `--color-muted`, each with an icon.
-- Right: a column of fixed width (12rem) behind a dashed divider, left-aligned so the status pill and the player counter ("4 / 8 spelers", mono) start at the same x on every card.
+- Visual stage: the green, tilted date stamp sits at the top left and the text status pill at the top right. Every selected game's cover occupies an equal slice of one continuous image area; where art is missing its logo or a gamepad placeholder appears. One game also shows its name. For multiple games, three logo marks remain visible on narrow screens and five on wider screens; a `+N` mark summarises the rest. The stage is 14rem high.
+- Information: category labels wrap above the title; title, time and location each have their own row. Titles are visually limited to three lines with an ellipsis, while their full text remains on the event page. The location appears only to signed-in users.
+- Footer: a dashed divider separates the player count from a button-shaped "View event" label. The label is part of the card link, not a nested button.
 
-Below `m` the status and counter move under the details, behind a dashed divider. Once the detail page exists the title becomes the link; the card stays one block, not one big clickable area.
+The nullable `cover_image_path` and `logo_image_path` fields on games refer to files on the public storage disk; no remote image request is made by the card.
+When an event has more than three games, the detail page provides a native disclosure with the complete game list.
 
 **Status pill.** `--radius-full`, the `--line` contour, `--text-xs`, weight 700, uppercase label with a leading dot.
 
@@ -231,7 +232,7 @@ Below `m` the status and counter move under the details, behind a dashed divider
 
 **Search and filter bar.** One row on desktop (search field, game dropdown, category dropdown, submit and reset), stacked on mobile. Selected values persist after submit.
 
-**Event schedule picker.** A single full-width date and time field opens a bordered, hard-shadowed panel. The layout follows the [Untitled UI date picker reference](https://dribbble.com/shots/27034829-Date-picker-Untitled-UI): quick periods at the left and two side-by-side months on wide screens; one month with horizontally scrollable quick periods on mobile. Event presets only offer future dates. Start and optional end are separate, clearly labelled selectors above the calendars, and the active selector determines which date and time the calendar edits. The footer holds Cancel and Apply; Cancel, Escape and clicking outside restore the last applied values. The component uses Samenspel's felt selection, paper surface, ink contour, hard depth and existing focus styles. The native date-time inputs remain as the fallback without JavaScript. Location mode buttons keep a visible selection circle and a short explanation for each choice.
+**Event schedule picker.** A single full-width date and time field opens a centred, bordered, hard-shadowed panel. The layout follows the [Untitled UI date picker reference](https://dribbble.com/shots/27034829-Date-picker-Untitled-UI): quick periods at the left and two side-by-side months on wide screens; one month with horizontally scrollable quick periods on mobile. Event presets only offer future dates. A first calendar click chooses the start and a second chooses the end; both endpoints and the continuous range remain visible. The displayed choice is a draft: only Apply writes to the form, while Cancel, Escape and clicking outside discard it. The month grid starts on Monday and uses five or six rows as needed. The component uses Samenspel's felt selection, paper surface, ink contour, hard depth and existing focus styles. The native date-time inputs remain as the fallback without JavaScript. Location mode buttons keep a visible selection circle and a short explanation for each choice.
 
 **Empty state.** Short Dutch sentence plus one clear primary action, for example "Nog geen events gevonden. Pas je filters aan of organiseer er zelf een."
 

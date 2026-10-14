@@ -17,11 +17,13 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property string $name
+ * @property string|null $cover_image_path
+ * @property string|null $logo_image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Event> $events
  */
-#[Fillable(['name'])]
+#[Fillable(['name', 'cover_image_path', 'logo_image_path'])]
 class Game extends Model
 {
     /** @use HasFactory<GameFactory> */

@@ -390,20 +390,19 @@
     overflow: auto;
 
     @include from('m') {
-      position: absolute;
-      inset-block-start: calc(100% + var(--space-3xs));
-      inset-inline-start: 0;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
       inset-inline-end: auto;
-      inline-size: min(100%, 54rem);
-      max-block-size: none;
+      inline-size: min(calc(100vw - 2 * var(--space-s)), 54rem);
+      max-block-size: calc(100dvh - 2 * var(--space-s));
       grid-template-columns: 9.5rem minmax(0, 1fr);
-      overflow: hidden;
+      transform: translate(-50%, -50%);
     }
   }
 
   &__schedule-presets {
     display: flex;
-    gap: var(--space-3xs);
+    gap: var(--space-2xs);
     overflow-x: auto;
     padding: var(--space-xs);
     border-bottom: 1px solid var(--color-line);
@@ -462,7 +461,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    gap: var(--space-2xs);
+    gap: var(--space-xs);
   }
 
   &__schedule-fields button {
@@ -530,7 +529,7 @@
     display: grid;
     grid-template-columns: var(--touch-target) 1fr var(--touch-target);
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-2xs);
     text-align: center;
 
     strong {
@@ -553,25 +552,28 @@
       &:focus-visible {
         background-color: var(--color-felt-tint);
       }
+
+      .icon {
+        inline-size: 1.25rem;
+        block-size: 1.25rem;
+      }
     }
   }
 
   &__calendar-mobile-next {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-end: 0;
-    display: grid;
-    place-items: center;
-    inline-size: var(--touch-target);
-    block-size: var(--touch-target);
-    border: 0;
-    border-radius: var(--radius-s);
-    background-color: transparent;
-    color: var(--color-felt);
-    cursor: pointer;
+    @include from('l') {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  &__schedule-calendar--second [data-calendar-next] {
+    visibility: hidden;
+    pointer-events: none;
 
     @include from('l') {
-      display: none;
+      visibility: visible;
+      pointer-events: auto;
     }
   }
 
@@ -592,7 +594,7 @@
     min-block-size: var(--touch-target);
     padding: 0;
     border: 0;
-    border-radius: var(--radius-s);
+    border-radius: 0;
     background-color: transparent;
     color: var(--color-ink);
     cursor: pointer;
@@ -602,6 +604,11 @@
     &:focus-visible,
     &[data-in-range] {
       background-color: var(--color-felt-tint);
+    }
+
+    &:hover:not([data-in-range]):not([aria-pressed='true']),
+    &:focus-visible:not([data-in-range]):not([aria-pressed='true']) {
+      border-radius: var(--radius-s);
     }
 
     &[data-outside-month] {
@@ -616,6 +623,11 @@
     &[aria-pressed='true'] {
       background-color: var(--color-felt);
       color: var(--color-paper);
+    }
+
+    &[data-range-start],
+    &[data-range-end] {
+      border-radius: var(--radius-s);
     }
 
     &:disabled {
@@ -655,7 +667,7 @@
     inset-block-end: 0;
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-2xs);
+    gap: var(--space-xs);
     grid-column: 1 / -1;
     padding: var(--space-xs);
     border-top: 1px solid var(--color-line);

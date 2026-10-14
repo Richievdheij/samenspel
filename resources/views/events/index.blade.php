@@ -135,25 +135,52 @@
         <ul class="event-list">
             @foreach ($events as $event)
                 <li>
-                    <a class="event-card" href="{{ route('events.show', $event) }}" aria-labelledby="event-title-{{ $event->id }}">
-                        <time class="event-card__stamp" datetime="{{ $event->starts_at->toIso8601String() }}">
-                            <span class="event-card__weekday">{{ $event->starts_at->translatedFormat('D') }}</span>
-                            <span class="event-card__day">{{ $event->starts_at->translatedFormat('j') }}</span>
-                            <span class="event-card__month">{{ $event->starts_at->translatedFormat('M') }}</span>
-                        </time>
+                    <a class="event-card {{ $event->games->count() === 1 ? 'event-card--featured' : 'event-card--multiple' }}" href="{{ route('events.show', $event) }}" aria-labelledby="event-title-{{ $event->id }}">
+                        <div class="event-card__visual">
+                            <div class="event-card__game-feature">
+                                @foreach ($event->games as $game)
+                                    <div class="event-card__game-tile">
+                                        @if ($game->cover_image_path)
+                                            <img class="event-card__game-cover" src="{{ Storage::disk('public')->url($game->cover_image_path) }}" alt="" loading="lazy" decoding="async">
+                                        @elseif ($game->logo_image_path)
+                                            <img class="event-card__game-cover event-card__game-cover--logo" src="{{ Storage::disk('public')->url($game->logo_image_path) }}" alt="" loading="lazy" decoding="async">
+                                        @else
+                                            <x-icon name="gamepad" class="event-card__game-placeholder" />
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                            @if ($event->games->count() > 1)
+                                <div class="event-card__games" aria-label="{{ __('Games') }}">
+                                    @foreach ($event->games->take(5) as $game)
+                                        <x-game-badge :game="$game" compact class="{{ $loop->iteration > 3 ? 'event-card__games-extra' : '' }}" />
+                                    @endforeach
+                                    @if ($event->games->count() > 3)
+                                        <span class="event-card__games-more event-card__games-more--mobile" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 3, ['count' => $event->games->count() - 3]) }}">+{{ $event->games->count() - 3 }}</span>
+                                    @endif
+                                    @if ($event->games->count() > 5)
+                                        <span class="event-card__games-more event-card__games-more--desktop" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 5, ['count' => $event->games->count() - 5]) }}">+{{ $event->games->count() - 5 }}</span>
+                                    @endif
+                                </div>
+                            @endif
+                            <time class="event-card__stamp" datetime="{{ $event->starts_at->toIso8601String() }}">
+                                <span class="event-card__weekday">{{ $event->starts_at->translatedFormat('D') }}</span>
+                                <span class="event-card__day">{{ $event->starts_at->translatedFormat('j') }}</span>
+                                <span class="event-card__month">{{ $event->starts_at->translatedFormat('M') }}</span>
+                            </time>
+                            <div class="event-card__visual-status"><x-status-pill :event="$event" /></div>
+                            @if ($event->games->count() === 1)
+                                <span class="event-card__game-feature-name">{{ $event->games->first()->name }}</span>
+                            @endif
+                        </div>
 
                         <div class="event-card__body">
-                            <p class="event-card__game">
-                                @foreach ($event->games as $game)
-                                    <x-game-badge :game="$game" />
-                                @endforeach
+                            <div class="event-card__categories" aria-label="{{ __('Categories') }}">
                                 @foreach ($event->categories as $category)
                                     <x-category-label :name="$category->name" />
                                 @endforeach
-                            </p>
-
+                            </div>
                             <h2 class="event-card__title" id="event-title-{{ $event->id }}">{{ $event->title }}</h2>
-
                             <ul class="event-card__facts">
                                 <li class="event-card__fact">
                                     <x-icon name="clock" />
@@ -169,19 +196,17 @@
                                     </li>
                                 @endauth
                             </ul>
-                        </div>
-
-                        <div class="event-card__aside">
-                            <x-status-pill :event="$event" />
-
-                            <p class="event-card__count">
-                                <x-icon name="users" />
-                                @if ($event->max_participants === null)
-                                    {{ trans_choice(':count player · no limit|:count players · no limit', $event->participants_count) }}
-                                @else
-                                    {{ __(':count / :max players', ['count' => $event->participants_count, 'max' => $event->max_participants]) }}
-                                @endif
-                            </p>
+                            <div class="event-card__footer">
+                                <span class="event-card__count">
+                                    <x-icon name="users" />
+                                    @if ($event->max_participants === null)
+                                        {{ trans_choice(':count player · no limit|:count players · no limit', $event->participants_count) }}
+                                    @else
+                                        {{ __(':count / :max players', ['count' => $event->participants_count, 'max' => $event->max_participants]) }}
+                                    @endif
+                                </span>
+                                <span class="event-card__action">{{ __('View event') }} <x-icon name="arrow-right" /></span>
+                            </div>
                         </div>
                     </a>
                 </li>

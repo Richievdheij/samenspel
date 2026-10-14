@@ -10,7 +10,7 @@
     Props — Blade has no typed props, so this block IS the contract.
 
       string $name  clock | map-pin | users | gamepad | check | alert | info | x | search | sliders-horizontal |
-                    arrow-left | arrow-right | chevron-down | home | calendar |
+                    arrow-left | arrow-right | chevron-left | chevron-right | chevron-down | home | calendar |
                     dashboard | user | log-out
 
     Styles: resources/scss/components/_icon.scss
@@ -79,6 +79,12 @@
             @break
         @case('chevron-down')
             <path d="m6 9 6 6 6-6" />
+            @break
+        @case('chevron-left')
+            <path d="m15 18-6-6 6-6" />
+            @break
+        @case('chevron-right')
+            <path d="m9 18 6-6-6-6" />
             @break
         @case('home')
             <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />

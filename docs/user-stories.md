@@ -59,10 +59,10 @@ Als bezoeker wil ik filteren met dropdowns op spel en categorie.
 Als gebruiker wil ik een event aanmaken met doorzoekbare spellen en categorieën, datum, plek en deelnemersinstellingen.
 
 - Titel, beschrijving, minimaal één spel en categorie en een toekomstige starttijd zijn verplicht; eindtijd is optioneel en ligt na de start
-- Begin en optioneel einde worden in één toegankelijke, responsieve datumkiezer gekozen: op desktop twee maanden met toekomstige snelle periodes, op mobiel één maand. Annuleren herstelt de vorige keuze; toepassen bewaart begin en einde
+- Begin en optioneel einde worden in één toegankelijke, responsieve datumkiezer gekozen: op desktop twee maanden met toekomstige snelle periodes, op mobiel één maand. De eerste klik kiest het begin, de tweede het einde; de tussenliggende dagen blijven zichtbaar. Pas bij toepassen worden de formulierwaarden veranderd; annuleren laat de vorige keuze staan
 - Kies met de locatieknoppen een bestaand Nederlands adres via PDOK of online. Adresvelden inclusief postcode worden automatisch ingevuld; een leeg adres betekent dat de locatie nog niet bekend is
 - Kies een minimum en maximum (beide positief, maximum minstens het minimum), of geen minimum en maximum
-- Gekozen spellen en categorieën verschijnen als verwijderbare chips en labels op het event; spelbadges reserveren ruimte voor toekomstige logo's
+- Gekozen spellen en categorieën verschijnen als verwijderbare chips en labels op het event. De eventkaart combineert de beschikbare covers van alle spellen in één beeldvlak; ontbrekende beelden krijgen placeholders. Bij veel spellen toont de kaart enkele logomarkeringen en `+N`; op de detailpagina kan de volledige spellenlijst worden uitgeklapt. Lange kaarttitels tonen maximaal drie regels; de volledige titel staat op de detailpagina
 - Alleen toegestaan als ik me eerder voor minimaal 3 events van anderen heb ingeschreven, geteld met een Eloquent-query op `event_user`
 - Anders zie ik een uitleg hoeveel inschrijvingen nog nodig zijn
 - Ook afgedwongen op de server, niet alleen door een verborgen knop

@@ -262,6 +262,8 @@ erDiagram
         string name UK
         datetime created_at "nullable"
         datetime updated_at "nullable"
+        string cover_image_path "nullable"
+        string logo_image_path "nullable"
     }
     "job_batches" {
         string id PK

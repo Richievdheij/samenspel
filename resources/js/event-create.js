@@ -181,12 +181,12 @@ export function initialiseSchedulePicker(form) {
   const monthDate = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' })
   let mode = 'start'
   let visibleMonth = startsAt.value.slice(0, 7)
-  let snapshot = { start: startsAt.value, end: endsAt.value }
+  let draft = { start: startsAt.value, end: endsAt.value }
 
   const asDate = (date) => new Date(`${date}T12:00:00`)
   const display = (value) =>
     `${shortDate.format(asDate(value.slice(0, 10)))} · ${value.slice(11, 16)}`
-  const selected = () => (mode === 'start' ? startsAt : endsAt)
+  const selected = () => draft[mode]
   const dateKey = (date) =>
     `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`
   const shiftedDate = (date, days) => {
@@ -206,13 +206,18 @@ export function initialiseSchedulePicker(form) {
     const start = startsAt.value ? display(startsAt.value) : ''
     const end = endsAt.value ? display(endsAt.value) : enhanced.dataset.addEndLabel
     summary.textContent = `${start}  →  ${end}`
-    enhanced.querySelector('[data-schedule-start-label]').textContent = start
-    enhanced.querySelector('[data-schedule-end-label]').textContent = end
-    enhanced.querySelector('[data-schedule-remove]').hidden = !endsAt.value
+  }
+
+  const syncDraft = () => {
+    enhanced.querySelector('[data-schedule-start-label]').textContent = display(draft.start)
+    enhanced.querySelector('[data-schedule-end-label]').textContent = draft.end
+      ? display(draft.end)
+      : enhanced.dataset.addEndLabel
+    enhanced.querySelector('[data-schedule-remove]').hidden = !draft.end
   }
 
   const syncTime = () => {
-    const value = selected().value || startsAt.value
+    const value = selected() || draft.start
     hour.value = value.slice(11, 13)
     minute.value = value.slice(14, 16)
   }
@@ -221,31 +226,32 @@ export function initialiseSchedulePicker(form) {
     const [year, month] = monthKey.split('-').map(Number)
     const first = new Date(Date.UTC(year, month - 1, 1))
     const offset = (first.getUTCDay() + 6) % 7
-    const minimum = mode === 'start' ? startsAt.min.slice(0, 10) : startsAt.value.slice(0, 10)
+    const count = new Date(Date.UTC(year, month, 0)).getUTCDate()
+    const slots = Math.max(35, Math.ceil((offset + count) / 7) * 7)
+    const minimum = startsAt.min.slice(0, 10)
     calendar.querySelector('[data-calendar-month]').textContent = monthDate.format(
       asDate(`${monthKey}-01`),
     )
 
     const buttons = []
-    for (let slot = 0; slot < 42; slot++) {
+    for (let slot = 0; slot < slots; slot++) {
       const date = shiftedDate(`${monthKey}-01`, slot - offset)
       const button = document.createElement('button')
       button.type = 'button'
       button.textContent = String(Number(date.slice(8, 10)))
       button.dataset.calendarDate = date
       button.setAttribute('aria-label', longDate.format(asDate(date)))
-      button.setAttribute('aria-pressed', String(selected().value.startsWith(date)))
+      button.setAttribute(
+        'aria-pressed',
+        String(draft.start.startsWith(date) || draft.end.startsWith(date)),
+      )
       button.disabled = date < minimum
       if (!date.startsWith(monthKey)) button.dataset.outsideMonth = ''
       if (date === startsAt.min.slice(0, 10)) button.dataset.today = ''
-      if (
-        startsAt.value &&
-        endsAt.value &&
-        date > startsAt.value.slice(0, 10) &&
-        date < endsAt.value.slice(0, 10)
-      ) {
+      if (date === draft.start.slice(0, 10)) button.dataset.rangeStart = ''
+      if (draft.end && date === draft.end.slice(0, 10)) button.dataset.rangeEnd = ''
+      if (draft.end && date > draft.start.slice(0, 10) && date < draft.end.slice(0, 10))
         button.dataset.inRange = ''
-      }
       buttons.push(button)
     }
     calendar.querySelector('[data-calendar-days]').replaceChildren(...buttons)
@@ -264,25 +270,48 @@ export function initialiseSchedulePicker(form) {
     for (const tab of enhanced.querySelectorAll('[data-schedule-tab]')) {
       tab.setAttribute('aria-pressed', String(tab.dataset.scheduleTab === value))
     }
-    visibleMonth = (selected().value || startsAt.value).slice(0, 7)
     syncTime()
     render()
   }
 
-  const update = (date) => {
-    const candidate = `${date}T${hour.value}:${minute.value}`
-    if (mode === 'start') {
-      startsAt.value = candidate < startsAt.min ? startsAt.min : candidate
-      if (endsAt.value && endsAt.value <= startsAt.value) endsAt.value = ''
-    } else {
-      endsAt.value = candidate <= startsAt.value ? addMinute(startsAt.value) : candidate
-    }
-    visibleMonth = selected().value.slice(0, 7)
+  const clearPreset = () => {
     for (const preset of enhanced.querySelectorAll('[data-schedule-preset]')) {
       preset.setAttribute('aria-pressed', 'false')
     }
+  }
+
+  const chooseDate = (date) => {
+    const candidate = `${date}T${hour.value}:${minute.value}`
+    if (mode === 'start') {
+      draft.start = candidate < startsAt.min ? startsAt.min : candidate
+      draft.end = ''
+      mode = 'end'
+      for (const tab of enhanced.querySelectorAll('[data-schedule-tab]')) {
+        tab.setAttribute('aria-pressed', String(tab.dataset.scheduleTab === mode))
+      }
+    } else if (date < draft.start.slice(0, 10)) {
+      draft.start = candidate < startsAt.min ? startsAt.min : candidate
+      draft.end = ''
+    } else {
+      draft.end = candidate <= draft.start ? addMinute(draft.start) : candidate
+    }
+    clearPreset()
     syncTime()
-    syncSummary()
+    syncDraft()
+    render()
+  }
+
+  const updateTime = () => {
+    const candidate = `${(selected() || draft.start).slice(0, 10)}T${hour.value}:${minute.value}`
+    if (mode === 'start') {
+      draft.start = candidate < startsAt.min ? startsAt.min : candidate
+      if (draft.end && draft.end <= draft.start) draft.end = ''
+    } else {
+      draft.end = candidate <= draft.start ? addMinute(draft.start) : candidate
+    }
+    clearPreset()
+    syncTime()
+    syncDraft()
     render()
   }
 
@@ -309,17 +338,13 @@ export function initialiseSchedulePicker(form) {
   for (const calendar of calendars) {
     calendar.querySelector('[data-calendar-days]').addEventListener('click', (event) => {
       const date = event.target.closest('[data-calendar-date]')?.dataset.calendarDate
-      if (date) update(date)
+      if (date) chooseDate(date)
     })
   }
   for (const tab of enhanced.querySelectorAll('[data-schedule-tab]')) {
     tab.addEventListener('click', () => setMode(tab.dataset.scheduleTab))
   }
-  for (const select of [hour, minute]) {
-    select.addEventListener('change', () =>
-      update((selected().value || startsAt.value).slice(0, 10)),
-    )
-  }
+  for (const select of [hour, minute]) select.addEventListener('change', updateTime)
   for (const preset of enhanced.querySelectorAll('[data-schedule-preset]')) {
     preset.setAttribute('aria-pressed', 'false')
     preset.addEventListener('click', () => {
@@ -337,10 +362,10 @@ export function initialiseSchedulePicker(form) {
         'next-month': [`${nextMonth}-01`, shiftedDate(`${shiftedMonth(nextMonth, 1)}-01`, -1)],
       }
       const [first, last] = periods[preset.dataset.schedulePreset]
-      startsAt.value = `${first}T${startsAt.value.slice(11, 16)}`
-      if (startsAt.value < startsAt.min) startsAt.value = startsAt.min
-      endsAt.value = `${last}T23:59`
-      if (endsAt.value <= startsAt.value) endsAt.value = addMinute(startsAt.value)
+      draft.start = `${first}T${draft.start.slice(11, 16)}`
+      if (draft.start < startsAt.min) draft.start = startsAt.min
+      draft.end = `${last}T23:59`
+      if (draft.end <= draft.start) draft.end = addMinute(draft.start)
       visibleMonth = first.slice(0, 7)
       mode = 'start'
       for (const tab of enhanced.querySelectorAll('[data-schedule-tab]')) {
@@ -349,28 +374,27 @@ export function initialiseSchedulePicker(form) {
       for (const option of enhanced.querySelectorAll('[data-schedule-preset]')) {
         option.setAttribute('aria-pressed', String(option === preset))
       }
-      syncSummary()
+      syncDraft()
       syncTime()
       render()
     })
   }
   enhanced.querySelector('[data-schedule-remove]').addEventListener('click', () => {
-    endsAt.value = ''
-    syncSummary()
+    draft.end = ''
+    clearPreset()
+    syncDraft()
     setMode('start')
   })
   const close = (apply, restoreFocus = true) => {
-    if (!apply) {
-      startsAt.value = snapshot.start
-      endsAt.value = snapshot.end
-      for (const preset of enhanced.querySelectorAll('[data-schedule-preset]')) {
-        preset.setAttribute('aria-pressed', 'false')
-      }
+    if (apply) {
+      startsAt.value = draft.start
+      endsAt.value = draft.end
       syncSummary()
-      setMode('start')
-    } else {
-      snapshot = { start: startsAt.value, end: endsAt.value }
     }
+    draft = { start: startsAt.value, end: endsAt.value }
+    clearPreset()
+    syncDraft()
+    setMode('start')
     details.open = false
     if (restoreFocus) details.querySelector('summary')?.focus()
   }
@@ -379,7 +403,11 @@ export function initialiseSchedulePicker(form) {
     if (details.open) {
       close(false)
     } else {
-      snapshot = { start: startsAt.value, end: endsAt.value }
+      draft = { start: startsAt.value, end: endsAt.value }
+      visibleMonth = draft.start.slice(0, 7)
+      clearPreset()
+      syncDraft()
+      setMode('start')
       details.open = true
     }
   })
@@ -391,7 +419,7 @@ export function initialiseSchedulePicker(form) {
     }
   })
   document.addEventListener('click', (event) => {
-    if (details.open && !details.contains(event.target)) close(false, false)
+    if (details.open && !event.composedPath().includes(details)) close(false, false)
   })
 
   startsAt.type = 'hidden'
@@ -399,5 +427,6 @@ export function initialiseSchedulePicker(form) {
   fallback.hidden = true
   enhanced.hidden = false
   syncSummary()
+  syncDraft()
   setMode('start')
 }
