@@ -125,7 +125,7 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 | Tabel            | Wat erin staat                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
 | `users`          | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin                        |
-| `games`          | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike                        |
+| `games`          | De spellen uit de IGDB-catalogus die events gebruiken, onder hun officiële titel                   |
 | `categories`     | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual                        |
 | `events`         | Een gaming-event of LAN-party, met spel, hoofdcategorie, tijd, plek en optionele deelnemersgrenzen |
 | `category_event` | Alle categorieën die bij een event horen                                                           |
@@ -223,6 +223,10 @@ erDiagram
         int event_id PK, FK
         int game_id PK, FK
     }
+    "event_platform" {
+        int event_id PK, FK
+        int platform_id PK, FK
+    }
     "event_user" {
         int id PK
         int event_id FK
@@ -259,11 +263,20 @@ erDiagram
     }
     "games" {
         int id PK
-        string name UK
+        string name
         datetime created_at "nullable"
         datetime updated_at "nullable"
         string cover_image_path "nullable"
         string logo_image_path "nullable"
+        string normalized_name UK "nullable"
+        string source
+        string provider "nullable"
+        int provider_id "nullable"
+        string platform "nullable"
+        int release_year "nullable"
+        string cover_image_url "nullable"
+        text available_platforms "nullable"
+        datetime catalog_synced_at "nullable"
     }
     "job_batches" {
         string id PK
@@ -291,6 +304,11 @@ erDiagram
         string token
         datetime created_at "nullable"
     }
+    "platforms" {
+        int id PK
+        string slug UK
+        string name
+    }
     "sessions" {
         string id PK
         int user_id FK "nullable"
@@ -314,9 +332,11 @@ erDiagram
     "categories" ||--o{ "events" : "category_id"
     "events" ||--o{ "category_event" : "event_id"
     "events" ||--o{ "event_game" : "event_id"
+    "events" ||--o{ "event_platform" : "event_id"
     "events" ||--o{ "event_user" : "event_id"
     "games" ||--o{ "event_game" : "game_id"
     "games" ||--o{ "events" : "game_id"
+    "platforms" ||--o{ "event_platform" : "platform_id"
     "users" |o..o{ "sessions" : "user_id"
     "users" ||--o{ "event_user" : "user_id"
     "users" ||--o{ "events" : "user_id"

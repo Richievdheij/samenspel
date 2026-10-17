@@ -11,6 +11,26 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Het eventoverzicht filtert op een of meer platformen. Actieve filters staan
+  als chips boven de lijst, met een link **Filters wissen** (US4).
+- Het gamefilter in het eventoverzicht heeft een zoekveld en toont alleen
+  spellen waarmee een komend event gespeeld wordt (US4).
+- Een event krijgt een of meer platformen, zoals PC, PlayStation, Xbox, Switch
+  of mobiel. Eventkaarten en de eventpagina tonen ze als gekleurde icoontjes (US8).
+- De organisator past de spellen en platformen van een bestaand event aan via
+  **Spellen en platformen aanpassen** op de eventpagina (US8).
+- `php artisan games:sync-igdb` ververst dagelijks om 03:30 cover, releasejaar
+  en platformen van gekozen catalogusgames, zonder de lokale titel te
+  overschrijven (US8).
+- Spellen voor een event komen uit de IGDB-catalogus, onder hun officiële titel.
+  De keuzelijst toont de bekende spellen direct; vanaf drie tekens zoekt hij in
+  de catalogus, en een gekozen spel blijft aangevinkt staan, zoals bij
+  categorieën (US8).
+- Alleen echte hoofdspellen zijn kiesbaar: geen DLC, seizoenen, pakketten,
+  bundels, speciale edities, geannuleerde of offline titels. De zoekresultaten
+  zetten het gezochte spel bovenaan, vóór spin-offs en fanprojecten (US8).
+- `php artisan games:retire-non-main` toetst eerder gekozen catalogusgames
+  opnieuw en verbergt ongeschikte voor nieuwe events (US8).
 - Datumkiezer voor eventaanmaak met snelle toekomstige periodes, twee maanden op
   desktop en één maand op mobiel, plus toepassen en annuleren (US8).
 - Gamecovers en logo's kunnen als lokale afbeeldingen aan een spel worden
@@ -29,6 +49,17 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- De filters in het eventoverzicht staan in drie even brede kolommen, zodat een
+  lange keuze ze niet verschuift; de keuzelijsten zijn hoger en scrollen binnen
+  zichzelf (US4).
+- Het formulier voor een nieuw event heeft drie stappen: spellen en platformen,
+  eventgegevens, en wanneer en waar. Elke stap controleert zijn velden voordat
+  je verdergaat; zonder JavaScript blijft het één pagina (US8).
+- De tijdkiezer gebruikt gecentreerde keuzelijsten met een pijltje, en toepassen
+  en annuleren hebben de gewone knopstijl (US8).
+- Eventkaarten en de eventpagina tonen de covers van de spellen uit de catalogus; meerdere
+  spellen staan als kleine covers onder de titel en de volledige lijst klapt uit
+  op de eventpagina (US8).
 - Eventkaarten combineren de covers van alle gekozen spellen, tonen bij veel
   spellen een `+N`-markering en begrenzen titels tot drie regels; op de
   eventpagina kan de volledige spellenlijst worden uitgeklapt (US8).
@@ -84,6 +115,13 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - Een volledige footer op elke pagina, ook op de inlogpagina's: logo,
   omschrijving, de kolommen Ontdekken en Account met werkende links, en een
   copyrightregel.
+
+### Verwijderd
+
+- Zelf een speltitel intypen bij een event. Eerder ingetypte titels blijven bij
+  hun events staan, maar zijn niet meer kiesbaar voor nieuwe events (US8).
+- De voorbeeldgames en demo-events uit de seeders: een nieuwe installatie start
+  met alleen categorieën en de twee accounts (US8).
 
 ## 2026-10-08: Datamodel
 

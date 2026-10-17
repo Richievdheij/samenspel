@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Game;
 use App\Models\User;
 use App\Services\AddressLookup;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -38,7 +39,9 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'games' => ['required', 'array', 'min:1'],
-            'games.*' => ['required', 'integer', 'distinct', Rule::exists('games', 'id')],
+            'games.*' => ['required', 'integer', 'distinct', Rule::exists('games', 'id')->where('source', Game::SOURCE_CATALOG)],
+            'platforms' => ['required', 'array', 'min:1'],
+            'platforms.*' => ['required', 'integer', 'distinct', Rule::exists('platforms', 'id')],
             'categories' => ['required', 'array', 'min:1'],
             'categories.*' => ['required', 'integer', 'distinct', Rule::exists('categories', 'id')],
             'title' => ['required', 'string', 'max:255'],
@@ -51,6 +54,17 @@ class StoreEventRequest extends FormRequest
             'capacity_mode' => ['required', Rule::in(['limited', 'unlimited'])],
             'min_participants' => ['required_if:capacity_mode,limited', 'nullable', 'integer', 'min:1', 'max:65535'],
             'max_participants' => ['required_if:capacity_mode,limited', 'nullable', 'integer', 'min:1', 'gte:min_participants', 'max:65535'],
+        ];
+    }
+
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'platforms.required' => __('Choose at least one platform.'),
+            'platforms.min' => __('Choose at least one platform.'),
+            'platforms.*.exists' => __('Choose valid platforms.'),
+            'platforms.*.distinct' => __('Choose each platform only once.'),
         ];
     }
 
@@ -119,11 +133,26 @@ class StoreEventRequest extends FormRequest
         return $ids;
     }
 
+    /** @return list<int> */
+    public function platformIds(): array
+    {
+        $platforms = $this->validated('platforms');
+        throw_unless(is_array($platforms), LogicException::class, 'Validated platforms must be an array.');
+
+        $ids = [];
+        foreach ($platforms as $platform) {
+            throw_if(! is_int($platform) && ! is_string($platform), LogicException::class, 'Validated platform IDs must be integers.');
+            $ids[] = (int) $platform;
+        }
+
+        return $ids;
+    }
+
     /** @return array<string, mixed> */
     public function eventAttributes(): array
     {
         $attributes = $this->safe()->except([
-            'games', 'categories', 'capacity_mode', 'location_mode', 'location_reference', 'event_address_search',
+            'games', 'categories', 'platforms', 'capacity_mode', 'location_mode', 'location_reference', 'event_address_search',
         ]);
         $attributes['game_id'] = $this->gameIds()[0];
         $attributes['category_id'] = $this->categoryIds()[0];

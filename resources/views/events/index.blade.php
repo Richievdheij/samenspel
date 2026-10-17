@@ -30,7 +30,7 @@
                     enterkeyhint="search"
                     data-search-input
                 />
-                <a class="event-search__reset" href="{{ route('events.index', array_filter(['game' => $gameId, 'category' => $categoryIds])) }}" aria-label="{{ __('Clear search') }}" data-search-reset @if ($search === '') hidden @endif>
+                <a class="event-search__reset" href="{{ route('events.index', array_filter(['game' => $gameId, 'category' => $categoryIds, 'platform' => $platformIds])) }}" aria-label="{{ __('Clear search') }}" data-search-reset @if ($search === '') hidden @endif>
                     <x-icon name="x" />
                 </a>
             </div>
@@ -43,20 +43,28 @@
                 <span class="event-search__submit-label">{{ __('Search') }}</span>
             </x-button>
         </div>
-        @if ($selectedGame || $selectedCategories->isNotEmpty())
+        @if ($selectedGame || $selectedCategories->isNotEmpty() || $selectedPlatforms->isNotEmpty())
             <div class="event-search__active" role="group" aria-label="{{ __('Active filters') }}">
                 @if ($selectedGame)
-                    <a class="event-search__chip" href="{{ route('events.index', array_filter(['q' => $search, 'category' => $categoryIds])) }}" aria-label="{{ __('Remove game filter: :name', ['name' => $selectedGame->name]) }}">
+                    <a class="event-search__chip" href="{{ route('events.index', array_filter(['q' => $search, 'category' => $categoryIds, 'platform' => $platformIds])) }}" aria-label="{{ __('Remove game filter: :name', ['name' => $selectedGame->name]) }}">
                         <span class="event-search__chip-name">{{ $selectedGame->name }}</span>
                         <x-icon name="x" />
                     </a>
                 @endif
                 @foreach ($selectedCategories as $selectedCategory)
-                    <a class="event-search__chip" href="{{ route('events.index', array_filter(['q' => $search, 'game' => $gameId, 'category' => array_values(array_diff($categoryIds, [$selectedCategory->id]))])) }}" aria-label="{{ __('Remove category filter: :name', ['name' => $selectedCategory->name]) }}">
+                    <a class="event-search__chip" href="{{ route('events.index', array_filter(['q' => $search, 'game' => $gameId, 'category' => array_values(array_diff($categoryIds, [$selectedCategory->id])), 'platform' => $platformIds])) }}" aria-label="{{ __('Remove category filter: :name', ['name' => $selectedCategory->name]) }}">
                         <span class="event-search__chip-name">{{ $selectedCategory->name }}</span>
                         <x-icon name="x" />
                     </a>
                 @endforeach
+                @foreach ($selectedPlatforms as $selectedPlatform)
+                    <a class="event-search__chip" href="{{ route('events.index', array_filter(['q' => $search, 'game' => $gameId, 'category' => $categoryIds, 'platform' => array_values(array_diff($platformIds, [$selectedPlatform->id]))])) }}" aria-label="{{ __('Remove platform filter: :name', ['name' => __($selectedPlatform->name)]) }}">
+                        <x-platform-icon :slug="$selectedPlatform->slug" />
+                        <span class="event-search__chip-name">{{ __($selectedPlatform->name) }}</span>
+                        <x-icon name="x" />
+                    </a>
+                @endforeach
+                <a class="event-search__clear" href="{{ route('events.index', array_filter(['q' => $search])) }}">{{ __('Clear filters') }}</a>
             </div>
         @endif
         <div class="event-filters" id="event-filters-panel" data-filter-panel>
@@ -69,16 +77,21 @@
                             <x-icon name="chevron-down" />
                         </summary>
                         <div class="event-filters__options" role="group" aria-label="{{ __('Game') }}">
+                            <label class="event-filters__search">
+                                <span class="sr-only">{{ __('Search games') }}</span>
+                                <input class="field__control" type="search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off" maxlength="80">
+                            </label>
                             <label class="event-filters__option">
                                 <input class="checkbox__control" type="radio" name="game" value="" @checked(!$selectedGame)>
                                 <span>{{ __('All games') }}</span>
                             </label>
                             @foreach ($games as $game)
-                                <label class="event-filters__option">
+                                <label class="event-filters__option" data-option-row>
                                     <input class="checkbox__control" type="radio" name="game" value="{{ $game->id }}" @checked($gameId === $game->id)>
                                     <span>{{ $game->name }}</span>
                                 </label>
                             @endforeach
+                            <p class="event-filters__empty" data-option-empty hidden>{{ __('No games match your search.') }}</p>
                         </div>
                     </details>
                 </div>
@@ -107,8 +120,36 @@
                         </div>
                     </details>
                 </div>
+                <div class="field event-filters__field">
+                    <span class="field__label" id="platform-label">{{ __('Platforms') }}</span>
+                    <details class="event-filters__dropdown" data-filter-select data-all-label="{{ __('All platforms') }}" data-multiple-label="{{ __('Platforms selected (:count)') }}">
+                        <summary class="field__control event-filters__dropdown-toggle" aria-labelledby="platform-label platform-choice">
+                            <span id="platform-choice" data-filter-summary>
+                                @if ($selectedPlatforms->count() === 1)
+                                    {{ __($selectedPlatforms->first()->name) }}
+                                @elseif ($platformIds !== [])
+                                    {{ __('Platforms selected (:count)', ['count' => count($platformIds)]) }}
+                                @else
+                                    {{ __('All platforms') }}
+                                @endif
+                            </span>
+                            <x-icon name="chevron-down" />
+                        </summary>
+                        <div class="event-filters__options" role="group" aria-label="{{ __('Platforms') }}">
+                            @foreach ($platforms as $platform)
+                                <label class="event-filters__option">
+                                    <input class="checkbox__control" type="checkbox" name="platform[]" value="{{ $platform->id }}" @checked(in_array($platform->id, $platformIds, true))>
+                                    <span class="platform-label"><x-platform-icon :slug="$platform->slug" />{{ __($platform->name) }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </details>
+                </div>
                 <div class="event-filters__actions">
                     <x-button variant="primary" type="submit">{{ __('Apply filters') }}</x-button>
+                    @if ($gameId || $categoryIds !== [] || $platformIds !== [])
+                        <a class="event-search__clear" href="{{ route('events.index', array_filter(['q' => $search])) }}">{{ __('Clear filters') }}</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -117,17 +158,17 @@
     @if ($events->isEmpty())
         <div class="card event-empty">
             <p>
-                @if ($search !== '' && ($gameId || $categoryIds !== []))
+                @if ($search !== '' && ($gameId || $categoryIds !== [] || $platformIds !== []))
                     {{ __('No events match your search and filters.') }}
                 @elseif ($search !== '')
                     {{ __('No events match your search.') }}
-                @elseif ($gameId || $categoryIds !== [])
+                @elseif ($gameId || $categoryIds !== [] || $platformIds !== [])
                     {{ __('No events match your filters.') }}
                 @else
                     {{ __('There are no upcoming events yet.') }}
                 @endif
             </p>
-            @if ($gameId || $categoryIds !== [])
+            @if ($gameId || $categoryIds !== [] || $platformIds !== [])
                 <a class="event-empty__clear" href="{{ route('events.index', array_filter(['q' => $search])) }}">{{ __('Clear filters') }}</a>
             @endif
         </div>
@@ -142,6 +183,8 @@
                                     <div class="event-card__game-tile">
                                         @if ($game->cover_image_path)
                                             <img class="event-card__game-cover" src="{{ Storage::disk('public')->url($game->cover_image_path) }}" alt="" loading="lazy" decoding="async">
+                                        @elseif ($game->cover_image_url)
+                                            <img class="event-card__game-cover" src="{{ $game->cover_image_url }}" alt="" loading="lazy" decoding="async">
                                         @elseif ($game->logo_image_path)
                                             <img class="event-card__game-cover event-card__game-cover--logo" src="{{ Storage::disk('public')->url($game->logo_image_path) }}" alt="" loading="lazy" decoding="async">
                                         @else
@@ -150,19 +193,6 @@
                                     </div>
                                 @endforeach
                             </div>
-                            @if ($event->games->count() > 1)
-                                <div class="event-card__games" aria-label="{{ __('Games') }}">
-                                    @foreach ($event->games->take(5) as $game)
-                                        <x-game-badge :game="$game" compact class="{{ $loop->iteration > 3 ? 'event-card__games-extra' : '' }}" />
-                                    @endforeach
-                                    @if ($event->games->count() > 3)
-                                        <span class="event-card__games-more event-card__games-more--mobile" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 3, ['count' => $event->games->count() - 3]) }}">+{{ $event->games->count() - 3 }}</span>
-                                    @endif
-                                    @if ($event->games->count() > 5)
-                                        <span class="event-card__games-more event-card__games-more--desktop" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 5, ['count' => $event->games->count() - 5]) }}">+{{ $event->games->count() - 5 }}</span>
-                                    @endif
-                                </div>
-                            @endif
                             <time class="event-card__stamp" datetime="{{ $event->starts_at->toIso8601String() }}">
                                 <span class="event-card__weekday">{{ $event->starts_at->translatedFormat('D') }}</span>
                                 <span class="event-card__day">{{ $event->starts_at->translatedFormat('j') }}</span>
@@ -180,7 +210,24 @@
                                     <x-category-label :name="$category->name" />
                                 @endforeach
                             </div>
+                            @if ($event->platforms->isNotEmpty())
+                                <div class="event-card__categories" aria-label="{{ __('Platforms') }}">
+                                    @foreach ($event->platforms as $platform)
+                                        <x-platform-label :platform="$platform" />
+                                    @endforeach
+                                </div>
+                            @endif
                             <h2 class="event-card__title" id="event-title-{{ $event->id }}">{{ $event->title }}</h2>
+                            @if ($event->games->count() > 1)
+                                <div class="event-card__game-names" aria-label="{{ __('Games') }}">
+                                    @foreach ($event->games->take(4) as $game)
+                                        <x-game-badge :game="$game" compact />
+                                    @endforeach
+                                    @if ($event->games->count() > 4)
+                                        <span class="event-card__games-note" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 4) }}" title="{{ trans_choice(':count more game|:count more games', $event->games->count() - 4) }}">+{{ $event->games->count() - 4 }}</span>
+                                    @endif
+                                </div>
+                            @endif
                             <ul class="event-card__facts">
                                 <li class="event-card__fact">
                                     <x-icon name="clock" />

@@ -1,5 +1,176 @@
 /** Form enhancements that leave the server-rendered form usable without JavaScript. */
 
+/**
+ * Search the game catalog from inside the games dropdown. The games already known
+ * locally are listed and filtered like any other option; from three characters on,
+ * catalog matches that are not yet local appear below them. Choosing one stores it
+ * locally and turns it into an ordinary, checked option, so the list keeps the
+ * choice in view and the dropdown stays open for the next one.
+ */
+export function initialiseGameCatalog() {
+  const select = document.querySelector('[data-event-games]')
+  if (!select) return
+
+  const form = select.closest('form')
+  const search = select.querySelector('[data-option-search]')
+  const localResults = select.querySelector('[data-local-results]')
+  const results = select.querySelector('[data-game-results]')
+  const resultsHeading = select.querySelector('[data-game-results-heading]')
+  const status = select.querySelector('[data-game-status]')
+  const csrf = form?.querySelector('[name="_token"]')?.value
+  let timer
+  let pending
+
+  const showResults = (buttons) => {
+    results.replaceChildren(...buttons)
+    resultsHeading.hidden = buttons.length === 0
+  }
+
+  const visibleLocalRows = () =>
+    [...localResults.querySelectorAll('[data-option-row]')].some((row) => !row.hidden)
+
+  const optionFor = (game) => {
+    const label = document.createElement('label')
+    label.className = 'event-create__option'
+    label.dataset.optionRow = ''
+    if (game.provider_id) label.dataset.providerId = game.provider_id
+    const input = document.createElement('input')
+    input.type = 'checkbox'
+    input.className = 'checkbox__control'
+    input.name = 'games[]'
+    input.value = game.id
+    const logo = document.createElement('span')
+    logo.className = 'event-create__game-option-logo'
+    logo.setAttribute('aria-hidden', 'true')
+    if (game.cover_url) {
+      const image = document.createElement('img')
+      image.src = game.cover_url
+      image.alt = ''
+      logo.append(image)
+    } else {
+      logo.textContent = game.name.slice(0, 2).toLocaleUpperCase()
+    }
+    const name = document.createElement('span')
+    name.dataset.optionName = ''
+    name.textContent = game.name
+    label.append(input, logo, name)
+    localResults.append(label)
+    return input
+  }
+
+  const choose = async (providerId) => {
+    const response = await fetch(select.dataset.gameAddUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrf,
+      },
+      body: JSON.stringify({
+        provider_id: providerId,
+        ...(select.dataset.eventId ? { event_id: select.dataset.eventId } : {}),
+      }),
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.message || select.dataset.selectError)
+
+    const input =
+      [...localResults.querySelectorAll('input[name="games[]"]')].find(
+        (item) => item.value === String(data.game.id),
+      ) ?? optionFor(data.game)
+    input.closest('[data-option-row]').hidden = false
+    input.checked = true
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    return input
+  }
+
+  const resultFor = (game) => {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'event-create__catalog-result'
+    button.dataset.providerId = game.id
+    const cover = game.cover_url ? document.createElement('img') : document.createElement('span')
+    if (game.cover_url) {
+      cover.src = game.cover_url
+      cover.alt = ''
+      cover.loading = 'lazy'
+    } else {
+      cover.textContent = game.name.slice(0, 2).toLocaleUpperCase()
+    }
+    const information = document.createElement('span')
+    information.className = 'event-create__catalog-info'
+    const title = document.createElement('strong')
+    title.className = 'event-create__catalog-title'
+    title.textContent = game.name
+    const metadata = document.createElement('small')
+    metadata.className = 'event-create__catalog-meta'
+    metadata.textContent = [
+      ...(game.platforms ?? []).slice(0, 2),
+      ...(game.platforms?.length > 2 ? [`+${game.platforms.length - 2}`] : []),
+      ...(game.release_year ? [String(game.release_year)] : []),
+    ].join(' · ')
+    information.append(title, metadata)
+    const add = document.createElement('span')
+    add.className = 'event-create__catalog-add'
+    add.setAttribute('aria-hidden', 'true')
+    add.textContent = '+'
+    button.append(cover, information, add)
+    button.addEventListener('click', async () => {
+      button.disabled = true
+      try {
+        const input = await choose(game.id)
+        button.remove()
+        resultsHeading.hidden = results.childElementCount === 0
+        status.textContent = ''
+        // The button that had focus is gone; keep the keyboard on the choice it made.
+        input.focus()
+      } catch (error) {
+        status.textContent = error.message
+        button.disabled = false
+      }
+    })
+    return button
+  }
+
+  search.addEventListener('input', () => {
+    clearTimeout(timer)
+    pending?.abort()
+    showResults([])
+    const term = search.value.trim()
+    status.textContent = select.dataset.searchHint
+    if (term.length < 3 || term.length > 80) return
+    if (!/^[\p{L}\p{N}][\p{L}\p{N} .:’'&+_-]*$/u.test(term)) {
+      status.textContent = select.dataset.searchInvalid
+      return
+    }
+    timer = setTimeout(async () => {
+      pending = new AbortController()
+      try {
+        const url = new URL(select.dataset.catalogSearchUrl, window.location.href)
+        url.searchParams.set('q', term)
+        const response = await fetch(url, {
+          signal: pending.signal,
+          headers: { Accept: 'application/json' },
+        })
+        const data = await response.json()
+        if (!response.ok) throw new Error(data.message || select.dataset.selectError)
+        if (search.value.trim() !== term) return
+        const localIds = new Set(
+          [...localResults.querySelectorAll('[data-option-row][data-provider-id]')].map(
+            (row) => row.dataset.providerId,
+          ),
+        )
+        const buttons = data.results.filter((game) => !localIds.has(String(game.id))).map(resultFor)
+        showResults(buttons)
+        status.textContent =
+          buttons.length === 0 && !visibleLocalRows() ? select.dataset.searchEmpty : ''
+      } catch (error) {
+        if (error.name !== 'AbortError') status.textContent = error.message
+      }
+    }, 350)
+  })
+}
+
 export function initialiseLocationSearch(form) {
   const fieldset = form.querySelector('[data-event-location]')
   if (!fieldset) return

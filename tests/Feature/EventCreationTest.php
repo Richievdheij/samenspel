@@ -6,6 +6,7 @@ use App\Enums\EventStatus;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
+use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
@@ -23,7 +24,7 @@ function createEligibleEventOrganiser(): User
     return $user;
 }
 
-/** @return array{games: list<int>, categories: list<int>, title: string, description: string, starts_at: string, ends_at: string, location_mode: string, capacity_mode: string, min_participants: int, max_participants: int} */
+/** @return array{games: list<int>, categories: list<int>, platforms: list<int>, title: string, description: string, starts_at: string, ends_at: string, location_mode: string, capacity_mode: string, min_participants: int, max_participants: int} */
 function validEventInput(): array
 {
     $firstCategory = Category::factory()->create();
@@ -32,6 +33,7 @@ function validEventInput(): array
     return [
         'games' => [Game::factory()->create()->id, Game::factory()->create()->id],
         'categories' => [$firstCategory->id, $secondCategory->id],
+        'platforms' => [Platform::query()->where('slug', 'pc')->sole()->id],
         'title' => 'Mario Kart evening',
         'description' => 'A friendly tournament for local players.',
         'starts_at' => now()->addWeek()->format('Y-m-d H:i:s'),
@@ -94,9 +96,13 @@ it('shows the form when the user has signed up for three events organised by oth
         ->assertSeeText('Titel')
         ->assertSeeHtml('name="starts_at"')
         ->assertSeeHtml('name="games[]"')
+        ->assertDontSeeHtml('manual-game')
+        ->assertDontSeeHtml('maxlength="255" required')
         ->assertSeeHtml('name="categories[]"')
         ->assertSeeHtml('data-event-game-chips')
         ->assertSeeHtml('data-event-category-chips')
+        ->assertSeeHtml('class="event-create__schedule-time-select"')
+        ->assertSeeHtml('data-schedule-apply')
         ->assertSeeHtml('name="min_participants"')
         ->assertSeeHtml('name="max_participants"');
 });

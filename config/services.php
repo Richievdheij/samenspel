@@ -24,6 +24,11 @@ return [
         'base_url' => 'https://api.pdok.nl/bzk/locatieserver/search/v3_1',
     ],
 
+    'igdb' => [
+        'client_id' => env('IGDB_CLIENT_ID'),
+        'client_secret' => env('IGDB_CLIENT_SECRET'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

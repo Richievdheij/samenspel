@@ -26,7 +26,7 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([GameSeeder::class, CategorySeeder::class]);
+        $this->call(CategorySeeder::class);
 
         if (! User::query()->where('email', 'test@example.com')->exists()) {
             User::factory()->create([
@@ -42,6 +42,5 @@ final class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $this->call(EventSeeder::class);
     }
 }

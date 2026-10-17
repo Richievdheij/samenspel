@@ -1,4 +1,8 @@
-import { initialiseLocationSearch, initialiseSchedulePicker } from './event-create.js'
+import {
+  initialiseGameCatalog,
+  initialiseLocationSearch,
+  initialiseSchedulePicker,
+} from './event-create.js'
 
 /**
  * The application entry point Vite bundles.
@@ -234,42 +238,53 @@ function initialiseFilterSelects() {
 
   for (const select of selects) {
     const summary = select.querySelector('[data-filter-summary]')
-    if (!summary) {
-      continue
+    if (summary) {
+      select.addEventListener('change', (event) => {
+        // Leaving the search field fires `change` too; that is typing, not a choice.
+        if (event.target.matches('[data-option-search]')) return
+        const checked = [...select.querySelectorAll('input:checked')]
+        const name = (input) => {
+          const label = input?.closest('label')
+          return (label?.querySelector('[data-option-name]') ?? label)?.textContent.trim()
+        }
+        if (select.hasAttribute('data-single-select')) {
+          summary.textContent = name(checked[0])
+          select.open = false
+        } else if (checked.length === 0) {
+          summary.textContent = select.dataset.allLabel
+        } else if (checked.length === 1) {
+          summary.textContent = name(checked[0])
+        } else {
+          const label = select.dataset.multipleLabel
+          summary.textContent = label.includes(':count')
+            ? label.replace(':count', checked.length)
+            : `${checked.length} ${label}`
+        }
+      })
     }
-
-    select.addEventListener('change', () => {
-      const checked = [...select.querySelectorAll('input:checked')]
-      if (select.hasAttribute('data-single-select')) {
-        summary.textContent = checked[0]?.closest('label')?.textContent.trim()
-        select.open = false
-      } else if (checked.length === 0) {
-        summary.textContent = select.dataset.allLabel
-      } else if (checked.length === 1) {
-        summary.textContent = checked[0].closest('label')?.textContent.trim()
-      } else {
-        const label = select.dataset.multipleLabel
-        summary.textContent = label.includes(':count')
-          ? label.replace(':count', checked.length)
-          : `${checked.length} ${label}`
-      }
-    })
 
     const search = select.querySelector('[data-option-search]')
     if (search) {
-      const rows = [...select.querySelectorAll('[data-option-row]')]
+      // Like the other dropdowns, a chosen option stays in the list, checked.
       const empty = select.querySelector('[data-option-empty]')
       search.addEventListener('input', () => {
         const term = search.value.trim().toLocaleLowerCase()
         let visible = 0
-        for (const row of rows) {
-          const matches = row.textContent.trim().toLocaleLowerCase().includes(term)
-          row.hidden = !matches
-          visible += Number(matches)
+        for (const row of select.querySelectorAll('[data-option-row]')) {
+          row.hidden = !row.textContent.trim().toLocaleLowerCase().includes(term)
+          visible += Number(!row.hidden)
         }
         if (empty) empty.hidden = visible > 0
       })
+      // Enter searches the list; it must not submit the surrounding form.
+      search.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') event.preventDefault()
+      })
     }
+
+    select.addEventListener('toggle', () => {
+      if (select.open) search?.focus()
+    })
 
     select.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
@@ -288,7 +303,24 @@ function initialiseFilterSelects() {
   })
 }
 
-/** Keep the event form's selected games and categories, capacity and date controls in sync. */
+function initialisePlatformRequirement() {
+  for (const form of document.querySelectorAll('form:has([data-event-platforms])')) {
+    if (form.querySelector('[data-event-step]')) continue
+    const select = form.querySelector('[data-event-platforms]')
+    const inputs = [...select.querySelectorAll('input[name="platforms[]"]')]
+    if (inputs.length === 0) continue
+    select.addEventListener('change', () => inputs[0].setCustomValidity(''))
+    form.addEventListener('submit', (event) => {
+      if (inputs.some((input) => input.checked)) return
+      event.preventDefault()
+      select.open = true
+      inputs[0].setCustomValidity(select.dataset.requiredMessage)
+      inputs[0].reportValidity()
+    })
+  }
+}
+
+/** Keep the event form's selected games, categories, platforms, capacity and date controls in sync. */
 function initialiseEventCreateForm() {
   const form = document.querySelector('[data-event-create]')
   if (!form) {
@@ -311,6 +343,7 @@ function initialiseEventCreateForm() {
   for (const [selectAttribute, chipAttribute, kind] of [
     ['data-event-games', 'data-event-game-chips', 'game'],
     ['data-event-categories', 'data-event-category-chips', 'category'],
+    ['data-event-platforms', 'data-event-platform-chips', 'platform'],
   ]) {
     const select = form.querySelector(`[${selectAttribute}]`)
     const chips = form.querySelector(`[${chipAttribute}]`)
@@ -325,7 +358,19 @@ function initialiseEventCreateForm() {
         button.setAttribute('aria-label', select.dataset.removeLabel.replace(':name', name))
         button.querySelector('[data-chip-name]').textContent = name
         const logo = button.querySelector('[data-chip-logo]')
-        if (logo) logo.hidden = kind !== 'game'
+        if (logo) {
+          const option = input.closest('label')
+          const optionLogo = option?.querySelector('.event-create__game-option-logo')
+          const platformIcon = option?.querySelector('.platform-icon')
+          if (kind === 'game' && optionLogo) {
+            logo.replaceChildren(...[...optionLogo.childNodes].map((node) => node.cloneNode(true)))
+            logo.hidden = false
+          } else if (kind === 'platform' && platformIcon) {
+            logo.replaceChildren(platformIcon.cloneNode(true))
+            logo.classList.add('event-create__chip-logo--icon')
+            logo.hidden = false
+          }
+        }
         return button
       })
       chips.replaceChildren(...buttons)
@@ -350,6 +395,7 @@ function initialiseEventCreateForm() {
 
   const capacityFields = form.querySelector('[data-capacity-fields]')
   const syncCapacity = () => {
+    if (!capacityFields) return
     const unlimited = form.querySelector('[data-capacity-mode]:checked')?.value === 'unlimited'
     capacityFields.hidden = unlimited
     for (const input of capacityFields.querySelectorAll('input')) {
@@ -366,6 +412,104 @@ function initialiseEventCreateForm() {
 
   initialiseLocationSearch(form)
   initialiseSchedulePicker(form)
+}
+
+function initialiseEventSteps() {
+  const form = document.querySelector('[data-event-create]:has([data-event-step])')
+  if (!form) return
+
+  const steps = [...form.querySelectorAll('[data-event-step]')]
+  const navigation = form.querySelector('[data-event-steps]')
+  const tabs = [...navigation.querySelectorAll('[data-step-tab]')]
+  let current = steps.findIndex((step) => step.querySelector('.field__error'))
+  if (current < 0) current = 0
+
+  const show = (index, focus = true) => {
+    current = index
+    steps.forEach((step, stepIndex) => {
+      step.hidden = stepIndex !== index
+    })
+    tabs.forEach((tab, stepIndex) => {
+      if (stepIndex === index) tab.setAttribute('aria-current', 'step')
+      else tab.removeAttribute('aria-current')
+    })
+    if (focus) steps[index].querySelector('h2')?.scrollIntoView({ block: 'start' })
+  }
+
+  const showError = (step, message) => {
+    let error = step.querySelector('[data-step-error]')
+    if (!error) {
+      error = document.createElement('p')
+      error.className = 'field__error'
+      error.setAttribute('role', 'alert')
+      error.dataset.stepError = ''
+      step.querySelector('h2').after(error)
+    }
+    error.textContent = message
+    error.hidden = false
+  }
+
+  const validate = (index) => {
+    const step = steps[index]
+    const error = step.querySelector('[data-step-error]')
+    if (error) error.hidden = true
+    if (index === 0) {
+      for (const select of step.querySelectorAll(
+        '[data-event-games], [data-event-categories], [data-event-platforms]',
+      )) {
+        if (select.querySelector('input:checked')) continue
+        show(index)
+        select.open = true
+        showError(step, select.dataset.requiredMessage)
+        select.querySelector('summary')?.focus()
+        return false
+      }
+    }
+    const invalid = [...step.querySelectorAll('input[required], textarea[required]')].find(
+      (field) => field.form === form && !field.disabled && !field.checkValidity(),
+    )
+    if (invalid) {
+      show(index)
+      if (invalid.closest('[data-schedule-fallback]')?.hidden) {
+        showError(step, form.dataset.scheduleRequired)
+        step.querySelector('[data-schedule-details]')?.setAttribute('open', '')
+        step.querySelector('[data-schedule-summary]')?.focus()
+      } else invalid.reportValidity()
+      return false
+    }
+    return true
+  }
+
+  navigation.hidden = false
+  for (const actions of form.querySelectorAll('[data-step-actions]')) actions.hidden = false
+  for (const button of form.querySelectorAll('[data-step-back]')) button.hidden = false
+  form.noValidate = true
+  show(current, false)
+
+  form.addEventListener('click', (event) => {
+    const next = event.target.closest('[data-step-next]')
+    const back = event.target.closest('[data-step-back]')
+    const tab = event.target.closest('[data-step-tab]')
+    if (next && validate(current)) show(Math.min(current + 1, steps.length - 1))
+    if (back) show(Math.max(current - 1, 0))
+    if (tab) {
+      const target = Number(tab.dataset.stepTab)
+      if (target > current) {
+        for (let index = current; index < target; index += 1) {
+          if (!validate(index)) return
+        }
+      }
+      show(target)
+    }
+  })
+
+  form.addEventListener('submit', (event) => {
+    for (let index = 0; index < steps.length; index += 1) {
+      if (validate(index)) continue
+      event.preventDefault()
+      return
+    }
+  })
 }
 
 /**
@@ -520,7 +664,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseDisclosures()
   initialiseEventFilters()
   initialiseFilterSelects()
+  initialisePlatformRequirement()
   initialiseEventCreateForm()
+  initialiseEventSteps()
+  initialiseGameCatalog()
   initialiseModals()
   initialiseTransientMessages()
   initialiseParticipantPagination()

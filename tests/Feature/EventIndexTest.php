@@ -40,6 +40,17 @@ it('provides a search reset before a query is submitted', function (): void {
     expect($response->getContent())->toMatch('/data-search-reset\s+hidden/');
 });
 
+it('offers clear filters when filtered events exist', function (): void {
+    $event = Event::factory()->create();
+    $game = $event->game;
+
+    get(route('events.index', ['game' => $game->id]))
+        ->assertOk()
+        ->assertSeeText($event->title)
+        ->assertSee('Filters wissen')
+        ->assertSeeHtml('href="'.route('events.index').'"');
+});
+
 it('leaves out events that have already started', function (): void {
     Event::factory()->create(['title' => 'Voorbij event', 'starts_at' => now()->subDay()]);
 
@@ -72,7 +83,7 @@ it('shows the location in the list to a signed-in user', function (): void {
         ->assertSeeText('Utrecht');
 });
 
-it('combines game art and keeps overflow games available on the event page', function (): void {
+it('shows game art and every game name on a card and event page', function (): void {
     $firstGame = Game::factory()->create(['cover_image_path' => 'covers/first.jpg']);
     $middleGames = Game::factory()->count(4)->create(['cover_image_path' => 'covers/middle.jpg']);
     $lastGame = Game::factory()->create(['cover_image_path' => 'covers/last.jpg']);
@@ -81,11 +92,15 @@ it('combines game art and keeps overflow games available on the event page', fun
 
     $index = get(route('events.index'))->assertOk();
 
-    $index->assertSeeHtml('class="event-card__game-tile"')->assertSee('covers/last.jpg')->assertSeeHtml('aria-label="3 spellen meer"')->assertSeeHtml('aria-label="1 spel meer"');
+    $index->assertSeeHtml('class="event-card__game-tile"')
+        ->assertSee('covers/last.jpg')
+        ->assertSeeHtml('class="game-badge game-badge--compact"')
+        ->assertSeeHtml('class="event-card__games-note" aria-label="2 spellen meer"')
+        ->assertDontSeeHtml('event-card__games-more');
 
     get(route('events.show', $event))
         ->assertOk()
-        ->assertSeeText('Bekijk alle 6 spellen')
+        ->assertSeeText('Spellen (6)')
         ->assertSeeText($lastGame->name);
 });
 
@@ -284,4 +299,22 @@ it('combines several categories with a game and keeps them on the next page', fu
         ->assertDontSeeText('Mario LAN')
         ->assertSee('category%5B0%5D='.$casual->id)
         ->assertSee('category%5B1%5D='.$online->id);
+});
+
+it('offers a searchable game filter with only the games upcoming events use', function (): void {
+    $played = Game::factory()->create(['name' => 'Fortnite']);
+    $handTyped = Game::factory()->manual()->create(['name' => 'Schaken']);
+    $unused = Game::factory()->create(['name' => 'Stardew Valley']);
+    $finished = Game::factory()->create(['name' => 'Rocket League']);
+    Event::factory()->for($played)->create();
+    Event::factory()->for($handTyped)->create();
+    Event::factory()->for($finished)->create(['starts_at' => now()->subDay()]);
+
+    get(route('events.index'))
+        ->assertOk()
+        ->assertSeeHtml('data-option-search')
+        ->assertSeeHtml('name="game" value="'.$played->id.'"')
+        ->assertSeeHtml('name="game" value="'.$handTyped->id.'"')
+        ->assertDontSeeHtml('name="game" value="'.$unused->id.'"')
+        ->assertDontSeeHtml('name="game" value="'.$finished->id.'"');
 });

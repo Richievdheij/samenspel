@@ -4,7 +4,7 @@
         <div class="event-detail__classification">
             @if ($event->games->count() > 3)
                 <details class="event-detail__games">
-                    <summary class="event-detail__games-toggle">{{ __('View all :count games', ['count' => $event->games->count()]) }} <x-icon name="chevron-down" /></summary>
+                    <summary class="event-detail__games-toggle">{{ __('Games') }} ({{ $event->games->count() }}) <x-icon name="chevron-down" /></summary>
                     <div class="event-detail__games-list">
                         @foreach ($event->games as $game)
                             <x-game-badge :game="$game" />
@@ -19,6 +19,9 @@
             @foreach ($event->categories as $category)
                 <x-category-label :name="$category->name" />
             @endforeach
+            @foreach ($event->platforms as $platform)
+                <x-platform-label :platform="$platform" />
+            @endforeach
         </div>
     </x-slot:header>
 
@@ -27,6 +30,11 @@
             <section class="card event-detail__description" aria-labelledby="event-description">
                 <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
                 <p class="event-detail__text">{{ $event->description }}</p>
+                @if (auth()->id() === $event->user_id)
+                    <div class="event-detail__actions">
+                        <x-button :href="route('events.play-options.edit', $event)">{{ __('Edit games and platforms') }}</x-button>
+                    </div>
+                @endif
             </section>
         @else
             <section class="card event-detail__description" aria-labelledby="event-description">

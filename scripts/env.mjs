@@ -71,7 +71,12 @@ export const DERIVED = {
  * Empty, and truthfully so: every key the production template ships empty is a
  * credential or an address that production genuinely cannot start without.
  */
-export const OPTIONAL = {}
+export const OPTIONAL = {
+  IGDB_CLIENT_ID:
+    'Without IGDB access the event form still offers the games chosen before; only catalog search needs it.',
+  IGDB_CLIENT_SECRET:
+    'Without IGDB access the event form still offers the games chosen before; only catalog search needs it.',
+}
 
 /**
  * Environment variables the source reads but no template declares, each with the

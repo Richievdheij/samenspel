@@ -38,6 +38,19 @@
   --color-danger-contrast: #ffffff;
   --color-backdrop: rgb(27 31 28 / 55%);
 
+  // Platform badges on event cards and event details.
+  --color-platform-pc: #29446e;
+  --color-platform-mac: #465363;
+  --color-platform-linux: #755220;
+  --color-platform-steam-deck: #334058;
+  --color-platform-playstation: #004a9f;
+  --color-platform-xbox: #107c10;
+  --color-platform-switch: #b9001b;
+  --color-platform-nintendo-other: #ae001a;
+  --color-platform-mobile: #006b68;
+  --color-platform-vr: #654094;
+  --color-platform-other: #4b5550;
+
   // ─── Spacing ──────────────────────────────────────────────────────────────
   // A 4px-based scale. Steps, not arbitrary numbers, so two components that mean
   // "one gap apart" cannot drift to 12px and 14px.
@@ -135,6 +148,9 @@
   --touch-target: 44px;
   --avatar-size: 2.1rem;
   --game-mark-size: 2.75rem;
+  --game-thumb-width: 2rem;
+  --game-thumb-height: 2.5rem;
+  --platform-badge-size: 2rem;
   --event-cover-placeholder-size: 8rem;
   --event-card-visual-height: 14rem;
 

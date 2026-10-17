@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\GameCatalog;
+use App\Services\IgdbGameCatalog;
 use App\Support\Herd;
 use Illuminate\Foundation\DevCommands;
 use Illuminate\Pagination\Paginator;
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(GameCatalog::class, IgdbGameCatalog::class);
         //
     }
 

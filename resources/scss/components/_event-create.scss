@@ -1,6 +1,72 @@
 @use '../abstracts' as *;
 
 .event-create {
+  &__steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-l);
+
+    &[hidden] {
+      display: none;
+    }
+
+    button {
+      min-inline-size: 0;
+      min-block-size: var(--touch-target);
+      padding: var(--space-2xs);
+      border: var(--line);
+      border-radius: var(--radius-s);
+      background-color: var(--color-surface);
+      color: var(--color-muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: var(--text-xs);
+      font-weight: var(--weight-semibold);
+      // Dutch step names are long single words; on a phone they break, not overflow.
+      overflow-wrap: break-word;
+      hyphens: auto;
+
+      &[aria-current='step'] {
+        border-color: var(--color-felt);
+        background-color: var(--color-felt-tint);
+        color: var(--color-felt);
+      }
+
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-accent);
+        outline-offset: var(--focus-ring-offset);
+      }
+    }
+  }
+
+  &__step {
+    &[hidden] {
+      display: none;
+    }
+
+    > h2 {
+      margin-block: 0 var(--space-2xs);
+      font-family: var(--font-display);
+      font-size: var(--text-l);
+    }
+
+    > .field__hint {
+      margin-block: 0 var(--space-m);
+    }
+  }
+
+  &__step-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-m);
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
   &__dashboard-card,
   &__eligibility {
     margin-block-start: var(--space-m);
@@ -71,14 +137,29 @@
   }
 
   &__options {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: var(--layer-dropdown);
+    box-sizing: border-box;
+    inline-size: 100%;
     max-block-size: 15rem;
     margin-block-start: var(--space-3xs);
     padding: var(--space-3xs);
     overflow-y: auto;
+    overscroll-behavior: contain;
     border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
     box-shadow: var(--shadow-depth-s);
+  }
+
+  &__options--games {
+    max-block-size: min(24rem, 55vh);
+  }
+
+  &__local-results:empty {
+    display: none;
   }
 
   &__search {
@@ -90,15 +171,92 @@
     background-color: var(--color-surface);
   }
 
-  &__empty {
+  &__catalog {
+    .field__hint {
+      margin: 0;
+      padding: var(--space-2xs);
+
+      &:empty {
+        display: none;
+      }
+    }
+  }
+
+  &__catalog-heading {
     margin: 0;
-    padding: var(--space-s);
+    padding: var(--space-xs) var(--space-2xs) var(--space-3xs);
     color: var(--color-muted);
-    text-align: center;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
 
     &[hidden] {
       display: none;
     }
+  }
+
+  &__catalog-add {
+    display: grid;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    flex: none;
+    margin-inline-start: auto;
+    border-radius: var(--radius-full);
+    background-color: var(--color-felt-tint);
+    color: var(--color-felt);
+    font-weight: var(--weight-bold);
+  }
+
+  &__catalog-result {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--touch-target);
+    padding: var(--space-2xs);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-felt-tint);
+    }
+
+    > img,
+    > span:first-child {
+      display: grid;
+      place-items: center;
+      inline-size: 2rem;
+      block-size: 2.75rem;
+      flex: none;
+      object-fit: cover;
+      border-radius: var(--radius-s);
+      background: var(--color-felt-tint);
+    }
+  }
+
+  &__catalog-info {
+    display: grid;
+    gap: var(--space-3xs);
+    min-inline-size: 0;
+  }
+
+  &__catalog-title,
+  &__catalog-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__catalog-meta {
+    color: var(--color-muted);
+    font-size: var(--text-xs);
   }
 
   &__option {
@@ -106,6 +264,7 @@
     align-items: center;
     gap: var(--space-2xs);
     min-block-size: var(--touch-target);
+    min-inline-size: 0;
     padding-inline: var(--space-2xs);
     border-radius: var(--radius-s);
     cursor: pointer;
@@ -118,19 +277,52 @@
     &:focus-within {
       background-color: var(--color-felt-tint);
     }
+
+    > span:last-child {
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
   }
 
   &__game-option-logo,
   &__chip-logo {
+    display: grid;
+    place-items: center;
     inline-size: 1.75rem;
     block-size: 1.75rem;
     flex: none;
+    overflow: hidden;
     border-radius: var(--radius-s);
     background-color: var(--color-felt-tint);
+    color: var(--color-felt);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+
+    img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__platform-name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
   }
 
   &__chip-logo[hidden] {
     display: none;
+  }
+
+  // A platform is a line icon, not a cover: no tile behind it.
+  &__chip-logo--icon {
+    inline-size: auto;
+    block-size: auto;
+    border-radius: 0;
+    background-color: transparent;
+    color: inherit;
   }
 
   &__chips {
@@ -315,6 +507,10 @@
     color: var(--color-muted);
     font-size: 0.625rem;
     line-height: var(--leading-tight);
+  }
+
+  &__location-panel [data-location-status] {
+    margin-block: var(--space-xs) 0;
   }
 
   &__schedule {
@@ -560,23 +756,6 @@
     }
   }
 
-  &__calendar-mobile-next {
-    @include from('l') {
-      visibility: hidden;
-      pointer-events: none;
-    }
-  }
-
-  &__schedule-calendar--second [data-calendar-next] {
-    visibility: hidden;
-    pointer-events: none;
-
-    @include from('l') {
-      visibility: visible;
-      pointer-events: auto;
-    }
-  }
-
   &__calendar-weekdays,
   &__calendar-days {
     display: grid;
@@ -641,9 +820,32 @@
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-2xs);
+  }
+
+  &__schedule-time-select {
+    position: relative;
+    display: inline-flex;
+    inline-size: 5rem;
+    flex: none;
 
     .field__control {
-      inline-size: 5rem;
+      inline-size: 100%;
+      padding-inline: var(--space-2xs);
+      appearance: none;
+      text-align: center;
+      text-align-last: center;
+      cursor: pointer;
+    }
+
+    .icon {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-end: var(--space-2xs);
+      inline-size: 1rem;
+      block-size: 1rem;
+      color: var(--color-felt);
+      pointer-events: none;
+      transform: translateY(-50%);
     }
   }
 
@@ -672,27 +874,10 @@
     padding: var(--space-xs);
     border-top: 1px solid var(--color-line);
     background-color: var(--color-surface);
-
-    button {
-      min-block-size: var(--touch-target);
-      padding-inline: var(--space-s);
-      border: var(--line);
-      border-radius: var(--radius-s);
-      background-color: var(--color-surface);
-      color: var(--color-ink);
-      cursor: pointer;
-      font: inherit;
-    }
   }
 
-  &__schedule-actions &__schedule-apply {
-    background-color: var(--color-felt);
-    color: var(--color-paper);
-  }
-
-  &__schedule-actions button:focus-visible,
   &__schedule-remove:focus-visible,
-  &__calendar-mobile-next:focus-visible {
+  &__calendar-head button:focus-visible {
     outline: 3px solid var(--color-felt);
     outline-offset: 2px;
   }
