@@ -12,3 +12,64 @@
   inline-size: 1.1em;
   block-size: 1.1em;
 }
+
+.platform-icon {
+  inline-size: 1.2em;
+  block-size: 1.2em;
+  flex: none;
+}
+
+.platform-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+
+  &--icon {
+    justify-content: center;
+    inline-size: var(--platform-badge-size);
+    block-size: var(--platform-badge-size);
+    flex: none;
+    border-radius: var(--radius-s);
+    background-color: var(--color-platform-other);
+    color: var(--color-paper);
+
+    .platform-icon {
+      inline-size: 1.3rem;
+      block-size: 1.3rem;
+    }
+  }
+
+  &--pc {
+    background-color: var(--color-platform-pc);
+  }
+  &--mac {
+    background-color: var(--color-platform-mac);
+  }
+  &--linux {
+    background-color: var(--color-platform-linux);
+  }
+  &--steam-deck {
+    background-color: var(--color-platform-steam-deck);
+  }
+  &--playstation {
+    background-color: var(--color-platform-playstation);
+  }
+  &--xbox {
+    background-color: var(--color-platform-xbox);
+  }
+  &--switch {
+    background-color: var(--color-platform-switch);
+  }
+  &--nintendo-other {
+    background-color: var(--color-platform-nintendo-other);
+  }
+  &--mobile {
+    background-color: var(--color-platform-mobile);
+  }
+  &--vr {
+    background-color: var(--color-platform-vr);
+  }
+  &--other {
+    background-color: var(--color-platform-other);
+  }
+}

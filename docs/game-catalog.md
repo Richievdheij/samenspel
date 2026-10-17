@@ -45,11 +45,23 @@ de opgegeven vervaltijd hergebruikt. Zoekresultaten blijven 30 minuten in de cac
 gekozen gamegegevens 6 uur. De backend beperkt IGDB-verzoeken tot vier per seconde
 en toont bij een storing geen ruwe providerrespons. Een onbekende ID wordt niet
 als lokale game opgeslagen. Covers gebruiken de IGDB afbeeldingsdienst; zonder
-beschikbare cover toont de interface de eerste letters van de titel.
+beschikbare cover toont de interface de eerste letters van de titel. Organisatoren kiezen
+per event een of meer platformfamilies (bijvoorbeeld PC, PlayStation, Xbox, Switch
+en mobiel). Die staan los van de beschikbare IGDB-platformen van een game en zijn
+later via **Spellen en platformen aanpassen** op de eventpagina te wijzigen.
 
 Een nieuwe installatie krijgt geen voorbeeldgames of demo-events: `make fresh yes=1`
-seedt alleen categorieën en de twee accounts uit de README. Games
+seedt alleen categorieën, de platformen en de twee accounts uit de README. Games
 komen er pas bij wanneer iemand ze voor een event uit de catalogus kiest.
+
+`games:sync-igdb` draait dagelijks om 03:30 via Laravel Scheduler, mits op de
+server `php artisan schedule:run` elke minuut wordt aangeroepen. Alleen lokale
+IGDB-games die aan een toekomstig event zijn gekoppeld worden bekeken, in batches
+van 50, maximaal 200 per run. Een game wordt hoogstens eens per zeven dagen
+ververst. Het commando kan met `--limit=50` handmatig worden uitgevoerd. Het
+ververst cover-URL, releasejaar en de volledige lijst met beschikbare
+providerplatformen. Lokale titels en handmatig toegevoegde games worden niet
+overschreven. De scheduler importeert geen nieuwe catalogusrecords.
 
 De [IGDB API-documentatie](https://api-docs.igdb.com/#getting-started) vermeldt
 gratis niet-commercieel gebruik en een commercieel partnerschap voor producten

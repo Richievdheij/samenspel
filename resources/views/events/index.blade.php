@@ -169,6 +169,13 @@
                                     <x-category-label :name="$category->name" />
                                 @endforeach
                             </div>
+                            @if ($event->platforms->isNotEmpty())
+                                <div class="event-card__categories" aria-label="{{ __('Platforms') }}">
+                                    @foreach ($event->platforms as $platform)
+                                        <x-platform-label :platform="$platform" />
+                                    @endforeach
+                                </div>
+                            @endif
                             <h2 class="event-card__title" id="event-title-{{ $event->id }}">{{ $event->title }}</h2>
                             @if ($event->games->count() > 1)
                                 <div class="event-card__game-names" aria-label="{{ __('Games') }}">

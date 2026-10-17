@@ -28,12 +28,14 @@ use Illuminate\Support\Carbon;
  * @property int|null $provider_id
  * @property string|null $platform
  * @property int|null $release_year
+ * @property list<string>|null $available_platforms
+ * @property Carbon|null $catalog_synced_at
  * @property string|null $logo_image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Event> $events
  */
-#[Fillable(['name', 'normalized_name', 'source', 'provider', 'provider_id', 'platform', 'release_year', 'cover_image_path', 'logo_image_path', 'cover_image_url'])]
+#[Fillable(['name', 'normalized_name', 'source', 'provider', 'provider_id', 'platform', 'release_year', 'available_platforms', 'cover_image_path', 'logo_image_path', 'cover_image_url'])]
 class Game extends Model
 {
     /** @use HasFactory<GameFactory> */
@@ -79,5 +81,11 @@ class Game extends Model
     protected function selectable(Builder $query): void
     {
         $query->where('source', self::SOURCE_CATALOG);
+    }
+
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return ['available_platforms' => 'array', 'catalog_synced_at' => 'datetime'];
     }
 }

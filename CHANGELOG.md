@@ -11,6 +11,13 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Een event krijgt een of meer platformen, zoals PC, PlayStation, Xbox, Switch
+  of mobiel. Eventkaarten en de eventpagina tonen ze als gekleurde icoontjes (US8).
+- De organisator past de spellen en platformen van een bestaand event aan via
+  **Spellen en platformen aanpassen** op de eventpagina (US8).
+- `php artisan games:sync-igdb` ververst dagelijks om 03:30 cover, releasejaar
+  en platformen van gekozen catalogusgames, zonder de lokale titel te
+  overschrijven (US8).
 - Spellen voor een event komen uit de IGDB-catalogus, onder hun officiële titel.
   De keuzelijst toont de bekende spellen direct; vanaf drie tekens zoekt hij in
   de catalogus, en een gekozen spel blijft aangevinkt staan, zoals bij
@@ -38,6 +45,11 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- Het formulier voor een nieuw event heeft drie stappen: spellen en platformen,
+  eventgegevens, en wanneer en waar. Elke stap controleert zijn velden voordat
+  je verdergaat; zonder JavaScript blijft het één pagina (US8).
+- De tijdkiezer gebruikt gecentreerde keuzelijsten met een pijltje, en toepassen
+  en annuleren hebben de gewone knopstijl (US8).
 - Eventkaarten en de eventpagina tonen de covers van de spellen uit de catalogus; meerdere
   spellen staan als kleine covers onder de titel en de volledige lijst klapt uit
   op de eventpagina (US8).

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A game night or LAN session.
@@ -44,6 +45,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Game> $games
  * @property-read Category $category
  * @property-read Collection<int, Category> $categories
+ * @property-read Collection<int, Platform> $platforms
  * @property-read Collection<int, User> $participants
  * @property-read int|null $participants_count set by withCount('participants')
  */
@@ -108,6 +110,25 @@ class Event extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    /** @return BelongsToMany<Platform, $this> */
+    public function platforms(): BelongsToMany
+    {
+        return $this->belongsToMany(Platform::class);
+    }
+
+    /**
+     * @param  list<int>  $gameIds
+     * @param  list<int>  $platformIds
+     */
+    public function updatePlayOptions(array $gameIds, array $platformIds): void
+    {
+        DB::transaction(function () use ($gameIds, $platformIds): void {
+            $this->games()->sync($gameIds);
+            $this->platforms()->sync($platformIds);
+            $this->update(['game_id' => $gameIds[0]]);
+        });
     }
 
     /**

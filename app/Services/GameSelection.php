@@ -36,6 +36,7 @@ final class GameSelection
                     'provider_id' => $result['id'],
                     'cover_image_url' => $candidate->cover_image_url ?? $result['cover_url'],
                     'release_year' => $candidate->release_year ?? $result['release_year'],
+                    'available_platforms' => $result['platforms'],
                 ])->save();
 
                 return $candidate;
@@ -52,6 +53,7 @@ final class GameSelection
                 'provider_id' => $result['id'],
                 'platform' => null,
                 'release_year' => $result['release_year'],
+                'available_platforms' => $result['platforms'],
                 'cover_image_url' => $result['cover_url'],
             ]);
         });

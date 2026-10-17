@@ -28,7 +28,7 @@ final class GameSelectionController extends Controller
         return response()->json(['game' => $this->gameData($selection->fromCatalog($result)), 'message' => __('Game selected. You can now save your event.')]);
     }
 
-    /** @return array{id: int, name: string, platform: string|null, provider_id: int|null, release_year: int|null, cover_url: string|null} */
+    /** @return array{id: int, name: string, platform: string|null, provider_id: int|null, platforms: list<string>, release_year: int|null, cover_url: string|null} */
     private function gameData(Game $game): array
     {
         return [
@@ -36,6 +36,7 @@ final class GameSelectionController extends Controller
             'name' => $game->name,
             'platform' => $game->platform,
             'provider_id' => $game->provider_id,
+            'platforms' => $game->available_platforms ?? [],
             'release_year' => $game->release_year,
             'cover_url' => $game->cover_image_path ? Storage::disk('public')->url($game->cover_image_path) : ($game->logo_image_path ? Storage::disk('public')->url($game->logo_image_path) : $game->cover_image_url),
         ];

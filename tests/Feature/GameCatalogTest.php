@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
+use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -188,6 +189,7 @@ it('persists a selected catalog game as the primary and linked event game', func
     actingAs($admin)->post(route('events.store'), [
         'games' => [$gameId],
         'categories' => [$category->id],
+        'platforms' => [Platform::query()->where('slug', 'switch')->value('id')],
         'title' => 'Mario Kart night',
         'description' => 'An online event.',
         'starts_at' => now()->addWeek()->format('Y-m-d H:i:s'),
@@ -198,5 +200,6 @@ it('persists a selected catalog game as the primary and linked event game', func
     $event = Event::query()->where('title', 'Mario Kart night')->sole();
     expect($event->game_id)->toBe($gameId)
         ->and($event->games->modelKeys())->toBe([$gameId])
-        ->and($event->game->platform)->toBeNull();
+        ->and($event->game->platform)->toBeNull()
+        ->and($event->game->available_platforms)->toBe(['PlayStation 5', 'PC (Microsoft Windows)']);
 });

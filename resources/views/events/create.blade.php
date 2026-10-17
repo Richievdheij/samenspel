@@ -18,15 +18,24 @@
             $selectedGameIds = is_array(old('games')) ? array_map('intval', old('games')) : [];
             $selectedCategoryIds = is_array(old('categories')) ? array_map('intval', old('categories')) : [];
             $selectedCategories = $categories->whereIn('id', $selectedCategoryIds);
+            $selectedPlatformIds = is_array(old('platforms')) ? array_map('intval', old('platforms')) : [];
+            $selectedPlatforms = $platforms->whereIn('id', $selectedPlatformIds);
             $capacityMode = old('capacity_mode', 'limited');
             $startValue = old('starts_at', now()->addWeek()->format('Y-m-d\TH:i'));
             $categoryError = $errors->first('categories') ?: $errors->first('categories.*');
             $locationMode = old('location_mode') === 'online' ? 'online' : 'search';
         @endphp
 
-        <form class="card event-create" method="POST" action="{{ route('events.store') }}" data-event-create>
+        <form class="card event-create" method="POST" action="{{ route('events.store') }}" data-event-create data-schedule-required="{{ __('Choose a valid start date and time.') }}">
             @csrf
-
+            <nav class="event-create__steps" aria-label="{{ __('Event setup') }}" data-event-steps hidden>
+                <button type="button" data-step-tab="0">1. {{ __('Games and platforms') }}</button>
+                <button type="button" data-step-tab="1">2. {{ __('Event details') }}</button>
+                <button type="button" data-step-tab="2">3. {{ __('When and where') }}</button>
+            </nav>
+            <section class="event-create__step" data-event-step="0" aria-labelledby="event-step-games">
+                <h2 id="event-step-games">{{ __('Games and platforms') }}</h2>
+                <p class="field__hint">{{ __('Choose the games, categories and platforms for your event.') }}</p>
             <div class="event-create__grid">
                 <div class="field">
                     <x-game-picker :games="$games" :selected-game-ids="$selectedGameIds" />
@@ -34,7 +43,7 @@
 
                 <div class="field">
                     <span class="field__label" id="event-categories-label">{{ __('Categories') }}</span>
-                    <details class="event-create__select" data-filter-select data-all-label="{{ __('Choose categories') }}" data-multiple-label="{{ __('Categories selected (:count)') }}" data-event-categories data-remove-label="{{ __('Remove category: :name') }}">
+                    <details class="event-create__select" data-filter-select data-all-label="{{ __('Choose categories') }}" data-multiple-label="{{ __('Categories selected (:count)') }}" data-event-categories data-required-message="{{ __('Choose at least one category.') }}" data-remove-label="{{ __('Remove category: :name') }}">
                         <summary class="field__control event-create__select-toggle" aria-labelledby="event-categories-label event-categories-choice" @if ($categoryError) aria-invalid="true" aria-describedby="event-categories-error" @endif>
                             <span id="event-categories-choice" data-filter-summary>
                                 @if ($selectedCategories->count() === 1)
@@ -69,10 +78,69 @@
                     </template>
                 </div>
 
+                <div class="field">
+                    <span class="field__label" id="event-platforms-label">{{ __('Platforms') }}</span>
+                    <details class="event-create__select" data-filter-select data-event-platforms data-required-message="{{ __('Choose at least one platform.') }}" data-all-label="{{ __('Choose platforms') }}" data-multiple-label="{{ __('Platforms selected (:count)') }}" data-remove-label="{{ __('Remove platform: :name') }}">
+                        <summary class="field__control event-create__select-toggle" aria-labelledby="event-platforms-label event-platforms-choice" @if ($errors->has('platforms') || $errors->has('platforms.*')) aria-invalid="true" aria-describedby="event-platforms-error" @endif>
+                            <span id="event-platforms-choice" data-filter-summary>
+                                @if ($selectedPlatforms->count() === 1)
+                                    {{ __($selectedPlatforms->first()->name) }}
+                                @elseif ($selectedPlatforms->count() > 1)
+                                    {{ __('Platforms selected (:count)', ['count' => $selectedPlatforms->count()]) }}
+                                @else
+                                    {{ __('Choose platforms') }}
+                                @endif
+                            </span>
+                            <x-icon name="chevron-down" />
+                        </summary>
+                        <div class="event-create__options" role="group" aria-label="{{ __('Platforms') }}">
+                            @foreach ($platforms as $platform)
+                                <label class="event-create__option">
+                                    <input class="checkbox__control" type="checkbox" name="platforms[]" value="{{ $platform->id }}" @checked(in_array($platform->id, $selectedPlatformIds, true))>
+                                    <span class="event-create__platform-name"><x-platform-icon :slug="$platform->slug" />{{ __($platform->name) }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </details>
+                    @if ($errors->has('platforms') || $errors->has('platforms.*'))
+                        <p class="field__error" id="event-platforms-error">{{ $errors->first('platforms') ?: $errors->first('platforms.*') }}</p>
+                    @endif
+                    <div class="event-create__chips" role="group" aria-label="{{ __('Selected platforms') }}" data-event-platform-chips hidden></div>
+                </div>
+            </div>
+                <div class="event-create__step-actions" data-step-actions hidden>
+                    <button class="button button--primary" type="button" data-step-next>{{ __('Next') }} <x-icon name="arrow-right" /></button>
+                </div>
+            </section>
+
+            <section class="event-create__step" data-event-step="1" aria-labelledby="event-step-details">
+                <h2 id="event-step-details">{{ __('Event details') }}</h2>
+                <p class="field__hint">{{ __('Give your event a clear title and description.') }}</p>
+                <div class="event-create__grid">
+
                 <div class="event-create__title-field">
                     <x-field name="title" :label="__('Title')" required maxlength="255" />
                     <p class="field__hint event-create__title-count" data-title-count data-count-label="{{ __(':count of :max characters') }}"></p>
                 </div>
+
+                <div class="field event-create__description">
+                    <label class="field__label" for="description">{{ __('Description') }}</label>
+                    <textarea class="field__control" id="description" name="description" rows="6" required @if ($errors->has('description')) aria-invalid="true" aria-describedby="description-error" @endif>{{ old('description') }}</textarea>
+                    @error('description')
+                        <p class="field__error" id="description-error">{{ $message }}</p>
+                    @enderror
+                </div>
+                </div>
+                <div class="event-create__step-actions" data-step-actions hidden>
+                    <button class="button" type="button" data-step-back>{{ __('Back') }}</button>
+                    <button class="button button--primary" type="button" data-step-next>{{ __('Next') }} <x-icon name="arrow-right" /></button>
+                </div>
+            </section>
+
+            <section class="event-create__step" data-event-step="2" aria-labelledby="event-step-schedule">
+                <h2 id="event-step-schedule">{{ __('When and where') }}</h2>
+                <p class="field__hint">{{ __('Set the place, time and number of players.') }}</p>
+                <div class="event-create__grid">
 
                 <fieldset class="event-create__location" data-event-location data-address-url="{{ route('events.addresses.search') }}" data-address-selected="{{ __('Address selected.') }}" data-address-empty="{{ __('No registered addresses found. Try another search.') }}" data-address-unavailable="{{ __('Address search is temporarily unavailable.') }}" data-address-prompt="{{ __('Choose an address from the suggestions.') }}">
                     <legend class="field__label">{{ __('Location') }}</legend>
@@ -150,7 +218,7 @@
                                             <div class="event-create__calendar-head">
                                                 <button type="button" data-calendar-previous aria-label="{{ __('Previous month') }}"><x-icon name="chevron-left" /></button>
                                                 <strong data-calendar-month="0"></strong>
-                                                <button type="button" class="event-create__calendar-mobile-next" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="chevron-right" /></button>
+                                                <button type="button" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="chevron-right" /></button>
                                             </div>
                                             <div class="event-create__calendar-weekdays" data-calendar-weekdays="0" aria-hidden="true"></div>
                                             <div class="event-create__calendar-days" data-calendar-days="0"></div>
@@ -159,7 +227,7 @@
                                             <div class="event-create__calendar-head">
                                                 <span aria-hidden="true"></span>
                                                 <strong data-calendar-month="1"></strong>
-                                                <button type="button" data-calendar-next aria-label="{{ __('Next month') }}"><x-icon name="chevron-right" /></button>
+                                                <span aria-hidden="true"></span>
                                             </div>
                                             <div class="event-create__calendar-weekdays" data-calendar-weekdays="1" aria-hidden="true"></div>
                                             <div class="event-create__calendar-days" data-calendar-days="1"></div>
@@ -168,16 +236,16 @@
                                     <div class="event-create__schedule-time">
                                         <span class="field__label">{{ __('Time') }}</span>
                                         <label class="sr-only" for="schedule-hour">{{ __('Hour') }}</label>
-                                        <select id="schedule-hour" class="field__control" data-schedule-hour></select>
+                                        <span class="event-create__schedule-time-select"><select id="schedule-hour" class="field__control" data-schedule-hour></select><x-icon name="chevron-down" /></span>
                                         <span aria-hidden="true">:</span>
                                         <label class="sr-only" for="schedule-minute">{{ __('Minute') }}</label>
-                                        <select id="schedule-minute" class="field__control" data-schedule-minute></select>
+                                        <span class="event-create__schedule-time-select"><select id="schedule-minute" class="field__control" data-schedule-minute></select><x-icon name="chevron-down" /></span>
                                         <button type="button" class="event-create__schedule-remove" data-schedule-remove>{{ __('Remove end time') }}</button>
                                     </div>
                                 </div>
                                 <div class="event-create__schedule-actions">
-                                    <button type="button" data-schedule-cancel>{{ __('Cancel') }}</button>
-                                    <button type="button" class="event-create__schedule-apply" data-schedule-apply>{{ __('Apply') }}</button>
+                                    <x-button data-schedule-cancel>{{ __('Cancel') }}</x-button>
+                                    <x-button variant="primary" data-schedule-apply>{{ __('Apply') }}</x-button>
                                 </div>
                             </div>
                         </details>
@@ -207,19 +275,14 @@
                     </div>
                 </fieldset>
 
-                <div class="field event-create__description">
-                    <label class="field__label" for="description">{{ __('Description') }}</label>
-                    <textarea class="field__control" id="description" name="description" rows="5" required @if ($errors->has('description')) aria-invalid="true" aria-describedby="description-error" @endif>{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="field__error" id="description-error">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
 
             <div class="form__actions form__actions--start">
+                <button class="button" type="button" data-step-back hidden>{{ __('Back') }}</button>
                 <x-button variant="primary" type="submit">{{ __('Create event') }}</x-button>
                 <x-button :href="route('dashboard')">{{ __('Cancel') }}</x-button>
             </div>
+            </section>
         </form>
     @endif
 </x-layouts.app>

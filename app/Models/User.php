@@ -112,16 +112,18 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
      * @param  array<string, mixed>  $attributes
      * @param  list<int>  $categoryIds
      * @param  list<int>  $gameIds
+     * @param  list<int>  $platformIds
      */
-    public function organizeEvent(array $attributes, array $categoryIds, array $gameIds): Event
+    public function organizeEvent(array $attributes, array $categoryIds, array $gameIds, array $platformIds = []): Event
     {
-        return DB::transaction(function () use ($attributes, $categoryIds, $gameIds): Event {
+        return DB::transaction(function () use ($attributes, $categoryIds, $gameIds, $platformIds): Event {
             $event = $this->organizedEvents()->create([
                 ...$attributes,
                 'status' => EventStatus::Open,
             ]);
             $event->categories()->sync($categoryIds);
             $event->games()->sync($gameIds);
+            $event->platforms()->sync($platformIds);
 
             return $event;
         });

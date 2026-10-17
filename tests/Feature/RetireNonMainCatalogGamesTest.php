@@ -35,6 +35,8 @@ it('hides previously selected add-ons from new choices while preserving their ev
     actingAs($admin)->get(route('events.create'))
         ->assertOk()->assertSeeHtml('name="games[]" value="'.$main->id.'"')
         ->assertDontSeeHtml('name="games[]" value="'.$addon->id.'"');
+    actingAs($admin)->get(route('events.play-options.edit', $event))
+        ->assertOk()->assertSeeHtml('name="games[]" value="'.$addon->id.'"');
     actingAs($admin)->post(route('events.store'), ['games' => [$addon->id]])
         ->assertSessionHasErrors('games.0');
 

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreEventRequest;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
+use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class EventController extends Controller
         return view('events.create', [
             'games' => Game::query()->selectable()->orderBy('name')->get(['id', 'name', 'platform', 'release_year', 'cover_image_url', 'cover_image_path', 'logo_image_path', 'provider_id']),
             'categories' => Category::query()->orderBy('name')->get(['id', 'name']),
+            'platforms' => Platform::query()->orderBy('id')->get(['id', 'name', 'slug']),
             'signUpsCount' => $signUpsCount,
             'signUpsRemaining' => max(0, 3 - $signUpsCount),
             'canOrganize' => $user->canOrganizeEvents(),
@@ -36,7 +38,7 @@ class EventController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $event = $user->organizeEvent($request->eventAttributes(), $request->categoryIds(), $request->gameIds());
+        $event = $user->organizeEvent($request->eventAttributes(), $request->categoryIds(), $request->gameIds(), $request->platformIds());
 
         return to_route('events.show', $event)
             ->with('status', __('Your event has been created.'));
@@ -78,7 +80,7 @@ class EventController extends Controller
                 ->matchingKeyword($search)
                 ->when($gameId !== null, fn ($query) => $query->whereHas('games', fn ($games) => $games->where('games.id', $gameId)))
                 ->when($categoryIds !== [], fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $categoryIds)))
-                ->with(['games', 'categories'])
+                ->with(['games', 'categories', 'platforms'])
                 ->withCount('participants')
                 ->oldest('starts_at')
                 ->paginate(10)
@@ -89,7 +91,7 @@ class EventController extends Controller
     /** Show public event facts, and private details only to signed-in users. */
     public function show(Request $request, Event $event): View
     {
-        $event->load(['games', 'categories'])
+        $event->load(['games', 'categories', 'platforms'])
             ->loadCount('participants');
 
         if ($request->user() !== null) {

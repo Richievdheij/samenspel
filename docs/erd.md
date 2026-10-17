@@ -223,6 +223,10 @@ erDiagram
         int event_id PK, FK
         int game_id PK, FK
     }
+    "event_platform" {
+        int event_id PK, FK
+        int platform_id PK, FK
+    }
     "event_user" {
         int id PK
         int event_id FK
@@ -271,6 +275,8 @@ erDiagram
         string platform "nullable"
         int release_year "nullable"
         string cover_image_url "nullable"
+        text available_platforms "nullable"
+        datetime catalog_synced_at "nullable"
     }
     "job_batches" {
         string id PK
@@ -298,6 +304,11 @@ erDiagram
         string token
         datetime created_at "nullable"
     }
+    "platforms" {
+        int id PK
+        string slug UK
+        string name
+    }
     "sessions" {
         string id PK
         int user_id FK "nullable"
@@ -321,9 +332,11 @@ erDiagram
     "categories" ||--o{ "events" : "category_id"
     "events" ||--o{ "category_event" : "event_id"
     "events" ||--o{ "event_game" : "event_id"
+    "events" ||--o{ "event_platform" : "event_id"
     "events" ||--o{ "event_user" : "event_id"
     "games" ||--o{ "event_game" : "game_id"
     "games" ||--o{ "events" : "game_id"
+    "platforms" ||--o{ "event_platform" : "platform_id"
     "users" |o..o{ "sessions" : "user_id"
     "users" ||--o{ "event_user" : "user_id"
     "users" ||--o{ "events" : "user_id"
