@@ -64,22 +64,35 @@ class EventController extends Controller
             }
         }
         $categoryIds = array_values(array_unique($categoryIds));
-        $games = Game::query()->orderBy('name')->get(['id', 'name']);
+        $platformIds = [];
+        $platform = $request->query('platform');
+        foreach (is_array($platform) ? $platform : [$platform] as $value) {
+            if (is_string($value) && ctype_digit($value) && (int) $value > 0) {
+                $platformIds[] = (int) $value;
+            }
+        }
+        $platformIds = array_values(array_unique($platformIds));
+        $games = Game::query()->playedInUpcomingEvents()->orderBy('name')->get(['id', 'name']);
         $categories = Category::query()->orderBy('name')->get(['id', 'name']);
+        $platforms = Platform::query()->orderBy('id')->get(['id', 'name', 'slug']);
 
         return view('events.index', [
             'search' => $search,
             'gameId' => $gameId,
             'categoryIds' => $categoryIds,
+            'platformIds' => $platformIds,
             'games' => $games,
             'categories' => $categories,
-            'selectedGame' => $games->firstWhere('id', $gameId),
+            'platforms' => $platforms,
+            'selectedGame' => $games->firstWhere('id', $gameId) ?? ($gameId === null ? null : Game::query()->find($gameId, ['id', 'name'])),
             'selectedCategories' => $categories->whereIn('id', $categoryIds),
+            'selectedPlatforms' => $platforms->whereIn('id', $platformIds),
             'events' => Event::query()
                 ->upcoming()
                 ->matchingKeyword($search)
                 ->when($gameId !== null, fn ($query) => $query->whereHas('games', fn ($games) => $games->where('games.id', $gameId)))
                 ->when($categoryIds !== [], fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $categoryIds)))
+                ->when($platformIds !== [], fn ($query) => $query->whereHas('platforms', fn ($platforms) => $platforms->whereIn('platforms.id', $platformIds)))
                 ->with(['games', 'categories', 'platforms'])
                 ->withCount('participants')
                 ->oldest('starts_at')

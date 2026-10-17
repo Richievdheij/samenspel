@@ -37,6 +37,9 @@ it('hides previously selected add-ons from new choices while preserving their ev
         ->assertDontSeeHtml('name="games[]" value="'.$addon->id.'"');
     actingAs($admin)->get(route('events.play-options.edit', $event))
         ->assertOk()->assertSeeHtml('name="games[]" value="'.$addon->id.'"');
+    // The public filter mirrors the cards: the event still shows the add-on, so it stays filterable.
+    actingAs($admin)->get(route('events.index'))
+        ->assertOk()->assertSeeHtml('name="game" value="'.$addon->id.'"');
     actingAs($admin)->post(route('events.store'), ['games' => [$addon->id]])
         ->assertSessionHasErrors('games.0');
 

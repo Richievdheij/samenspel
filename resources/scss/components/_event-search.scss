@@ -124,6 +124,23 @@
     margin-block-start: var(--space-xs);
   }
 
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2rem;
+    padding-inline: var(--space-xs);
+    color: var(--color-felt);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: var(--space-3xs);
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-accent);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+
   &__chip {
     display: inline-flex;
     align-items: center;
@@ -190,9 +207,14 @@
     align-items: end;
     padding: var(--space-s) var(--depth-m) var(--depth-m) 0;
 
+    // Every filter gets an equal, fixed share, so a longer choice never resizes it.
     @include from('m') {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--space-s);
+    }
+
+    @include from('l') {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
     }
   }
 
@@ -244,9 +266,10 @@
     inset-block-start: calc(100% + var(--space-3xs));
     inset-inline: 0;
     z-index: var(--layer-dropdown);
-    max-block-size: 15rem;
+    max-block-size: min(20rem, 55vh);
     padding: var(--space-3xs);
     overflow-y: auto;
+    overscroll-behavior: contain;
     border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
@@ -273,6 +296,37 @@
     }
   }
 
+  &__search {
+    display: block;
+    position: sticky;
+    inset-block-start: calc(-1 * var(--space-3xs));
+    z-index: 1;
+    padding: var(--space-2xs);
+    background-color: var(--color-surface);
+
+    // Without JavaScript nothing filters the list, so there is no field to type in.
+    :root:not(.js) & {
+      display: none;
+    }
+
+    .field__control {
+      box-sizing: border-box;
+      inline-size: 100%;
+    }
+  }
+
+  &__option[hidden],
+  &__empty[hidden] {
+    display: none;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: var(--space-xs) var(--space-2xs);
+    color: var(--color-muted);
+    font-size: var(--text-s);
+  }
+
   &__actions {
     display: flex;
     flex-wrap: wrap;
@@ -280,7 +334,7 @@
     gap: var(--space-xs);
     grid-column: 1 / -1;
 
-    @include from('m') {
+    @include from('l') {
       grid-column: auto;
     }
   }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A game that events are played with, managed by an admin.
@@ -68,6 +69,20 @@ class Game extends Model
     public function selectedEvents(): BelongsToMany
     {
         return $this->belongsToMany(Event::class);
+    }
+
+    /**
+     * Games at least one upcoming event is played with, whatever their source: the
+     * choices that make sense in the public game filter.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function playedInUpcomingEvents(Builder $query): void
+    {
+        $query->whereIn('id', DB::table('event_game')
+            ->whereIn('event_id', Event::query()->upcoming()->select('id'))
+            ->select('game_id'));
     }
 
     /**

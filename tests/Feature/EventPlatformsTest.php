@@ -36,6 +36,8 @@ it('lets an organiser replace games and platform choices on an existing event', 
         ->assertSeeHtml('aria-label="Nintendo Switch"')
         ->assertSeeHtml('platform-label--mobile')
         ->assertDontSeeHtml('>Nintendo Switch</span>');
+    get(route('events.index', ['platform' => [$switch->id]]))->assertSee('Console night');
+    get(route('events.index', ['platform' => [Platform::query()->where('slug', 'xbox')->sole()->id]]))->assertDontSee('Console night');
 });
 
 it('protects event choices and rejects empty, duplicate and unknown values', function (): void {

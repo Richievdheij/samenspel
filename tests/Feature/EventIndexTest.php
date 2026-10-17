@@ -40,6 +40,17 @@ it('provides a search reset before a query is submitted', function (): void {
     expect($response->getContent())->toMatch('/data-search-reset\s+hidden/');
 });
 
+it('offers clear filters when filtered events exist', function (): void {
+    $event = Event::factory()->create();
+    $game = $event->game;
+
+    get(route('events.index', ['game' => $game->id]))
+        ->assertOk()
+        ->assertSeeText($event->title)
+        ->assertSee('Filters wissen')
+        ->assertSeeHtml('href="'.route('events.index').'"');
+});
+
 it('leaves out events that have already started', function (): void {
     Event::factory()->create(['title' => 'Voorbij event', 'starts_at' => now()->subDay()]);
 
@@ -288,4 +299,22 @@ it('combines several categories with a game and keeps them on the next page', fu
         ->assertDontSeeText('Mario LAN')
         ->assertSee('category%5B0%5D='.$casual->id)
         ->assertSee('category%5B1%5D='.$online->id);
+});
+
+it('offers a searchable game filter with only the games upcoming events use', function (): void {
+    $played = Game::factory()->create(['name' => 'Fortnite']);
+    $handTyped = Game::factory()->manual()->create(['name' => 'Schaken']);
+    $unused = Game::factory()->create(['name' => 'Stardew Valley']);
+    $finished = Game::factory()->create(['name' => 'Rocket League']);
+    Event::factory()->for($played)->create();
+    Event::factory()->for($handTyped)->create();
+    Event::factory()->for($finished)->create(['starts_at' => now()->subDay()]);
+
+    get(route('events.index'))
+        ->assertOk()
+        ->assertSeeHtml('data-option-search')
+        ->assertSeeHtml('name="game" value="'.$played->id.'"')
+        ->assertSeeHtml('name="game" value="'.$handTyped->id.'"')
+        ->assertDontSeeHtml('name="game" value="'.$unused->id.'"')
+        ->assertDontSeeHtml('name="game" value="'.$finished->id.'"');
 });

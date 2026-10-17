@@ -11,6 +11,10 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Het eventoverzicht filtert op een of meer platformen. Actieve filters staan
+  als chips boven de lijst, met een link **Filters wissen** (US4).
+- Het gamefilter in het eventoverzicht heeft een zoekveld en toont alleen
+  spellen waarmee een komend event gespeeld wordt (US4).
 - Een event krijgt een of meer platformen, zoals PC, PlayStation, Xbox, Switch
   of mobiel. Eventkaarten en de eventpagina tonen ze als gekleurde icoontjes (US8).
 - De organisator past de spellen en platformen van een bestaand event aan via
@@ -45,6 +49,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- De filters in het eventoverzicht staan in drie even brede kolommen, zodat een
+  lange keuze ze niet verschuift; de keuzelijsten zijn hoger en scrollen binnen
+  zichzelf (US4).
 - Het formulier voor een nieuw event heeft drie stappen: spellen en platformen,
   eventgegevens, en wanneer en waar. Elke stap controleert zijn velden voordat
   je verdergaat; zonder JavaScript blijft het één pagina (US8).
