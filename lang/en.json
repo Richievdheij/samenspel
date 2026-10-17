@@ -201,5 +201,17 @@
   "This week": "This week",
   "Next week": "Next week",
   "This month": "This month",
-  "Apply": "Apply"
+  "Apply": "Apply",
+  "Choose a game from the catalog.": "Choose a game from the catalog.",
+  "Choose at least one game.": "Choose at least one game.",
+  "Enter a game title to search.": "Enter a game title to search.",
+  "Enter a valid game title.": "Enter a valid game title.",
+  "Enter at least 3 characters to search games.": "Enter at least 3 characters to search games.",
+  "Game search is temporarily unavailable. Try again later.": "Game search is temporarily unavailable. Try again later.",
+  "Game selected. You can now save your event.": "Game selected. You can now save your event.",
+  "More from the game catalog": "More from the game catalog",
+  "Search with at most 80 characters.": "Search with at most 80 characters.",
+  "This game could not be found in the catalog.": "This game could not be found in the catalog.",
+  "This game could not be selected. Try again.": "This game could not be selected. Try again.",
+  "Type at least 3 characters to search the catalog.": "Type at least 3 characters to search the catalog."
 }

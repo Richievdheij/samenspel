@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Models\Game;
 use App\Models\User;
 use App\Services\AddressLookup;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -38,7 +39,7 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'games' => ['required', 'array', 'min:1'],
-            'games.*' => ['required', 'integer', 'distinct', Rule::exists('games', 'id')],
+            'games.*' => ['required', 'integer', 'distinct', Rule::exists('games', 'id')->where('source', Game::SOURCE_CATALOG)],
             'categories' => ['required', 'array', 'min:1'],
             'categories.*' => ['required', 'integer', 'distinct', Rule::exists('categories', 'id')],
             'title' => ['required', 'string', 'max:255'],

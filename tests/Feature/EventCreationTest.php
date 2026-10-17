@@ -94,6 +94,8 @@ it('shows the form when the user has signed up for three events organised by oth
         ->assertSeeText('Titel')
         ->assertSeeHtml('name="starts_at"')
         ->assertSeeHtml('name="games[]"')
+        ->assertDontSeeHtml('manual-game')
+        ->assertDontSeeHtml('maxlength="255" required')
         ->assertSeeHtml('name="categories[]"')
         ->assertSeeHtml('data-event-game-chips')
         ->assertSeeHtml('data-event-category-chips')

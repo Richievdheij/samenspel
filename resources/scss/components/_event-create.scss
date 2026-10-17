@@ -71,14 +71,29 @@
   }
 
   &__options {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: var(--layer-dropdown);
+    box-sizing: border-box;
+    inline-size: 100%;
     max-block-size: 15rem;
     margin-block-start: var(--space-3xs);
     padding: var(--space-3xs);
     overflow-y: auto;
+    overscroll-behavior: contain;
     border: var(--line);
     border-radius: var(--radius-s);
     background-color: var(--color-surface);
     box-shadow: var(--shadow-depth-s);
+  }
+
+  &__options--games {
+    max-block-size: min(24rem, 55vh);
+  }
+
+  &__local-results:empty {
+    display: none;
   }
 
   &__search {
@@ -90,15 +105,92 @@
     background-color: var(--color-surface);
   }
 
-  &__empty {
+  &__catalog {
+    .field__hint {
+      margin: 0;
+      padding: var(--space-2xs);
+
+      &:empty {
+        display: none;
+      }
+    }
+  }
+
+  &__catalog-heading {
     margin: 0;
-    padding: var(--space-s);
+    padding: var(--space-xs) var(--space-2xs) var(--space-3xs);
     color: var(--color-muted);
-    text-align: center;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
 
     &[hidden] {
       display: none;
     }
+  }
+
+  &__catalog-add {
+    display: grid;
+    place-items: center;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    flex: none;
+    margin-inline-start: auto;
+    border-radius: var(--radius-full);
+    background-color: var(--color-felt-tint);
+    color: var(--color-felt);
+    font-weight: var(--weight-bold);
+  }
+
+  &__catalog-result {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: var(--touch-target);
+    padding: var(--space-2xs);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-felt-tint);
+    }
+
+    > img,
+    > span:first-child {
+      display: grid;
+      place-items: center;
+      inline-size: 2rem;
+      block-size: 2.75rem;
+      flex: none;
+      object-fit: cover;
+      border-radius: var(--radius-s);
+      background: var(--color-felt-tint);
+    }
+  }
+
+  &__catalog-info {
+    display: grid;
+    gap: var(--space-3xs);
+    min-inline-size: 0;
+  }
+
+  &__catalog-title,
+  &__catalog-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__catalog-meta {
+    color: var(--color-muted);
+    font-size: var(--text-xs);
   }
 
   &__option {
@@ -106,6 +198,7 @@
     align-items: center;
     gap: var(--space-2xs);
     min-block-size: var(--touch-target);
+    min-inline-size: 0;
     padding-inline: var(--space-2xs);
     border-radius: var(--radius-s);
     cursor: pointer;
@@ -118,15 +211,33 @@
     &:focus-within {
       background-color: var(--color-felt-tint);
     }
+
+    > span:last-child {
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
   }
 
   &__game-option-logo,
   &__chip-logo {
+    display: grid;
+    place-items: center;
     inline-size: 1.75rem;
     block-size: 1.75rem;
     flex: none;
+    overflow: hidden;
     border-radius: var(--radius-s);
     background-color: var(--color-felt-tint);
+    color: var(--color-felt);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+
+    img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
   }
 
   &__chip-logo[hidden] {

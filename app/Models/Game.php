@@ -6,9 +6,12 @@ namespace App\Models;
 
 use Database\Factories\GameFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -18,16 +21,38 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string|null $cover_image_path
+ * @property string|null $cover_image_url
+ * @property string|null $normalized_name
+ * @property string $source
+ * @property string|null $provider
+ * @property int|null $provider_id
+ * @property string|null $platform
+ * @property int|null $release_year
  * @property string|null $logo_image_path
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Event> $events
  */
-#[Fillable(['name', 'cover_image_path', 'logo_image_path'])]
+#[Fillable(['name', 'normalized_name', 'source', 'provider', 'provider_id', 'platform', 'release_year', 'cover_image_path', 'logo_image_path', 'cover_image_url'])]
 class Game extends Model
 {
     /** @use HasFactory<GameFactory> */
     use HasFactory;
+
+    public const string SOURCE_RETIRED_CATALOG = 'retired_catalog';
+
+    public const string SOURCE_CATALOG = 'igdb';
+
+    public static function normalizedKey(string $name, ?string $platform = null): string
+    {
+        $title = mb_strtolower(trim($name));
+        // Keep symbols that distinguish actual titles (for example C++ and C#).
+        $title = preg_replace('/[^\pL\pN+#]+/u', ' ', $title) ?? $title;
+        $title = trim(preg_replace('/\s+/u', ' ', $title) ?? $title);
+        $platformKey = $platform === null ? '' : mb_strtolower(trim($platform));
+
+        return hash('sha256', $title.'|'.$platformKey);
+    }
 
     /**
      * @return HasMany<Event, $this>
@@ -35,5 +60,24 @@ class Game extends Model
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    /** @return BelongsToMany<Event, $this> */
+    public function selectedEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class);
+    }
+
+    /**
+     * Games a new event can choose: main games from the catalog, under their official
+     * title. Retired catalog entries and earlier hand-typed titles stay
+     * attached to the events that already use them.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function selectable(Builder $query): void
+    {
+        $query->where('source', self::SOURCE_CATALOG);
     }
 }

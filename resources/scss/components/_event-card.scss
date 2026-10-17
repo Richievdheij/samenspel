@@ -132,8 +132,7 @@
 
   &__stamp,
   &__visual-status,
-  &__game-feature-name,
-  &__games {
+  &__game-feature-name {
     position: relative;
     z-index: 2;
   }
@@ -187,48 +186,26 @@
     overflow-wrap: anywhere;
   }
 
-  &__games {
+  &__game-names {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    max-inline-size: 100%;
-  }
-
-  &__games .game-badge.event-card__games-extra {
-    display: none;
-
-    @include from('m') {
-      display: inline-flex;
-    }
-  }
-
-  &__games-more {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    inline-size: var(--game-mark-size);
-    block-size: var(--game-mark-size);
+    gap: var(--space-3xs);
+    block-size: var(--game-thumb-height);
+    max-inline-size: 100%;
+    overflow: hidden;
+  }
+
+  &__games-note {
+    display: grid;
+    place-items: center;
+    inline-size: var(--game-thumb-width);
+    block-size: var(--game-thumb-height);
     flex: none;
     border-radius: var(--radius-s);
-    background-color: var(--color-paper);
+    background-color: var(--color-felt-tint);
     color: var(--color-felt);
-    font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: var(--weight-bold);
-  }
-
-  &__games-more--mobile {
-    @include from('m') {
-      display: none;
-    }
-  }
-
-  &__games-more--desktop {
-    display: none;
-
-    @include from('m') {
-      display: inline-flex;
-    }
   }
 
   &__body {

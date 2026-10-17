@@ -23,7 +23,7 @@ class EventController extends Controller
         $signUpsCount = $user->signUpsForOtherOrganisersCount();
 
         return view('events.create', [
-            'games' => Game::query()->orderBy('name')->get(['id', 'name']),
+            'games' => Game::query()->selectable()->orderBy('name')->get(['id', 'name', 'platform', 'release_year', 'cover_image_url', 'cover_image_path', 'logo_image_path', 'provider_id']),
             'categories' => Category::query()->orderBy('name')->get(['id', 'name']),
             'signUpsCount' => $signUpsCount,
             'signUpsRemaining' => max(0, 3 - $signUpsCount),

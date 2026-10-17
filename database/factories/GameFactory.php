@@ -20,6 +20,15 @@ class GameFactory extends Factory
     {
         return [
             'name' => Str::title(fake()->unique()->word()),
+            'source' => Game::SOURCE_CATALOG,
+            'provider' => 'igdb',
+            'provider_id' => fake()->unique()->numberBetween(1, 9_999_999),
         ];
+    }
+
+    /** A title typed in by hand before only catalog games could be chosen. */
+    public function manual(): static
+    {
+        return $this->state(['source' => 'manual', 'provider' => null, 'provider_id' => null]);
     }
 }

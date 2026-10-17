@@ -1,4 +1,8 @@
-import { initialiseLocationSearch, initialiseSchedulePicker } from './event-create.js'
+import {
+  initialiseGameCatalog,
+  initialiseLocationSearch,
+  initialiseSchedulePicker,
+} from './event-create.js'
 
 /**
  * The application entry point Vite bundles.
@@ -234,42 +238,53 @@ function initialiseFilterSelects() {
 
   for (const select of selects) {
     const summary = select.querySelector('[data-filter-summary]')
-    if (!summary) {
-      continue
+    if (summary) {
+      select.addEventListener('change', (event) => {
+        // Leaving the search field fires `change` too; that is typing, not a choice.
+        if (event.target.matches('[data-option-search]')) return
+        const checked = [...select.querySelectorAll('input:checked')]
+        const name = (input) => {
+          const label = input?.closest('label')
+          return (label?.querySelector('[data-option-name]') ?? label)?.textContent.trim()
+        }
+        if (select.hasAttribute('data-single-select')) {
+          summary.textContent = name(checked[0])
+          select.open = false
+        } else if (checked.length === 0) {
+          summary.textContent = select.dataset.allLabel
+        } else if (checked.length === 1) {
+          summary.textContent = name(checked[0])
+        } else {
+          const label = select.dataset.multipleLabel
+          summary.textContent = label.includes(':count')
+            ? label.replace(':count', checked.length)
+            : `${checked.length} ${label}`
+        }
+      })
     }
-
-    select.addEventListener('change', () => {
-      const checked = [...select.querySelectorAll('input:checked')]
-      if (select.hasAttribute('data-single-select')) {
-        summary.textContent = checked[0]?.closest('label')?.textContent.trim()
-        select.open = false
-      } else if (checked.length === 0) {
-        summary.textContent = select.dataset.allLabel
-      } else if (checked.length === 1) {
-        summary.textContent = checked[0].closest('label')?.textContent.trim()
-      } else {
-        const label = select.dataset.multipleLabel
-        summary.textContent = label.includes(':count')
-          ? label.replace(':count', checked.length)
-          : `${checked.length} ${label}`
-      }
-    })
 
     const search = select.querySelector('[data-option-search]')
     if (search) {
-      const rows = [...select.querySelectorAll('[data-option-row]')]
+      // Like the other dropdowns, a chosen option stays in the list, checked.
       const empty = select.querySelector('[data-option-empty]')
       search.addEventListener('input', () => {
         const term = search.value.trim().toLocaleLowerCase()
         let visible = 0
-        for (const row of rows) {
-          const matches = row.textContent.trim().toLocaleLowerCase().includes(term)
-          row.hidden = !matches
-          visible += Number(matches)
+        for (const row of select.querySelectorAll('[data-option-row]')) {
+          row.hidden = !row.textContent.trim().toLocaleLowerCase().includes(term)
+          visible += Number(!row.hidden)
         }
         if (empty) empty.hidden = visible > 0
       })
+      // Enter searches the list; it must not submit the surrounding form.
+      search.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') event.preventDefault()
+      })
     }
+
+    select.addEventListener('toggle', () => {
+      if (select.open) search?.focus()
+    })
 
     select.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
@@ -325,7 +340,14 @@ function initialiseEventCreateForm() {
         button.setAttribute('aria-label', select.dataset.removeLabel.replace(':name', name))
         button.querySelector('[data-chip-name]').textContent = name
         const logo = button.querySelector('[data-chip-logo]')
-        if (logo) logo.hidden = kind !== 'game'
+        if (logo) {
+          const option = input.closest('label')
+          const optionLogo = option?.querySelector('.event-create__game-option-logo')
+          if (kind === 'game' && optionLogo) {
+            logo.replaceChildren(...[...optionLogo.childNodes].map((node) => node.cloneNode(true)))
+            logo.hidden = false
+          }
+        }
         return button
       })
       chips.replaceChildren(...buttons)
@@ -350,6 +372,7 @@ function initialiseEventCreateForm() {
 
   const capacityFields = form.querySelector('[data-capacity-fields]')
   const syncCapacity = () => {
+    if (!capacityFields) return
     const unlimited = form.querySelector('[data-capacity-mode]:checked')?.value === 'unlimited'
     capacityFields.hidden = unlimited
     for (const input of capacityFields.querySelectorAll('input')) {
@@ -521,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseEventFilters()
   initialiseFilterSelects()
   initialiseEventCreateForm()
+  initialiseGameCatalog()
   initialiseModals()
   initialiseTransientMessages()
   initialiseParticipantPagination()

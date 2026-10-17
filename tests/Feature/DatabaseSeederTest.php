@@ -9,7 +9,6 @@ use App\Models\Game;
 use App\Models\User;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\DatabaseSeeder;
-use Database\Seeders\GameSeeder;
 
 /*
  * `make install` runs `migrate --seed`, and running `make install` again on a
@@ -25,12 +24,12 @@ it('can seed a database that has already been seeded', function (): void {
     expect(User::query()->where('email', 'test@example.com')->count())->toBe(1);
 });
 
-it('seeds the games, categories, admin and demo events only once', function (): void {
+it('seeds categories and accounts without sample games or events', function (): void {
     $this->seed(DatabaseSeeder::class);
     $this->seed(DatabaseSeeder::class);
 
-    expect(Game::query()->count())->toBe(count(GameSeeder::NAMES))
+    expect(Game::query()->count())->toBe(0)
         ->and(Category::query()->count())->toBe(count(CategorySeeder::NAMES))
         ->and(User::query()->where('email', 'admin@example.com')->sole()->role)->toBe(Role::Admin)
-        ->and(Event::query()->count())->toBe(4);
+        ->and(Event::query()->count())->toBe(0);
 });

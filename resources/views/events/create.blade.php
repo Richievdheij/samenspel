@@ -16,7 +16,6 @@
     @else
         @php
             $selectedGameIds = is_array(old('games')) ? array_map('intval', old('games')) : [];
-            $selectedGames = $games->whereIn('id', $selectedGameIds);
             $selectedCategoryIds = is_array(old('categories')) ? array_map('intval', old('categories')) : [];
             $selectedCategories = $categories->whereIn('id', $selectedCategoryIds);
             $capacityMode = old('capacity_mode', 'limited');
@@ -30,39 +29,7 @@
 
             <div class="event-create__grid">
                 <div class="field">
-                    <span class="field__label" id="event-games-label">{{ __('Games') }}</span>
-                    <details class="event-create__select" data-filter-select data-event-games data-all-label="{{ __('Choose games') }}" data-multiple-label="{{ __('Games selected (:count)') }}" data-remove-label="{{ __('Remove game: :name') }}">
-                        <summary class="field__control event-create__select-toggle" aria-labelledby="event-games-label event-games-choice" @if ($errors->has('games') || $errors->has('games.*')) aria-invalid="true" aria-describedby="event-games-error" @endif>
-                            <span id="event-games-choice" data-filter-summary>
-                                @if ($selectedGames->count() === 1)
-                                    {{ $selectedGames->first()->name }}
-                                @elseif ($selectedGames->count() > 1)
-                                    {{ __('Games selected (:count)', ['count' => $selectedGames->count()]) }}
-                                @else
-                                    {{ __('Choose games') }}
-                                @endif
-                            </span>
-                            <x-icon name="chevron-down" />
-                        </summary>
-                        <div class="event-create__options" role="group" aria-label="{{ __('Games') }}">
-                            <label class="event-create__search">
-                                <span class="sr-only">{{ __('Search games') }}</span>
-                                <input class="field__control" type="search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off">
-                            </label>
-                            @foreach ($games as $game)
-                                <label class="event-create__option" data-option-row>
-                                    <input class="checkbox__control" type="checkbox" name="games[]" value="{{ $game->id }}" @checked(in_array($game->id, $selectedGameIds, true))>
-                                    <span class="event-create__game-option-logo" aria-hidden="true"></span>
-                                    <span>{{ $game->name }}</span>
-                                </label>
-                            @endforeach
-                            <p class="event-create__empty" data-option-empty hidden>{{ __('No games match your search.') }}</p>
-                        </div>
-                    </details>
-                    @if ($errors->has('games') || $errors->has('games.*'))
-                        <p class="field__error" id="event-games-error">{{ $errors->first('games') ?: $errors->first('games.*') }}</p>
-                    @endif
-                    <div class="event-create__chips" role="group" aria-label="{{ __('Selected games') }}" data-event-game-chips hidden></div>
+                    <x-game-picker :games="$games" :selected-game-ids="$selectedGameIds" />
                 </div>
 
                 <div class="field">

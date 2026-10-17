@@ -125,7 +125,7 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 | Tabel            | Wat erin staat                                                                                     |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
 | `users`          | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin                        |
-| `games`          | De spellen die een admin beheert, bijvoorbeeld Mario Kart of Counter-Strike                        |
+| `games`          | De spellen uit de IGDB-catalogus die events gebruiken, onder hun officiële titel                   |
 | `categories`     | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual                        |
 | `events`         | Een gaming-event of LAN-party, met spel, hoofdcategorie, tijd, plek en optionele deelnemersgrenzen |
 | `category_event` | Alle categorieën die bij een event horen                                                           |
@@ -259,11 +259,18 @@ erDiagram
     }
     "games" {
         int id PK
-        string name UK
+        string name
         datetime created_at "nullable"
         datetime updated_at "nullable"
         string cover_image_path "nullable"
         string logo_image_path "nullable"
+        string normalized_name UK "nullable"
+        string source
+        string provider "nullable"
+        int provider_id "nullable"
+        string platform "nullable"
+        int release_year "nullable"
+        string cover_image_url "nullable"
     }
     "job_batches" {
         string id PK

@@ -142,6 +142,8 @@
                                     <div class="event-card__game-tile">
                                         @if ($game->cover_image_path)
                                             <img class="event-card__game-cover" src="{{ Storage::disk('public')->url($game->cover_image_path) }}" alt="" loading="lazy" decoding="async">
+                                        @elseif ($game->cover_image_url)
+                                            <img class="event-card__game-cover" src="{{ $game->cover_image_url }}" alt="" loading="lazy" decoding="async">
                                         @elseif ($game->logo_image_path)
                                             <img class="event-card__game-cover event-card__game-cover--logo" src="{{ Storage::disk('public')->url($game->logo_image_path) }}" alt="" loading="lazy" decoding="async">
                                         @else
@@ -150,19 +152,6 @@
                                     </div>
                                 @endforeach
                             </div>
-                            @if ($event->games->count() > 1)
-                                <div class="event-card__games" aria-label="{{ __('Games') }}">
-                                    @foreach ($event->games->take(5) as $game)
-                                        <x-game-badge :game="$game" compact class="{{ $loop->iteration > 3 ? 'event-card__games-extra' : '' }}" />
-                                    @endforeach
-                                    @if ($event->games->count() > 3)
-                                        <span class="event-card__games-more event-card__games-more--mobile" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 3, ['count' => $event->games->count() - 3]) }}">+{{ $event->games->count() - 3 }}</span>
-                                    @endif
-                                    @if ($event->games->count() > 5)
-                                        <span class="event-card__games-more event-card__games-more--desktop" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 5, ['count' => $event->games->count() - 5]) }}">+{{ $event->games->count() - 5 }}</span>
-                                    @endif
-                                </div>
-                            @endif
                             <time class="event-card__stamp" datetime="{{ $event->starts_at->toIso8601String() }}">
                                 <span class="event-card__weekday">{{ $event->starts_at->translatedFormat('D') }}</span>
                                 <span class="event-card__day">{{ $event->starts_at->translatedFormat('j') }}</span>
@@ -181,6 +170,16 @@
                                 @endforeach
                             </div>
                             <h2 class="event-card__title" id="event-title-{{ $event->id }}">{{ $event->title }}</h2>
+                            @if ($event->games->count() > 1)
+                                <div class="event-card__game-names" aria-label="{{ __('Games') }}">
+                                    @foreach ($event->games->take(4) as $game)
+                                        <x-game-badge :game="$game" compact />
+                                    @endforeach
+                                    @if ($event->games->count() > 4)
+                                        <span class="event-card__games-note" aria-label="{{ trans_choice(':count more game|:count more games', $event->games->count() - 4) }}" title="{{ trans_choice(':count more game|:count more games', $event->games->count() - 4) }}">+{{ $event->games->count() - 4 }}</span>
+                                    @endif
+                                </div>
+                            @endif
                             <ul class="event-card__facts">
                                 <li class="event-card__fact">
                                     <x-icon name="clock" />

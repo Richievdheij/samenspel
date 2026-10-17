@@ -72,7 +72,7 @@ it('shows the location in the list to a signed-in user', function (): void {
         ->assertSeeText('Utrecht');
 });
 
-it('combines game art and keeps overflow games available on the event page', function (): void {
+it('shows game art and every game name on a card and event page', function (): void {
     $firstGame = Game::factory()->create(['cover_image_path' => 'covers/first.jpg']);
     $middleGames = Game::factory()->count(4)->create(['cover_image_path' => 'covers/middle.jpg']);
     $lastGame = Game::factory()->create(['cover_image_path' => 'covers/last.jpg']);
@@ -81,11 +81,15 @@ it('combines game art and keeps overflow games available on the event page', fun
 
     $index = get(route('events.index'))->assertOk();
 
-    $index->assertSeeHtml('class="event-card__game-tile"')->assertSee('covers/last.jpg')->assertSeeHtml('aria-label="3 spellen meer"')->assertSeeHtml('aria-label="1 spel meer"');
+    $index->assertSeeHtml('class="event-card__game-tile"')
+        ->assertSee('covers/last.jpg')
+        ->assertSeeHtml('class="game-badge game-badge--compact"')
+        ->assertSeeHtml('class="event-card__games-note" aria-label="2 spellen meer"')
+        ->assertDontSeeHtml('event-card__games-more');
 
     get(route('events.show', $event))
         ->assertOk()
-        ->assertSeeText('Bekijk alle 6 spellen')
+        ->assertSeeText('Spellen (6)')
         ->assertSeeText($lastGame->name);
 });
 

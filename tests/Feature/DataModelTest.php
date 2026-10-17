@@ -17,10 +17,21 @@ use Illuminate\Support\Facades\DB;
  * the relations, the unique sign-up and what deleting a row takes with it.
  */
 
-it('refuses a second game or category with the same name', function (string $model): void {
-    $model::query()->create(['name' => 'LAN']);
-    $model::query()->create(['name' => 'LAN']);
-})->with([Game::class, Category::class])->throws(UniqueConstraintViolationException::class);
+it('refuses a second category with the same name', function (): void {
+    Category::query()->create(['name' => 'LAN']);
+    Category::query()->create(['name' => 'LAN']);
+})->throws(UniqueConstraintViolationException::class);
+
+it('prevents concurrent duplicate games by normalized title and platform', function (): void {
+    $key = Game::normalizedKey('Mario Kart', 'Switch');
+    Game::query()->create(['name' => 'Mario Kart', 'platform' => 'Switch', 'normalized_name' => $key]);
+    Game::query()->create(['name' => 'mario-kart', 'platform' => 'Switch', 'normalized_name' => $key]);
+})->throws(UniqueConstraintViolationException::class);
+
+it('prevents two games from sharing the same provider ID', function (): void {
+    Game::query()->create(['name' => 'Mario Kart', 'provider' => 'igdb', 'provider_id' => 42]);
+    Game::query()->create(['name' => 'Mario Kart Deluxe', 'provider' => 'igdb', 'provider_id' => 42]);
+})->throws(UniqueConstraintViolationException::class);
 
 it('connects an event to its organiser and its participants', function (): void {
     $organiser = User::factory()->create();

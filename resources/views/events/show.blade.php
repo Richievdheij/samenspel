@@ -4,7 +4,7 @@
         <div class="event-detail__classification">
             @if ($event->games->count() > 3)
                 <details class="event-detail__games">
-                    <summary class="event-detail__games-toggle">{{ __('View all :count games', ['count' => $event->games->count()]) }} <x-icon name="chevron-down" /></summary>
+                    <summary class="event-detail__games-toggle">{{ __('Games') }} ({{ $event->games->count() }}) <x-icon name="chevron-down" /></summary>
                     <div class="event-detail__games-list">
                         @foreach ($event->games as $game)
                             <x-game-badge :game="$game" />

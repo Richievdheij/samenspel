@@ -11,6 +11,15 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Spellen voor een event komen uit de IGDB-catalogus, onder hun officiële titel.
+  De keuzelijst toont de bekende spellen direct; vanaf drie tekens zoekt hij in
+  de catalogus, en een gekozen spel blijft aangevinkt staan, zoals bij
+  categorieën (US8).
+- Alleen echte hoofdspellen zijn kiesbaar: geen DLC, seizoenen, pakketten,
+  bundels, speciale edities, geannuleerde of offline titels. De zoekresultaten
+  zetten het gezochte spel bovenaan, vóór spin-offs en fanprojecten (US8).
+- `php artisan games:retire-non-main` toetst eerder gekozen catalogusgames
+  opnieuw en verbergt ongeschikte voor nieuwe events (US8).
 - Datumkiezer voor eventaanmaak met snelle toekomstige periodes, twee maanden op
   desktop en één maand op mobiel, plus toepassen en annuleren (US8).
 - Gamecovers en logo's kunnen als lokale afbeeldingen aan een spel worden
@@ -29,6 +38,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- Eventkaarten en de eventpagina tonen de covers van de spellen uit de catalogus; meerdere
+  spellen staan als kleine covers onder de titel en de volledige lijst klapt uit
+  op de eventpagina (US8).
 - Eventkaarten combineren de covers van alle gekozen spellen, tonen bij veel
   spellen een `+N`-markering en begrenzen titels tot drie regels; op de
   eventpagina kan de volledige spellenlijst worden uitgeklapt (US8).
@@ -84,6 +96,13 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - Een volledige footer op elke pagina, ook op de inlogpagina's: logo,
   omschrijving, de kolommen Ontdekken en Account met werkende links, en een
   copyrightregel.
+
+### Verwijderd
+
+- Zelf een speltitel intypen bij een event. Eerder ingetypte titels blijven bij
+  hun events staan, maar zijn niet meer kiesbaar voor nieuwe events (US8).
+- De voorbeeldgames en demo-events uit de seeders: een nieuwe installatie start
+  met alleen categorieën en de twee accounts (US8).
 
 ## 2026-10-08: Datamodel
 

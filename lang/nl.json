@@ -201,5 +201,17 @@
   "This week": "Deze week",
   "Next week": "Volgende week",
   "This month": "Deze maand",
-  "Apply": "Toepassen"
+  "Apply": "Toepassen",
+  "Choose a game from the catalog.": "Kies een game uit de catalogus.",
+  "Choose at least one game.": "Kies minstens één spel.",
+  "Enter a game title to search.": "Vul een gametitel in om te zoeken.",
+  "Enter a valid game title.": "Vul een geldige gametitel in.",
+  "Enter at least 3 characters to search games.": "Vul minstens 3 tekens in om games te zoeken.",
+  "Game search is temporarily unavailable. Try again later.": "Zoeken naar games is tijdelijk niet beschikbaar. Probeer het later opnieuw.",
+  "Game selected. You can now save your event.": "Game geselecteerd. Je kunt je event nu opslaan.",
+  "More from the game catalog": "Meer uit de gamecatalogus",
+  "Search with at most 80 characters.": "Zoek met maximaal 80 tekens.",
+  "This game could not be found in the catalog.": "Deze game is niet gevonden in de catalogus.",
+  "This game could not be selected. Try again.": "Deze game kon niet worden geselecteerd. Probeer het opnieuw.",
+  "Type at least 3 characters to search the catalog.": "Typ minstens 3 tekens om in de catalogus te zoeken."
 }

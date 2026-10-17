@@ -99,6 +99,13 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
         return $this->role === Role::Admin || $this->signUpsForOtherOrganisersCount() >= 3;
     }
 
+    /** An existing organiser can keep editing their event if eligibility later changes. */
+    public function canSelectGamesForEvent(?int $eventId): bool
+    {
+        return $this->canOrganizeEvents()
+            || ($eventId !== null && $this->organizedEvents()->whereKey($eventId)->exists());
+    }
+
     /**
      * Create the event and its game and category labels as one database change.
      *
