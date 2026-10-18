@@ -30,10 +30,31 @@
             <section class="card event-detail__description" aria-labelledby="event-description">
                 <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
                 <p class="event-detail__text">{{ $event->description }}</p>
-                @can('update', $event)
+                @canany(['update', 'delete'], $event)
                     <div class="event-detail__actions">
-                        <x-button :href="route('events.edit', $event)">{{ __('Edit event') }}</x-button>
+                        @can('update', $event)
+                            <x-button :href="route('events.edit', $event)">{{ __('Edit event') }}</x-button>
+                        @endcan
+                        @can('delete', $event)
+                            <x-button variant="danger" command="show-modal" commandfor="confirm-event-deletion">{{ __('Delete event') }}</x-button>
+                        @endcan
                     </div>
+                @endcanany
+                @can('delete', $event)
+                    <x-modal name="confirm-event-deletion" aria-labelledby="confirm-event-deletion-title">
+                        <form class="form" method="POST" action="{{ route('events.destroy', $event) }}">
+                            @csrf
+                            @method('DELETE')
+
+                            <h2 class="modal__title" id="confirm-event-deletion-title">{{ __('Delete this event?') }}</h2>
+                            <p class="modal__text">{{ trans_choice('This permanently deletes the event, together with :count sign-up.|This permanently deletes the event, together with :count sign-ups.', $event->participants_count) }}</p>
+
+                            <div class="form__actions form__actions--end">
+                                <x-button command="close" commandfor="confirm-event-deletion">{{ __('Cancel') }}</x-button>
+                                <x-button variant="danger" type="submit">{{ __('Delete event') }}</x-button>
+                            </div>
+                        </form>
+                    </x-modal>
                 @endcan
             </section>
         @else
@@ -73,7 +94,7 @@
                 @endif
                 <div>
                     <dt>{{ __('Time zone') }}</dt>
-                    <dd>{{ __('Amsterdam time') }}</dd>
+                    <dd>{{ __('Amsterdam time (:offset)', ['offset' => $event->utcOffsetLabel()]) }}</dd>
                 </div>
                 @auth
                     <div>

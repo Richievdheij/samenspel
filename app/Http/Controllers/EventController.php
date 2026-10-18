@@ -76,6 +76,19 @@ class EventController extends Controller
     }
 
     /**
+     * Delete the organiser's event. The database removes its sign-ups and its
+     * game, category and platform labels with it (cascadeOnDelete).
+     */
+    public function destroy(Event $event): RedirectResponse
+    {
+        Gate::authorize('delete', $event);
+        $event->delete();
+
+        return to_route('events.index')
+            ->with('status', __('Your event has been deleted.'));
+    }
+
+    /**
      * The upcoming events, soonest first, ten to a page. Open to guests.
      *
      * The game, category and sign-up count come along in the same few queries,

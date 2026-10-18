@@ -75,6 +75,15 @@ it('shows start, end, duration and time zone across midnight', function (): void
         ->assertSeeText('Amsterdamse tijd');
 });
 
+it('names the UTC offset of Amsterdam time on the day the event starts', function (): void {
+    $year = now()->year + 1;
+    $winterEvent = Event::factory()->create(['starts_at' => now()->setDate($year, 1, 15)->setTime(20, 0)]);
+    $summerEvent = Event::factory()->create(['starts_at' => now()->setDate($year, 7, 15)->setTime(20, 0)]);
+
+    get(route('events.show', $winterEvent))->assertOk()->assertSeeText('Amsterdamse tijd (UTC+1)');
+    get(route('events.show', $summerEvent))->assertOk()->assertSeeText('Amsterdamse tijd (UTC+2)');
+});
+
 it('does not invent an end time for an existing event', function (): void {
     $event = Event::factory()->create(['ends_at' => null]);
 

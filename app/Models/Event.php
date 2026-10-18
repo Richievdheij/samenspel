@@ -174,6 +174,18 @@ class Event extends Model
     }
 
     /**
+     * The offset of Amsterdam time from UTC when the event starts: "UTC+1" in
+     * winter and "UTC+2" in summer, so a visitor elsewhere can convert it.
+     */
+    public function utcOffsetLabel(): string
+    {
+        $offset = $this->starts_at->copy()->setTimezone(config()->string('app.timezone'))->utcOffset();
+        $minutes = abs($offset) % 60;
+
+        return 'UTC'.($offset < 0 ? '-' : '+').intdiv(abs($offset), 60).($minutes > 0 ? sprintf(':%02d', $minutes) : '');
+    }
+
+    /**
      * Only events that have not started yet.
      *
      * @param  Builder<self>  $query

@@ -11,6 +11,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- De organisator verwijdert een eigen event via **Event verwijderen** op de
+  eventpagina, na bevestiging in een venster dat noemt hoeveel inschrijvingen
+  meeverdwijnen. Inschrijvingen en labels gaan mee; een ander krijgt een 403 (US10).
 - De organisator bewerkt een eigen event via **Event bewerken** op de
   eventpagina: hetzelfde formulier in drie stappen als bij aanmaken, vooraf
   ingevuld en met dezelfde controles. Status en inschrijvingen blijven staan, en
@@ -52,6 +55,8 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- De tijdzone op de eventpagina noemt het verschil met UTC op de startdag, zoals
+  "Amsterdamse tijd (UTC+1)" in de winter en "(UTC+2)" in de zomer (US5).
 - De filters in het eventoverzicht staan in drie even brede kolommen, zodat een
   lange keuze ze niet verschuift; de keuzelijsten zijn hoger en scrollen binnen
   zichzelf (US4).
