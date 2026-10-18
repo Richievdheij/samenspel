@@ -11,6 +11,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Een gebruiker schrijft zich in voor een open event via **Inschrijven** op de
+  eventpagina. Dat kan niet voor een eigen, gesloten, vol of al begonnen event,
+  en niet twee keer; de pagina zegt waarom (US12).
 - De organisator zet de inschrijving van een eigen event open of dicht met een
   knop onder de kaart in het eventoverzicht en op de eventpagina. De knop stuurt
   een POST naar een eigen `toggleStatus`-actie; een ander krijgt een 403 (US11).

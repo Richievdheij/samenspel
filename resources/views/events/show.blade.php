@@ -144,6 +144,24 @@
                     </dd>
                 </div>
             </dl>
+
+            @auth
+                <div class="event-detail__sign-up">
+                    @if ($isSignedUp)
+                        <p class="event-detail__sign-up-state"><x-icon name="check" /> {{ __('You are signed up for this event.') }}</p>
+                    @elseif ($signUpRefusal === null)
+                        <form method="POST" action="{{ route('events.sign-up.store', $event) }}">
+                            @csrf
+                            <x-button variant="primary" type="submit">{{ __('Sign up') }}</x-button>
+                        </form>
+                    @else
+                        <p class="event-detail__sign-up-note">{{ $signUpRefusal }}</p>
+                    @endif
+                    @error('sign_up')
+                        <p class="field__error" role="alert">{{ $message }}</p>
+                    @enderror
+                </div>
+            @endauth
         </aside>
 
         @auth

@@ -119,6 +119,33 @@
     }
   }
 
+  &__sign-up {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-xs);
+    inline-size: 100%;
+    padding-block-start: var(--space-m);
+    border-block-start: var(--line);
+
+    form {
+      margin: 0;
+    }
+  }
+
+  &__sign-up-state {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin: 0;
+    color: var(--color-felt);
+    font-weight: var(--weight-semibold);
+  }
+
+  &__sign-up-note {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
   &__availability {
     display: grid;
     justify-items: start;

@@ -167,8 +167,12 @@ class EventController extends Controller
             $event->load('organizer');
         }
 
+        $user = $request->user();
+
         return view('events.show', [
             'event' => $event,
+            'isSignedUp' => $user !== null && $event->hasParticipant($user),
+            'signUpRefusal' => $user === null ? null : $event->signUpRefusal($user),
             'participantPreview' => $request->user() === null ? null : $event->participants()->orderBy('users.name')->limit(4)->get(['users.id', 'users.name']),
             'participants' => $request->user() === null ? null : $event->participants()
                 ->orderBy('users.name')

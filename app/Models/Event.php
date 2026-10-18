@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -161,6 +162,57 @@ class Event extends Model
         $signUps = $this->participants_count ?? $this->participants()->count();
 
         return $signUps >= $this->max_participants;
+    }
+
+    public function hasParticipant(User $user): bool
+    {
+        return $this->participants()->whereKey($user->id)->exists();
+    }
+
+    /** Why the user cannot sign up for this event right now, or null when they can. */
+    public function signUpRefusal(User $user): ?string
+    {
+        if ($this->user_id === $user->id) {
+            return __('You organise this event, so you cannot sign up for it.');
+        }
+        if ($this->hasParticipant($user)) {
+            return __('You are already signed up for this event.');
+        }
+        if ($this->starts_at->isPast()) {
+            return __('This event has already started.');
+        }
+        if ($this->status === EventStatus::Closed) {
+            return __('Sign-ups for this event are closed.');
+        }
+        if ($this->isFull()) {
+            return __('This event is full.');
+        }
+
+        return null;
+    }
+
+    /**
+     * Sign the user up, or return why that is not possible. The event row is
+     * locked while the places are counted, so two people cannot both take the
+     * last one; the unique pair on event_user stops a double sign-up.
+     */
+    public function signUp(User $user): ?string
+    {
+        return DB::transaction(function () use ($user): ?string {
+            $event = self::query()->lockForUpdate()->findOrFail($this->id);
+            $refusal = $event->signUpRefusal($user);
+            if ($refusal !== null) {
+                return $refusal;
+            }
+
+            try {
+                $event->participants()->attach($user);
+            } catch (UniqueConstraintViolationException) {
+                return __('You are already signed up for this event.');
+            }
+
+            return null;
+        });
     }
 
     /** Duration is unknown for events created before an end time was recorded. */
