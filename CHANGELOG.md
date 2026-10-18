@@ -11,6 +11,8 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Een gebruiker schrijft zich uit voor een event via **Uitschrijven** op de
+  eventpagina, zolang het nog niet begonnen is; de plek komt vrij (US13).
 - Een gebruiker schrijft zich in voor een open event via **Inschrijven** op de
   eventpagina. Dat kan niet voor een eigen, gesloten, vol of al begonnen event,
   en niet twee keer; de pagina zegt waarom (US12).

@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     Route::post('/events/{event}/status', [EventController::class, 'toggleStatus'])->name('events.toggle-status');
     Route::post('/events/{event}/sign-up', [EventSignUpController::class, 'store'])->name('events.sign-up.store');
+    Route::delete('/events/{event}/sign-up', [EventSignUpController::class, 'destroy'])->name('events.sign-up.destroy');
 });
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 

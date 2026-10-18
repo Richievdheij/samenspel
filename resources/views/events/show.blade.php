@@ -149,6 +149,13 @@
                 <div class="event-detail__sign-up">
                     @if ($isSignedUp)
                         <p class="event-detail__sign-up-state"><x-icon name="check" /> {{ __('You are signed up for this event.') }}</p>
+                        @if ($event->starts_at->isFuture())
+                            <form method="POST" action="{{ route('events.sign-up.destroy', $event) }}">
+                                @csrf
+                                @method('DELETE')
+                                <x-button type="submit">{{ __('Cancel my sign-up') }}</x-button>
+                            </form>
+                        @endif
                     @elseif ($signUpRefusal === null)
                         <form method="POST" action="{{ route('events.sign-up.store', $event) }}">
                             @csrf
