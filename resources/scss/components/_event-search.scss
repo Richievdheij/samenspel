@@ -5,18 +5,28 @@
   top: 0;
   z-index: calc(var(--layer-dropdown) - 1);
   inline-size: calc(100% + 2 * var(--space-s));
-  margin: calc(-1 * var(--space-xl)) calc(-1 * var(--space-s)) var(--space-l);
+  margin: 0 calc(-1 * var(--space-s)) var(--space-l);
   padding: var(--space-2xs) var(--space-s);
   border-block-end: var(--line);
   background-color: var(--color-surface);
 
+  // Pulled up against the page header only when it opens the content. Under a
+  // flash message the pull would slide the bar over the message.
+  &:first-child {
+    margin-block-start: calc(-1 * var(--space-xl));
+  }
+
   @include from('m') {
     position: static;
     inline-size: 100%;
-    margin: calc(-1 * var(--space-xl) + var(--space-s)) 0 var(--space-l);
+    margin-inline: 0;
     padding: 0;
     border: 0;
     background: transparent;
+
+    &:first-child {
+      margin-block-start: calc(-1 * var(--space-xl) + var(--space-s));
+    }
   }
 
   &__row {

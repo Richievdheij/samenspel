@@ -14,9 +14,20 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  // A card, and under it the organiser's status switch: a form cannot sit inside
+  // the card's link.
   > li {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: var(--space-xs);
     min-inline-size: 0;
   }
+}
+
+.event-status-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
 }
 
 .event-card {

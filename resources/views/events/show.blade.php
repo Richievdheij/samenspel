@@ -30,10 +30,13 @@
             <section class="card event-detail__description" aria-labelledby="event-description">
                 <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
                 <p class="event-detail__text">{{ $event->description }}</p>
-                @canany(['update', 'delete'], $event)
+                @canany(['update', 'toggleStatus', 'delete'], $event)
                     <div class="event-detail__actions">
                         @can('update', $event)
                             <x-button :href="route('events.edit', $event)">{{ __('Edit event') }}</x-button>
+                        @endcan
+                        @can('toggleStatus', $event)
+                            <x-event-status-toggle :event="$event" />
                         @endcan
                         @can('delete', $event)
                             <x-button variant="danger" command="show-modal" commandfor="confirm-event-deletion">{{ __('Delete event') }}</x-button>

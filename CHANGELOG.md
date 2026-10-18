@@ -11,6 +11,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- De organisator zet de inschrijving van een eigen event open of dicht met een
+  knop onder de kaart in het eventoverzicht en op de eventpagina. De knop stuurt
+  een POST naar een eigen `toggleStatus`-actie; een ander krijgt een 403 (US11).
 - De organisator verwijdert een eigen event via **Event verwijderen** op de
   eventpagina, na bevestiging in een venster dat noemt hoeveel inschrijvingen
   meeverdwijnen. Inschrijvingen en labels gaan mee; een ander krijgt een 403 (US10).
@@ -52,6 +55,12 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - Paginering per tien events, met een eigen paginaweergave zonder Tailwind (US4).
   Elk paginanummer is een blokje in de knopstijl; de huidige pagina is groen
   en ingedrukt.
+
+### Opgelost
+
+- Een melding boven het eventoverzicht, zoals na het sluiten van de inschrijving
+  of het verwijderen van een event, wordt niet meer half bedekt door de
+  zoekbalk (US11).
 
 ### Gewijzigd
 

@@ -256,6 +256,9 @@
                             </div>
                         </div>
                     </a>
+                    @can('toggleStatus', $event)
+                        <x-event-status-toggle :event="$event" />
+                    @endcan
                 </li>
             @endforeach
         </ul>

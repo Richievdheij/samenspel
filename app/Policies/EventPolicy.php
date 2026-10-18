@@ -19,6 +19,12 @@ final class EventPolicy
         return $user->id === $event->user_id;
     }
 
+    /** Only the organiser opens or closes sign-ups for an event. */
+    public function toggleStatus(User $user, Event $event): bool
+    {
+        return $user->id === $event->user_id;
+    }
+
     /** Only the organiser deletes an event; its sign-ups go with it. */
     public function delete(User $user, Event $event): bool
     {

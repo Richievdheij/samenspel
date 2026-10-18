@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\EventStatus;
 use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\ToggleEventStatusRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Category;
 use App\Models\Event;
@@ -73,6 +75,16 @@ class EventController extends Controller
 
         return to_route('events.show', $event)
             ->with('status', __('Your event has been updated.'));
+    }
+
+    /** Open or close sign-ups, then return to the list or page the button was on. */
+    public function toggleStatus(ToggleEventStatusRequest $request, Event $event): RedirectResponse
+    {
+        $event->update(['status' => $request->status()]);
+
+        return back(fallback: route('events.show', $event))->with('status', $event->status === EventStatus::Closed
+            ? __('Sign-ups for :title are closed.', ['title' => $event->title])
+            : __('Sign-ups for :title are open again.', ['title' => $event->title]));
     }
 
     /**
