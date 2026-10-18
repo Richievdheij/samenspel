@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use App\Models\Category;
 use App\Models\Event;
 use App\Models\Game;
@@ -12,6 +13,7 @@ use App\Models\Platform;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class EventController extends Controller
@@ -42,6 +44,35 @@ class EventController extends Controller
 
         return to_route('events.show', $event)
             ->with('status', __('Your event has been created.'));
+    }
+
+    /**
+     * The creation form, filled with the event. Only for its organiser, who keeps
+     * that right even when they could no longer create a new event.
+     */
+    public function edit(Event $event): View
+    {
+        Gate::authorize('update', $event);
+        $event->load(['games', 'categories', 'platforms']);
+
+        return view('events.edit', [
+            'event' => $event,
+            'games' => Game::query()
+                ->where(fn ($query) => $query->selectable()->orWhereIn('id', $event->games->modelKeys()))
+                ->orderBy('name')
+                ->get(['id', 'name', 'platform', 'release_year', 'cover_image_url', 'cover_image_path', 'logo_image_path', 'provider_id']),
+            'categories' => Category::query()->orderBy('name')->get(['id', 'name']),
+            'platforms' => Platform::query()->orderBy('id')->get(['id', 'name', 'slug']),
+        ]);
+    }
+
+    /** Save the organiser's changes; the request has checked who sent them. */
+    public function update(UpdateEventRequest $request, Event $event): RedirectResponse
+    {
+        $event->reviseDetails($request->eventAttributes(), $request->categoryIds(), $request->gameIds(), $request->platformIds());
+
+        return to_route('events.show', $event)
+            ->with('status', __('Your event has been updated.'));
     }
 
     /**

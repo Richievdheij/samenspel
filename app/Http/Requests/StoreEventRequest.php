@@ -17,7 +17,7 @@ use LogicException;
 
 class StoreEventRequest extends FormRequest
 {
-    /** @var array{id: string, label: string, street: string, number: string, postcode: string, city: string, type: string}|null */
+    /** @var array{id: string, label: string}|null */
     private ?array $resolvedAddress = null;
 
     /**
@@ -84,11 +84,16 @@ class StoreEventRequest extends FormRequest
                 return;
             }
 
+            $this->resolvedAddress = $this->unchangedAddress($reference);
+            if ($this->resolvedAddress !== null) {
+                return;
+            }
+
             /** @var AddressLookup $addresses */
             $addresses = resolve(AddressLookup::class);
 
             try {
-                $this->resolvedAddress = $addresses->lookup($this->stringInput('location_reference'));
+                $this->resolvedAddress = $addresses->lookup($reference);
             } catch (ConnectionException|RequestException) {
                 $validator->errors()->add('location_mode', __('Address search is temporarily unavailable.'));
 
@@ -166,6 +171,17 @@ class StoreEventRequest extends FormRequest
         }
 
         return $attributes;
+    }
+
+    /**
+     * An address that needs no lookup, because the event already has it. A new
+     * event has none.
+     *
+     * @return array{id: string, label: string}|null
+     */
+    protected function unchangedAddress(string $reference): ?array
+    {
+        return null;
     }
 
     private function stringInput(string $key): string

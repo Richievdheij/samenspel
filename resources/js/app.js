@@ -303,23 +303,6 @@ function initialiseFilterSelects() {
   })
 }
 
-function initialisePlatformRequirement() {
-  for (const form of document.querySelectorAll('form:has([data-event-platforms])')) {
-    if (form.querySelector('[data-event-step]')) continue
-    const select = form.querySelector('[data-event-platforms]')
-    const inputs = [...select.querySelectorAll('input[name="platforms[]"]')]
-    if (inputs.length === 0) continue
-    select.addEventListener('change', () => inputs[0].setCustomValidity(''))
-    form.addEventListener('submit', (event) => {
-      if (inputs.some((input) => input.checked)) return
-      event.preventDefault()
-      select.open = true
-      inputs[0].setCustomValidity(select.dataset.requiredMessage)
-      inputs[0].reportValidity()
-    })
-  }
-}
-
 /** Keep the event form's selected games, categories, platforms, capacity and date controls in sync. */
 function initialiseEventCreateForm() {
   const form = document.querySelector('[data-event-create]')
@@ -664,7 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initialiseDisclosures()
   initialiseEventFilters()
   initialiseFilterSelects()
-  initialisePlatformRequirement()
   initialiseEventCreateForm()
   initialiseEventSteps()
   initialiseGameCatalog()

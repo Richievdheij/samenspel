@@ -198,7 +198,11 @@ export function initialiseLocationSearch(form) {
       const active = panel.dataset.locationPanel === mode
       for (const input of panel.querySelectorAll('input')) input.disabled = !active
     }
-    addressParts.hidden = mode !== 'search' || reference.value === ''
+    // An address the event already had arrives as its label alone, without parts.
+    const hasParts = [...addressParts.querySelectorAll('[data-address-part]')].some(
+      (part) => part.value !== '',
+    )
+    addressParts.hidden = mode !== 'search' || reference.value === '' || !hasParts
     clearResults()
   }
 

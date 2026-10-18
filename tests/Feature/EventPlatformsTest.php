@@ -13,24 +13,12 @@ use Illuminate\Support\Facades\Http;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-it('lets an organiser replace games and platform choices on an existing event', function (): void {
-    $organiser = User::factory()->admin()->create();
-    $original = Game::factory()->create();
-    $newGame = Game::factory()->create(['name' => 'Switch adventure']);
+it('shows the platforms of an event as icons and filters the overview on them', function (): void {
     $switch = Platform::query()->where('slug', 'switch')->sole();
     $mobile = Platform::query()->where('slug', 'mobile')->sole();
-    $event = Event::factory()->for($organiser, 'organizer')->create(['game_id' => $original->id, 'title' => 'Console night']);
+    $event = Event::factory()->create(['title' => 'Console night']);
+    $event->platforms()->attach([$switch->id, $mobile->id]);
 
-    actingAs($organiser)->get(route('events.play-options.edit', $event))
-        ->assertOk()->assertSee('Switch adventure')->assertSee('Nintendo Switch');
-    actingAs($organiser)->put(route('events.play-options.update', $event), [
-        'games' => [$newGame->id],
-        'platforms' => [$switch->id, $mobile->id],
-    ])->assertSessionHasNoErrors()->assertRedirect(route('events.show', $event));
-
-    expect($event->refresh()->game_id)->toBe($newGame->id)
-        ->and($event->games->modelKeys())->toBe([$newGame->id])
-        ->and($event->platforms->modelKeys())->toEqualCanonicalizing([$switch->id, $mobile->id]);
     get(route('events.show', $event))
         ->assertSeeHtml('platform-label--switch')
         ->assertSeeHtml('aria-label="Nintendo Switch"')
@@ -38,29 +26,6 @@ it('lets an organiser replace games and platform choices on an existing event', 
         ->assertDontSeeHtml('>Nintendo Switch</span>');
     get(route('events.index', ['platform' => [$switch->id]]))->assertSee('Console night');
     get(route('events.index', ['platform' => [Platform::query()->where('slug', 'xbox')->sole()->id]]))->assertDontSee('Console night');
-});
-
-it('protects event choices and rejects empty, duplicate and unknown values', function (): void {
-    $owner = User::factory()->admin()->create();
-    $stranger = User::factory()->admin()->create();
-    $event = Event::factory()->for($owner, 'organizer')->create();
-    $platform = Platform::query()->firstOrFail();
-
-    get(route('events.play-options.edit', $event))->assertRedirect(route('login'));
-    actingAs($stranger)->get(route('events.play-options.edit', $event))->assertForbidden();
-    actingAs($stranger)->put(route('events.play-options.update', $event), [
-        'games' => [$event->game_id], 'platforms' => [$platform->id],
-    ])->assertForbidden();
-    actingAs($owner)->put(route('events.play-options.update', $event), [
-        'games' => [$event->game_id, $event->game_id], 'platforms' => [$platform->id, $platform->id],
-    ])->assertSessionHasErrors(['games.0', 'platforms.0']);
-    actingAs($owner)->put(route('events.play-options.update', $event), [
-        'games' => [$event->game_id], 'platforms' => [999999],
-    ])->assertSessionHasErrors('platforms.0');
-    actingAs($owner)->put(route('events.play-options.update', $event), [
-        'games' => [$event->game_id],
-    ])->assertSessionHasErrors('platforms');
-    expect($event->refresh()->platforms)->toHaveCount(0);
 });
 
 it('allows a current organiser to add a game after their creation eligibility changes', function (): void {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AddressSearchController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\EventPlayOptionsController;
 use App\Http\Controllers\GameSearchController;
 use App\Http\Controllers\GameSelectionController;
 use App\Http\Controllers\ProfileController;
@@ -29,8 +28,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/events/games/search', GameSearchController::class)->middleware('throttle:20,1')->name('events.games.search');
     Route::post('/events/games', GameSelectionController::class)->middleware('throttle:12,1')->name('events.games.store');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
-    Route::get('/events/{event}/play-options', [EventPlayOptionsController::class, 'edit'])->name('events.play-options.edit');
-    Route::put('/events/{event}/play-options', [EventPlayOptionsController::class, 'update'])->name('events.play-options.update');
+    Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
 });
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 

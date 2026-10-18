@@ -35,7 +35,7 @@ it('hides previously selected add-ons from new choices while preserving their ev
     actingAs($admin)->get(route('events.create'))
         ->assertOk()->assertSeeHtml('name="games[]" value="'.$main->id.'"')
         ->assertDontSeeHtml('name="games[]" value="'.$addon->id.'"');
-    actingAs($admin)->get(route('events.play-options.edit', $event))
+    actingAs($admin)->get(route('events.edit', $event))
         ->assertOk()->assertSeeHtml('name="games[]" value="'.$addon->id.'"');
     // The public filter mirrors the cards: the event still shows the add-on, so it stays filterable.
     actingAs($admin)->get(route('events.index'))

@@ -48,7 +48,7 @@ als lokale game opgeslagen. Covers gebruiken de IGDB afbeeldingsdienst; zonder
 beschikbare cover toont de interface de eerste letters van de titel. Organisatoren kiezen
 per event een of meer platformfamilies (bijvoorbeeld PC, PlayStation, Xbox, Switch
 en mobiel). Die staan los van de beschikbare IGDB-platformen van een game en zijn
-later via **Spellen en platformen aanpassen** op de eventpagina te wijzigen.
+later via **Event bewerken** op de eventpagina te wijzigen.
 Het publieke eventoverzicht kan op meerdere platformen tegelijk filteren.
 
 Een nieuwe installatie krijgt geen voorbeeldgames of demo-events: `make fresh yes=1`

@@ -119,15 +119,21 @@ class Event extends Model
     }
 
     /**
+     * Save the edited event and its game, category and platform labels as one
+     * database change. The status and the sign-ups stay as they were.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @param  list<int>  $categoryIds
      * @param  list<int>  $gameIds
      * @param  list<int>  $platformIds
      */
-    public function updatePlayOptions(array $gameIds, array $platformIds): void
+    public function reviseDetails(array $attributes, array $categoryIds, array $gameIds, array $platformIds): void
     {
-        DB::transaction(function () use ($gameIds, $platformIds): void {
+        DB::transaction(function () use ($attributes, $categoryIds, $gameIds, $platformIds): void {
+            $this->update($attributes);
+            $this->categories()->sync($categoryIds);
             $this->games()->sync($gameIds);
             $this->platforms()->sync($platformIds);
-            $this->update(['game_id' => $gameIds[0]]);
         });
     }
 

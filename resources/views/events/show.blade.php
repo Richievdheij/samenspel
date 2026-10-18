@@ -30,11 +30,11 @@
             <section class="card event-detail__description" aria-labelledby="event-description">
                 <h2 class="card__title" id="event-description">{{ __('About this event') }}</h2>
                 <p class="event-detail__text">{{ $event->description }}</p>
-                @if (auth()->id() === $event->user_id)
+                @can('update', $event)
                     <div class="event-detail__actions">
-                        <x-button :href="route('events.play-options.edit', $event)">{{ __('Edit games and platforms') }}</x-button>
+                        <x-button :href="route('events.edit', $event)">{{ __('Edit event') }}</x-button>
                     </div>
-                @endif
+                @endcan
             </section>
         @else
             <section class="card event-detail__description" aria-labelledby="event-description">

@@ -11,14 +11,17 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- De organisator bewerkt een eigen event via **Event bewerken** op de
+  eventpagina: hetzelfde formulier in drie stappen als bij aanmaken, vooraf
+  ingevuld en met dezelfde controles. Status en inschrijvingen blijven staan, en
+  een ongewijzigd adres wordt niet opnieuw bij PDOK opgevraagd. Iemand anders
+  krijgt een 403, ook via een directe link of een eigen verzoek (US9).
 - Het eventoverzicht filtert op een of meer platformen. Actieve filters staan
   als chips boven de lijst, met een link **Filters wissen** (US4).
 - Het gamefilter in het eventoverzicht heeft een zoekveld en toont alleen
   spellen waarmee een komend event gespeeld wordt (US4).
 - Een event krijgt een of meer platformen, zoals PC, PlayStation, Xbox, Switch
   of mobiel. Eventkaarten en de eventpagina tonen ze als gekleurde icoontjes (US8).
-- De organisator past de spellen en platformen van een bestaand event aan via
-  **Spellen en platformen aanpassen** op de eventpagina (US8).
 - `php artisan games:sync-igdb` ververst dagelijks om 03:30 cover, releasejaar
   en platformen van gekozen catalogusgames, zonder de lokale titel te
   overschrijven (US8).
