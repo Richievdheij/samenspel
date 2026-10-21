@@ -11,6 +11,10 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Het dashboard toont **Mijn inschrijvingen**: komende events, eerstvolgende
+  bovenaan, met datum en status, en de laatste eerdere inschrijvingen. Daaronder
+  staat hoeveel inschrijvingen nog nodig zijn om zelf te organiseren, met
+  dezelfde teller als bij het aanmaken van een event (US14).
 - Een gebruiker schrijft zich uit voor een event via **Uitschrijven** op de
   eventpagina, zolang het nog niet begonnen is; de plek komt vrij (US13).
 - Een gebruiker schrijft zich in voor een open event via **Inschrijven** op de

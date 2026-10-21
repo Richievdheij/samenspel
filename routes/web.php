@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AddressSearchController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventSignUpController;
 use App\Http\Controllers\GameSearchController;
@@ -38,7 +39,7 @@ Route::middleware('auth')->group(function (): void {
 });
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
-Route::view('/dashboard', 'dashboard')
+Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
