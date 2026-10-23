@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AddressSearchController;
+use App\Http\Controllers\Admin\GameController as AdminGameController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventSignUpController;
@@ -42,6 +43,11 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
+    Route::get('/games', [AdminGameController::class, 'index'])->name('games.index');
+    Route::post('/games', [AdminGameController::class, 'store'])->name('games.store');
+});
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

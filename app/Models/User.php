@@ -93,10 +93,15 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
             ->count();
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin;
+    }
+
     /** Admins may organise immediately; other users need three sign-ups. */
     public function canOrganizeEvents(): bool
     {
-        return $this->role === Role::Admin || $this->signUpsForOtherOrganisersCount() >= 3;
+        return $this->isAdmin() || $this->signUpsForOtherOrganisersCount() >= 3;
     }
 
     /** An existing organiser can keep editing their event if eligibility later changes. */

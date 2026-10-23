@@ -20,7 +20,7 @@ final class GameSearchController extends Controller
         abort_unless($user instanceof User && $user->canSelectGamesForEvent($eventId), 403);
 
         $input = $request->validate([
-            'q' => ['required', 'string', 'min:3', 'max:80', 'regex:/^[\pL\pN][\pL\pN .:’\'&+_-]*$/uD'],
+            'q' => ['required', 'string', 'min:3', 'max:80', 'regex:'.GameCatalog::TITLE_PATTERN],
         ], [
             'q.required' => __('Enter a game title to search.'),
             'q.string' => __('Enter a valid game title.'),

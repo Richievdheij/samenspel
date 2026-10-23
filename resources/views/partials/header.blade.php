@@ -70,6 +70,17 @@
                             {{ __('Profile') }}
                         </a>
 
+                        @if (auth()->user()->isAdmin())
+                            <a
+                                class="dropdown__item"
+                                href="{{ route('admin.games.index') }}"
+                                @if (request()->routeIs('admin.games.*')) aria-current="page" @endif
+                            >
+                                <x-icon name="gamepad" />
+                                {{ __('Manage games') }}
+                            </a>
+                        @endif
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="dropdown__item" type="submit">
@@ -154,6 +165,17 @@
                                     <x-icon name="user" />
                                     {{ __('Profile') }}
                                 </x-button>
+
+                                @if (auth()->user()->isAdmin())
+                                    <x-button
+                                        variant="block"
+                                        :href="route('admin.games.index')"
+                                        :aria-current="request()->routeIs('admin.games.*') ? 'page' : null"
+                                    >
+                                        <x-icon name="gamepad" />
+                                        {{ __('Manage games') }}
+                                    </x-button>
+                                @endif
 
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
