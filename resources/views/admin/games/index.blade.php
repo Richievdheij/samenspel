@@ -43,6 +43,9 @@
 
     <section class="card admin-games" aria-labelledby="all-games">
         <h2 class="card__title" id="all-games">{{ __('All games (:count)', ['count' => $games->total()]) }}</h2>
+        @error('game')
+            <p class="field__error" role="alert">{{ $message }}</p>
+        @enderror
 
         @if ($games->isEmpty())
             <p>{{ __('There are no games yet. Add one from the catalog.') }}</p>
@@ -59,6 +62,16 @@
                             @endif
                         </span>
                         <span class="admin-list__meta">{{ trans_choice(':count event|:count events', $game->selected_events_count) }}</span>
+                        <div class="admin-list__actions">
+                            <x-button :href="route('admin.games.edit', $game)" :aria-label="__('Edit :name', ['name' => $game->name])">{{ __('Edit') }}</x-button>
+                            @if ($game->selected_events_count === 0)
+                                <form method="POST" action="{{ route('admin.games.destroy', $game) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-button variant="danger" type="submit" :aria-label="__('Delete :name', ['name' => $game->name])">{{ __('Delete') }}</x-button>
+                                </form>
+                            @endif
+                        </div>
                     </li>
                 @endforeach
             </ul>

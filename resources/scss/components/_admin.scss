@@ -1,7 +1,7 @@
 @use '../abstracts' as *;
 
-// The admin pages: a catalog search row, a list of rows, and the space above the
-// list of games.
+// The admin pages: a catalog search row, a list of rows with actions, the cover
+// preview on the edit form, and the space above the list of games.
 .admin-search {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -48,6 +48,28 @@
     font-size: var(--text-s);
     font-weight: var(--weight-normal);
   }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    grid-column: 1 / -1;
+
+    @include from('m') {
+      grid-column: auto;
+    }
+
+    form {
+      margin: 0;
+    }
+  }
+}
+
+.admin-cover {
+  display: block;
+  block-size: auto;
+  border: var(--line);
+  border-radius: var(--radius-s);
 }
 
 .admin-games {

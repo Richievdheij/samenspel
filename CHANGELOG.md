@@ -11,10 +11,10 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
-- Admins voegen spellen toe via **Spellen beheren** in het gebruikersmenu: zoeken
-  in de IGDB-catalogus en een spel met één klik toevoegen. Het overzicht toont
-  hoeveel events elk spel gebruikt. Alleen admins kunnen erbij, via middleware
-  (US15).
+- Admins beheren de spellen via **Spellen beheren** in het gebruikersmenu: een
+  spel toevoegen uit de IGDB-catalogus, de getoonde titel wijzigen, een eigen
+  cover uploaden en een spel verwijderen zolang geen event het gebruikt. De
+  pagina's zijn alleen bereikbaar voor admins, via middleware (US15).
 - Het dashboard toont **Mijn inschrijvingen**: komende events, eerstvolgende
   bovenaan, met datum en status, en de laatste eerdere inschrijvingen. Daaronder
   staat hoeveel inschrijvingen nog nodig zijn om zelf te organiseren, met

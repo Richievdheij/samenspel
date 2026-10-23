@@ -47,6 +47,9 @@ Route::get('/dashboard', DashboardController::class)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/games', [AdminGameController::class, 'index'])->name('games.index');
     Route::post('/games', [AdminGameController::class, 'store'])->name('games.store');
+    Route::get('/games/{game}/edit', [AdminGameController::class, 'edit'])->name('games.edit');
+    Route::put('/games/{game}', [AdminGameController::class, 'update'])->name('games.update');
+    Route::delete('/games/{game}', [AdminGameController::class, 'destroy'])->name('games.destroy');
 });
 
 Route::middleware('auth')->group(function (): void {

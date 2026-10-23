@@ -5,8 +5,10 @@ declare(strict_types=1);
 use App\Models\Event;
 use App\Models\Game;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -26,14 +28,19 @@ function fakeIgdbCatalog(): void
 }
 
 it('keeps game management for signed-in admins only', function (): void {
+    $game = Game::factory()->create();
     $user = User::factory()->create();
 
     get(route('admin.games.index'))->assertRedirect(route('login'));
     actingAs($user)->get(route('admin.games.index'))->assertForbidden();
     actingAs($user)->post(route('admin.games.store'), ['provider_id' => 1020])->assertForbidden();
+    actingAs($user)->get(route('admin.games.edit', $game))->assertForbidden();
+    actingAs($user)->put(route('admin.games.update', $game), ['name' => 'Taken over'])->assertForbidden();
+    actingAs($user)->delete(route('admin.games.destroy', $game))->assertForbidden();
     actingAs($user)->get(route('dashboard'))->assertDontSeeHtml('href="'.route('admin.games.index').'"');
 
-    expect(Game::query()->count())->toBe(0);
+    expect($game->refresh()->exists)->toBeTrue()
+        ->and($game->name)->not->toBe('Taken over');
 });
 
 it('lists the games with how many events use them, and links the admin there', function (): void {
@@ -74,4 +81,44 @@ it('refuses a search outside the catalog alphabet before it reaches IGDB', funct
         ->assertSessionHasErrors('q');
 
     Http::assertNothingSent();
+});
+
+it('renames a game and replaces or removes its cover', function (): void {
+    Storage::fake('public');
+    $admin = User::factory()->admin()->create();
+    $game = Game::factory()->create(['name' => 'GTA5']);
+
+    actingAs($admin)->get(route('admin.games.edit', $game))->assertOk()->assertSeeHtml('value="GTA5"');
+    actingAs($admin)->put(route('admin.games.update', $game), [
+        'name' => 'Grand Theft Auto V',
+        'cover' => UploadedFile::fake()->image('cover.png', 300, 400),
+    ])->assertSessionHasNoErrors()->assertRedirect(route('admin.games.index'));
+
+    $covers = Storage::disk('public')->files('games/covers');
+    expect($game->refresh()->name)->toBe('Grand Theft Auto V')
+        ->and($covers)->toHaveCount(1)
+        ->and($game->cover_image_path)->toBe($covers[0]);
+
+    actingAs($admin)->put(route('admin.games.update', $game), ['name' => 'Grand Theft Auto V', 'remove_cover' => '1']);
+    expect($game->refresh()->cover_image_path)->toBeNull()
+        ->and(Storage::disk('public')->files('games/covers'))->toBeEmpty();
+
+    actingAs($admin)->put(route('admin.games.update', $game), ['name' => '', 'cover' => UploadedFile::fake()->create('notes.pdf', 10)])
+        ->assertSessionHasErrors(['name', 'cover']);
+});
+
+it('deletes an unused game and refuses one that events use', function (): void {
+    $admin = User::factory()->admin()->create();
+    $unused = Game::factory()->create();
+    $used = Game::factory()->create();
+    Event::factory()->for($used)->create();
+
+    actingAs($admin)->delete(route('admin.games.destroy', $unused))
+        ->assertRedirect(route('admin.games.index'))
+        ->assertSessionHasNoErrors();
+    actingAs($admin)->delete(route('admin.games.destroy', $used))
+        ->assertSessionHasErrors(['game' => 'Dit spel wordt gebruikt door 1 event en kan niet worden verwijderd.']);
+
+    expect(Game::query()->find($unused->id))->toBeNull()
+        ->and(Game::query()->find($used->id))->not->toBeNull();
 });

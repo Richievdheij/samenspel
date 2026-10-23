@@ -64,6 +64,12 @@ ververst cover-URL, releasejaar en de volledige lijst met beschikbare
 providerplatformen. Lokale titels en handmatig toegevoegde games worden niet
 overschreven. De scheduler importeert geen nieuwe catalogusrecords.
 
+Admins beheren de spellen op `/admin/games` (**Spellen beheren** in het
+gebruikersmenu). Toevoegen gaat via dezelfde catalogusvergelijking als in het
+eventformulier, dus ook daar alleen hoofdspellen. Een admin kan de getoonde titel
+wijzigen en een eigen cover uploaden; `games:sync-igdb` overschrijft die niet.
+Een spel dat een event gebruikt, kan niet worden verwijderd.
+
 De [IGDB API-documentatie](https://api-docs.igdb.com/#getting-started) vermeldt
 gratis niet-commercieel gebruik en een commercieel partnerschap voor producten
 met inkomsten. Vóór een betaalde versie van Samenspel zijn de actuele Twitch/
