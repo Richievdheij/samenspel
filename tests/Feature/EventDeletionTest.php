@@ -31,12 +31,11 @@ it('deletes the event together with its sign-ups and labels, and keeps the peopl
     }
 });
 
-it('lets only the organiser delete, also through a direct request', function (): void {
+it('refuses a delete from other users, also through a direct request', function (): void {
     $organiser = User::factory()->create();
     $event = Event::factory()->for($organiser, 'organizer')->create();
 
     delete(route('events.destroy', $event))->assertRedirect(route('login'));
-    actingAs(User::factory()->admin()->create())->delete(route('events.destroy', $event))->assertForbidden();
     actingAs(User::factory()->create())->delete(route('events.destroy', $event))->assertForbidden();
 
     assertModelExists($event);

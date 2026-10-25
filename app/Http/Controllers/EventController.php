@@ -88,16 +88,18 @@ class EventController extends Controller
     }
 
     /**
-     * Delete the organiser's event. The database removes its sign-ups and its
-     * game, category and platform labels with it (cascadeOnDelete).
+     * Delete the event, as its organiser or as an admin who moderates. The database
+     * removes its sign-ups and its game, category and platform labels with it
+     * (cascadeOnDelete).
      */
-    public function destroy(Event $event): RedirectResponse
+    public function destroy(Request $request, Event $event): RedirectResponse
     {
         Gate::authorize('delete', $event);
         $event->delete();
 
-        return to_route('events.index')
-            ->with('status', __('Your event has been deleted.'));
+        return to_route('events.index')->with('status', $request->user()?->id === $event->user_id
+            ? __('Your event has been deleted.')
+            : __('The event has been deleted.'));
     }
 
     /**

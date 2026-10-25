@@ -11,6 +11,9 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Admins kunnen bij misbruik elk event sluiten of verwijderen, met dezelfde
+  knoppen als de organisator. Dat is een bewuste uitzondering in de
+  `EventPolicy`; bewerken blijft alleen voor de organisator (US17).
 - Admins beheren de categorieën via **Categorieën beheren** in het
   gebruikersmenu: toevoegen met een unieke naam, hernoemen en verwijderen zolang
   geen event de categorie gebruikt. Dezelfde admin-middleware als bij de

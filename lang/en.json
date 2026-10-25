@@ -105,6 +105,8 @@
   "Delete this event?": "Delete this event?",
   "This permanently deletes the event, together with :count sign-up.|This permanently deletes the event, together with :count sign-ups.": "This permanently deletes the event, together with :count sign-up.|This permanently deletes the event, together with :count sign-ups.",
   "Your event has been deleted.": "Your event has been deleted.",
+  "The event has been deleted.": "The event has been deleted.",
+  "You are deleting someone else’s event, as an admin.": "You are deleting someone else’s event, as an admin.",
   "Close sign-ups": "Close sign-ups",
   "Close sign-ups for :title": "Close sign-ups for :title",
   "Reopen sign-ups": "Reopen sign-ups",

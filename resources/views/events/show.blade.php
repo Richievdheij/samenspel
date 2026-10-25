@@ -51,6 +51,9 @@
 
                             <h2 class="modal__title" id="confirm-event-deletion-title">{{ __('Delete this event?') }}</h2>
                             <p class="modal__text">{{ trans_choice('This permanently deletes the event, together with :count sign-up.|This permanently deletes the event, together with :count sign-ups.', $event->participants_count) }}</p>
+                            @if (auth()->id() !== $event->user_id)
+                                <p class="modal__text">{{ __('You are deleting someone else’s event, as an admin.') }}</p>
+                            @endif
 
                             <div class="form__actions form__actions--end">
                                 <x-button command="close" commandfor="confirm-event-deletion">{{ __('Cancel') }}</x-button>

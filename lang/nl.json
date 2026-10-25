@@ -105,6 +105,8 @@
   "Delete this event?": "Dit event verwijderen?",
   "This permanently deletes the event, together with :count sign-up.|This permanently deletes the event, together with :count sign-ups.": "Dit verwijdert het event definitief, samen met :count inschrijving.|Dit verwijdert het event definitief, samen met :count inschrijvingen.",
   "Your event has been deleted.": "Je event is verwijderd.",
+  "The event has been deleted.": "Het event is verwijderd.",
+  "You are deleting someone else’s event, as an admin.": "Je verwijdert het event van iemand anders, als admin.",
   "Close sign-ups": "Inschrijving sluiten",
   "Close sign-ups for :title": "Sluit inschrijving voor :title",
   "Reopen sign-ups": "Inschrijving heropenen",

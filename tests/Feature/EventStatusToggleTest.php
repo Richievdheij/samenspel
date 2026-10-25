@@ -44,10 +44,10 @@ it('keeps the status when the same switch is sent twice', function (): void {
     expect($event->refresh()->status)->toBe(EventStatus::Closed);
 });
 
-it('lets only the organiser switch the status, and only through a POST', function (): void {
+it('refuses the switch to other users, and takes only a POST', function (): void {
     $organiser = User::factory()->create();
     $event = Event::factory()->for($organiser, 'organizer')->create();
-    $stranger = User::factory()->admin()->create();
+    $stranger = User::factory()->create();
 
     post(route('events.toggle-status', $event), ['status' => 'closed'])->assertRedirect(route('login'));
     actingAs($stranger)->post(route('events.toggle-status', $event), ['status' => 'closed'])->assertForbidden();
