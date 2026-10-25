@@ -25,7 +25,8 @@ final class DashboardController extends Controller
             'upcomingSignUps' => $user->joinedEvents()->upcoming()->withCount('participants')->oldest('starts_at')->get(),
             'pastSignUps' => $user->joinedEvents()->where('starts_at', '<', now())->latest('starts_at')->limit(5)->get(),
             'signUpsCount' => $signUpsCount,
-            'signUpsRemaining' => max(0, 3 - $signUpsCount),
+            'signUpsNeeded' => User::SIGN_UPS_NEEDED_TO_ORGANIZE,
+            'signUpsRemaining' => max(0, User::SIGN_UPS_NEEDED_TO_ORGANIZE - $signUpsCount),
             'canOrganize' => $user->canOrganizeEvents(),
         ]);
     }

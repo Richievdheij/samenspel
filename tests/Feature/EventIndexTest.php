@@ -134,19 +134,21 @@ it('spreads the events over pages of ten', function (): void {
     get(route('events.index', ['page' => 2]))->assertSee('Elfde event')->assertSee('Vorige');
 });
 
-it('searches public event titles and keeps the term in the field', function (): void {
-    Event::factory()->create(['title' => 'Mario Kart avond', 'description' => 'Samen racen.']);
-    Event::factory()->create(['title' => 'Raceavond', 'description' => 'Neem je Mario controller mee.']);
-    Event::factory()->create(['title' => 'Schaakavond', 'description' => 'Samen schaken.']);
+it('searches the public title and the game names, not the description, and keeps the term in the field', function (): void {
+    Event::factory()->for(Game::factory()->state(['name' => 'Tetris']))->create(['title' => 'Mario Kart avond', 'description' => 'Samen racen.']);
+    Event::factory()->for(Game::factory()->state(['name' => 'Super Mario Party']))->create(['title' => 'Feestavond', 'description' => 'Samen spelen.']);
+    Event::factory()->for(Game::factory()->state(['name' => 'Gran Turismo']))->create(['title' => 'Raceavond', 'description' => 'Neem je Mario controller mee.']);
+    Event::factory()->for(Game::factory()->state(['name' => 'Chess']))->create(['title' => 'Schaakavond', 'description' => 'Samen schaken.']);
     Event::factory()->create(['title' => 'Mario van gisteren', 'starts_at' => now()->subDay()]);
 
     get(route('events.index', ['q' => '  Mario  ']))
         ->assertOk()
         ->assertSeeText('Mario Kart avond')
+        ->assertSeeText('Feestavond')
         ->assertDontSeeText('Raceavond')
         ->assertDontSeeText('Schaakavond')
         ->assertDontSeeText('Mario van gisteren')
-        ->assertSeeText('Zoekresultaten voor "Mario" (1)')
+        ->assertSeeText('Zoekresultaten voor "Mario" (2)')
         ->assertSeeHtml('content="noindex, follow"')
         ->assertSeeHtml('rel="canonical" href="'.route('events.index').'"')
         ->assertSeeHtml('aria-label="Zoekopdracht wissen"')
@@ -155,11 +157,14 @@ it('searches public event titles and keeps the term in the field', function (): 
 });
 
 it('keeps the search term when paging and explains an empty search result', function (): void {
-    Event::factory()->count(11)->sequence(fn ($sequence): array => [
+    // A named game, because the search also matches game names and a random one
+    // such as "Blanditiis" contains "lan".
+    $chess = Game::factory()->create(['name' => 'Chess']);
+    Event::factory()->for($chess)->count(11)->sequence(fn ($sequence): array => [
         'title' => 'LAN event '.($sequence->index + 1),
         'starts_at' => now()->addDays($sequence->index + 1),
     ])->create();
-    Event::factory()->create(['title' => 'Schaakavond', 'description' => 'Samen schaken.']);
+    Event::factory()->for($chess)->create(['title' => 'Schaakavond', 'description' => 'Samen schaken.']);
 
     get(route('events.index', ['q' => 'LAN']))
         ->assertOk()
@@ -180,7 +185,9 @@ it('keeps the search term when paging and explains an empty search result', func
 });
 
 it('combines game and category filters with a keyword', function (): void {
-    $game = Game::factory()->create(['name' => 'Mario Kart']);
+    // Not "Mario Kart": the keyword also matches game names, and "Andere avond"
+    // must miss on the keyword alone.
+    $game = Game::factory()->create(['name' => 'Tetris']);
     $otherGame = Game::factory()->create(['name' => 'Chess']);
     $category = Category::factory()->create(['name' => 'Casual']);
     $otherCategory = Category::factory()->create(['name' => 'Online']);
@@ -199,7 +206,7 @@ it('combines game and category filters with a keyword', function (): void {
         ->assertSeeHtml('type="radio" name="game" value="'.$game->id.'" checked')
         ->assertSeeHtml('value="'.$category->id.'" checked')
         ->assertSeeHtml('value="Mario"')
-        ->assertSeeHtml('aria-label="Spelfilter verwijderen: Mario Kart"')
+        ->assertSeeHtml('aria-label="Spelfilter verwijderen: Tetris"')
         ->assertSeeHtml('aria-label="Categoriefilter verwijderen: Casual"')
         ->assertSeeHtml('href="'.e(route('events.index', ['q' => 'Mario', 'category' => [$category->id]])).'"')
         ->assertSeeHtml('href="'.e(route('events.index', ['q' => 'Mario', 'game' => $game->id])).'"');

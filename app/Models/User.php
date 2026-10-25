@@ -66,6 +66,12 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
     use HasFactory, Notifiable;
 
     /**
+     * Sign-ups for events of other organisers a user needs before organising one
+     * themselves. Counted with a query each time, never stored.
+     */
+    public const int SIGN_UPS_NEEDED_TO_ORGANIZE = 3;
+
+    /**
      * The events this user organises.
      *
      * @return HasMany<Event, $this>
@@ -98,10 +104,10 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
         return $this->role === Role::Admin;
     }
 
-    /** Admins may organise immediately; other users need three sign-ups. */
+    /** Admins may organise immediately; other users need enough sign-ups first. */
     public function canOrganizeEvents(): bool
     {
-        return $this->isAdmin() || $this->signUpsForOtherOrganisersCount() >= 3;
+        return $this->isAdmin() || $this->signUpsForOtherOrganisersCount() >= self::SIGN_UPS_NEEDED_TO_ORGANIZE;
     }
 
     /** An existing organiser can keep editing their event if eligibility later changes. */

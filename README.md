@@ -9,8 +9,10 @@ en eraan meedoet.
 
 - Gebruikers maken een event aan met een spel, categorie, datum, plek en een
   maximaal aantal deelnemers, en schrijven zich in op events van anderen.
-- Bezoekers zoeken op titel en beschrijving en filteren op spel en categorie.
-- Alleen de organisator kan zijn eigen event wijzigen en openen of sluiten.
+- Bezoekers zoeken op titel en spelnaam en filteren op spel, categorie en
+  platform.
+- Alleen de organisator kan zijn eigen event wijzigen en openen of sluiten; een
+  admin mag elk event sluiten of verwijderen bij misbruik.
 - Wie zelf een event wil organiseren, moet zich eerst voor minimaal drie events
   van anderen hebben ingeschreven.
 - Een admin beheert de spellen en categorieën.
@@ -56,9 +58,8 @@ herd link --secure samenspel
 
 ### Testaccounts
 
-`make fresh yes=1` leegt de database, migreert en seedt. De seed zet spellen,
-categorieën en een paar demo-events van andere gebruikers klaar, plus twee
-accounts om op `/login` mee in te loggen:
+`make fresh yes=1` leegt de database, migreert en seedt. De seed zet de
+categorieën klaar, plus twee accounts om op `/login` mee in te loggen:
 
 | Rol       | E-mail              | Wachtwoord |
 | --------- | ------------------- | ---------- |
@@ -66,6 +67,19 @@ accounts om op `/login` mee in te loggen:
 | Admin     | `admin@example.com` | `password` |
 
 Deze accounts bestaan alleen in de lokale seed-data.
+
+Spellen komen alleen uit de IGDB-catalogus, dus de seed maakt geen spellen of
+events aan. Voor een demo voeg je als admin eerst een paar spellen toe via
+**Spellen beheren** en draai je daarna:
+
+```bash
+php artisan db:seed --class=DemoSeeder
+```
+
+Dat maakt drie organisatoren (wachtwoord `password`) met elk twee komende events,
+waaronder een vol en een gesloten event. Het testaccount heeft nog geen
+inschrijvingen, zodat je kunt laten zien dat organiseren pas na drie
+inschrijvingen kan.
 
 ## Dagelijks werk
 

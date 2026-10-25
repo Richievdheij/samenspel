@@ -45,7 +45,7 @@
             <p class="card__intro">{{ __('You can organise events yourself now.') }}</p>
             <x-button :href="route('events.create')">{{ __('Create an event') }}</x-button>
         @else
-            <p class="card__intro">{{ __('You have signed up for :count of the 3 events organised by other people that you need.', ['count' => $signUpsCount]) }}</p>
+            <p class="card__intro">{{ __('You have signed up for :count of the :needed events organised by other people that you need.', ['count' => $signUpsCount, 'needed' => $signUpsNeeded]) }}</p>
             <p>{{ trans_choice('Sign up for :count more event.|Sign up for :count more events.', $signUpsRemaining) }}</p>
             <x-button :href="route('events.index')">{{ __('Find an event') }}</x-button>
         @endif

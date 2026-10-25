@@ -1,5 +1,6 @@
 {{--
-    <x-event-status-toggle>, the organiser's button that opens or closes sign-ups:
+    <x-event-status-toggle>, the button that opens or closes sign-ups, for the
+    organiser and for an admin who moderates:
 
         @can('toggleStatus', $event)
             <x-event-status-toggle :event="$event" />

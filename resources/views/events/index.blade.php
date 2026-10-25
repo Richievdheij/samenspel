@@ -26,7 +26,7 @@
                     :label="__('Search events')"
                     :value="$search"
                     type="search"
-                    :placeholder="__('Search by title')"
+                    :placeholder="__('Search by title or game')"
                     enterkeyhint="search"
                     data-search-input
                 />

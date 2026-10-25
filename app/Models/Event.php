@@ -249,7 +249,12 @@ class Event extends Model
     }
 
     /**
-     * Match public event titles. Descriptions may contain private details.
+     * Match the title or the name of one of the event's games, both public. The
+     * description is not searched: it is only shown to signed-in users, and a
+     * search result would give it away to a guest.
+     *
+     * The closure puts the two conditions between brackets, so the OR cannot undo
+     * the upcoming, game, category and platform conditions around it.
      *
      * @param  Builder<self>  $query
      */
@@ -260,7 +265,9 @@ class Event extends Model
             return;
         }
 
-        $query->where('title', 'like', '%'.$keyword.'%');
+        $query->where(fn (Builder $matches) => $matches
+            ->where('title', 'like', '%'.$keyword.'%')
+            ->orWhereHas('games', fn (Builder $games) => $games->where('name', 'like', '%'.$keyword.'%')));
     }
 
     /**

@@ -32,7 +32,8 @@ class EventController extends Controller
             'categories' => Category::query()->orderBy('name')->get(['id', 'name']),
             'platforms' => Platform::query()->orderBy('id')->get(['id', 'name', 'slug']),
             'signUpsCount' => $signUpsCount,
-            'signUpsRemaining' => max(0, 3 - $signUpsCount),
+            'signUpsNeeded' => User::SIGN_UPS_NEEDED_TO_ORGANIZE,
+            'signUpsRemaining' => max(0, User::SIGN_UPS_NEEDED_TO_ORGANIZE - $signUpsCount),
             'canOrganize' => $user->canOrganizeEvents(),
         ]);
     }
@@ -115,21 +116,8 @@ class EventController extends Controller
         $game = $request->query('game');
         $category = $request->query('category');
         $gameId = is_string($game) && ctype_digit($game) ? (int) $game : null;
-        $categoryIds = [];
-        foreach (is_array($category) ? $category : [$category] as $value) {
-            if (is_string($value) && ctype_digit($value) && (int) $value > 0) {
-                $categoryIds[] = (int) $value;
-            }
-        }
-        $categoryIds = array_values(array_unique($categoryIds));
-        $platformIds = [];
-        $platform = $request->query('platform');
-        foreach (is_array($platform) ? $platform : [$platform] as $value) {
-            if (is_string($value) && ctype_digit($value) && (int) $value > 0) {
-                $platformIds[] = (int) $value;
-            }
-        }
-        $platformIds = array_values(array_unique($platformIds));
+        $categoryIds = $this->idsFromQuery($category);
+        $platformIds = $this->idsFromQuery($request->query('platform'));
         $games = Game::query()->playedInUpcomingEvents()->orderBy('name')->get(['id', 'name']);
         $categories = Category::query()->orderBy('name')->get(['id', 'name']);
         $platforms = Platform::query()->orderBy('id')->get(['id', 'name', 'slug']);
@@ -181,5 +169,24 @@ class EventController extends Controller
                 ->paginate(8, ['users.id', 'users.name'], 'participants_page')
                 ->fragment('event-participants'),
         ]);
+    }
+
+    /**
+     * The ids from a filter in the query string, such as `category[]=1&category[]=2`.
+     * Anything that is not a positive whole number is dropped, so a changed URL
+     * cannot break the query.
+     *
+     * @return list<int>
+     */
+    private function idsFromQuery(mixed $values): array
+    {
+        $ids = [];
+        foreach (is_array($values) ? $values : [$values] as $value) {
+            if (is_string($value) && ctype_digit($value) && (int) $value > 0) {
+                $ids[] = (int) $value;
+            }
+        }
+
+        return array_values(array_unique($ids));
     }
 }
