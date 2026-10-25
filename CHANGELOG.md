@@ -11,6 +11,10 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Admins beheren de categorieën via **Categorieën beheren** in het
+  gebruikersmenu: toevoegen met een unieke naam, hernoemen en verwijderen zolang
+  geen event de categorie gebruikt. Dezelfde admin-middleware als bij de
+  spellen (US16).
 - Admins beheren de spellen via **Spellen beheren** in het gebruikersmenu: een
   spel toevoegen uit de IGDB-catalogus, de getoonde titel wijzigen, een eigen
   cover uploaden en een spel verwijderen zolang geen event het gebruikt. De

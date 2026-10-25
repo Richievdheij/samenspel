@@ -41,7 +41,7 @@
         @endif
     </section>
 
-    <section class="card admin-games" aria-labelledby="all-games">
+    <section class="card admin-section" aria-labelledby="all-games">
         <h2 class="card__title" id="all-games">{{ __('All games (:count)', ['count' => $games->total()]) }}</h2>
         @error('game')
             <p class="field__error" role="alert">{{ $message }}</p>

@@ -79,6 +79,14 @@
                                 <x-icon name="gamepad" />
                                 {{ __('Manage games') }}
                             </a>
+                            <a
+                                class="dropdown__item"
+                                href="{{ route('admin.categories.index') }}"
+                                @if (request()->routeIs('admin.categories.*')) aria-current="page" @endif
+                            >
+                                <x-icon name="sliders-horizontal" />
+                                {{ __('Manage categories') }}
+                            </a>
                         @endif
 
                         <form method="POST" action="{{ route('logout') }}">
@@ -174,6 +182,14 @@
                                     >
                                         <x-icon name="gamepad" />
                                         {{ __('Manage games') }}
+                                    </x-button>
+                                    <x-button
+                                        variant="block"
+                                        :href="route('admin.categories.index')"
+                                        :aria-current="request()->routeIs('admin.categories.*') ? 'page' : null"
+                                    >
+                                        <x-icon name="sliders-horizontal" />
+                                        {{ __('Manage categories') }}
                                     </x-button>
                                 @endif
 

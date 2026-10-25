@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AddressSearchController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\GameController as AdminGameController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
@@ -50,6 +51,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/games/{game}/edit', [AdminGameController::class, 'edit'])->name('games.edit');
     Route::put('/games/{game}', [AdminGameController::class, 'update'])->name('games.update');
     Route::delete('/games/{game}', [AdminGameController::class, 'destroy'])->name('games.destroy');
+    Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
 Route::middleware('auth')->group(function (): void {
