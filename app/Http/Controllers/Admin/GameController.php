@@ -24,6 +24,10 @@ use Illuminate\View\View;
  */
 final class GameController extends Controller
 {
+    /**
+     * The games Samenspel knows, plus IGDB results when the admin searches. An outage
+     * of the catalog shows a message instead of breaking the page.
+     */
     public function index(SearchGameCatalogRequest $request, GameCatalog $catalog): View
     {
         $search = $request->term();
@@ -48,6 +52,10 @@ final class GameController extends Controller
         ]);
     }
 
+    /**
+     * Add the chosen IGDB game, looked up again by its id so only the catalog's own
+     * details are stored. An outage or an unknown id returns with an error.
+     */
     public function store(StoreGameRequest $request, GameCatalog $catalog, GameSelection $selection): RedirectResponse
     {
         try {
@@ -64,6 +72,7 @@ final class GameController extends Controller
         return to_route('admin.games.index')->with('status', __(':name has been added.', ['name' => $game->name]));
     }
 
+    /** The form to change the title Samenspel shows and to upload an own cover. */
     public function edit(Game $game): View
     {
         return view('admin.games.edit', ['game' => $game]);
@@ -86,6 +95,10 @@ final class GameController extends Controller
         return to_route('admin.games.index')->with('status', __(':name has been updated.', ['name' => $game->name]));
     }
 
+    /**
+     * Delete the game and its uploaded cover; the request has refused it while an
+     * event still uses it.
+     */
     public function destroy(DestroyGameRequest $request, Game $game): RedirectResponse
     {
         if ($game->cover_image_path !== null) {

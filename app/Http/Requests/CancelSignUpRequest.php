@@ -16,6 +16,7 @@ use LogicException;
  */
 final class CancelSignUpRequest extends FormRequest
 {
+    /** Any signed-in user may try; after() checks there is a sign-up to cancel. */
     public function authorize(): bool
     {
         return $this->user() instanceof User;
@@ -40,6 +41,7 @@ final class CancelSignUpRequest extends FormRequest
         }];
     }
 
+    /** The event from the route, already loaded by route model binding. */
     public function event(): Event
     {
         $event = $this->route('event');
@@ -48,6 +50,7 @@ final class CancelSignUpRequest extends FormRequest
         return $event;
     }
 
+    /** The user cancelling; the auth middleware guarantees there is one. */
     public function signedInUser(): User
     {
         $user = $this->user();

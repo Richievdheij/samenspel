@@ -17,6 +17,10 @@ use Illuminate\Support\Sleep;
 #[Description('Refresh IGDB details for selected games in upcoming events')]
 final class SyncSelectedIgdbGames extends Command
 {
+    /**
+     * Refresh cover, release year and platforms for games in upcoming events that were
+     * not synced this week, at most --limit per run. Stops at the first catalog outage.
+     */
     public function handle(GameCatalog $catalog): int
     {
         $limit = filter_var($this->option('limit'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1000]]);

@@ -25,6 +25,7 @@ final class IgdbGameCatalog implements GameCatalog
 
     private const int SEARCH_RESULTS = 10;
 
+    /** Search IGDB for main games, ranked, and cache each term's results for 30 minutes. */
     public function search(string $term): array
     {
         $key = 'igdb:main-game:v4:search:'.hash('sha256', mb_strtolower($term));
@@ -37,6 +38,10 @@ final class IgdbGameCatalog implements GameCatalog
         return $games;
     }
 
+    /**
+     * One main game by its IGDB id, cached for six hours; null when IGDB has no main
+     * game with that id.
+     */
     public function find(int $id): ?array
     {
         /** @var list<array{id: int, name: string, platform: string|null, platforms: list<string>, release_year: int|null, cover_url: string|null}> $games */
@@ -47,6 +52,10 @@ final class IgdbGameCatalog implements GameCatalog
         return $games[0] ?? null;
     }
 
+    /**
+     * Like find(), but always asks IGDB and overwrites the cached copy, so the sync
+     * command sees changes made since.
+     */
     public function fresh(int $id): ?array
     {
         $games = $this->request(self::MAIN_GAME_FIELDS.' where id = '.$id.' & '.self::MAIN_GAME_FILTER.'; limit 1;');
@@ -156,6 +165,10 @@ final class IgdbGameCatalog implements GameCatalog
         };
     }
 
+    /**
+     * The OAuth token IGDB wants, fetched from Twitch and cached until a minute before
+     * it expires. Missing credentials or a failed request make the catalog unavailable.
+     */
     private function token(): string
     {
         $clientId = config('services.igdb.client_id');

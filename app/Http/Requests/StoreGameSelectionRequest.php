@@ -10,6 +10,10 @@ use Illuminate\Validation\Rule;
 
 final class StoreGameSelectionRequest extends FormRequest
 {
+    /**
+     * Users who may organise can pick games, and so can an organiser editing their own
+     * event, even when they could no longer create a new one.
+     */
     public function authorize(): bool
     {
         $user = $this->user();

@@ -17,6 +17,7 @@ use LogicException;
  */
 final class SignUpForEventRequest extends FormRequest
 {
+    /** Any signed-in user may try; after() decides whether the event takes them. */
     public function authorize(): bool
     {
         return $this->user() instanceof User;
@@ -39,6 +40,7 @@ final class SignUpForEventRequest extends FormRequest
         }];
     }
 
+    /** The event from the route, already loaded by route model binding. */
     public function event(): Event
     {
         $event = $this->route('event');
@@ -47,6 +49,7 @@ final class SignUpForEventRequest extends FormRequest
         return $event;
     }
 
+    /** The user signing up; the auth middleware guarantees there is one. */
     public function signedInUser(): User
     {
         $user = $this->user();

@@ -18,6 +18,7 @@ use Illuminate\Validation\Rule;
  */
 final class ToggleEventStatusRequest extends FormRequest
 {
+    /** Only the event's organiser, or an admin to moderate, may open or close sign-ups. */
     public function authorize(): bool
     {
         $user = $this->user();
@@ -34,6 +35,7 @@ final class ToggleEventStatusRequest extends FormRequest
         ];
     }
 
+    /** The status the button asked for, which validation has already checked. */
     public function status(): EventStatus
     {
         return $this->enum('status', EventStatus::class) ?? EventStatus::Open;

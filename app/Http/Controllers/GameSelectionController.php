@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Storage;
 
 final class GameSelectionController extends Controller
 {
+    /**
+     * Store the IGDB game an organiser picked in the event form and return it as JSON.
+     * Answers 503 when the catalog is down and 404 when it does not know the game.
+     */
     public function __invoke(StoreGameSelectionRequest $request, GameCatalog $catalog, GameSelection $selection): JsonResponse
     {
         try {

@@ -164,6 +164,7 @@ class Event extends Model
         return $signUps >= $this->max_participants;
     }
 
+    /** Whether the user has signed up, asked of the database, not a loaded list. */
     public function hasParticipant(User $user): bool
     {
         return $this->participants()->whereKey($user->id)->exists();

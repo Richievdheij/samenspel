@@ -99,6 +99,7 @@ class User extends Authenticatable // implements \Illuminate\Contracts\Auth\Must
             ->count();
     }
 
+    /** Admins manage games and categories and may moderate any event. */
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin;

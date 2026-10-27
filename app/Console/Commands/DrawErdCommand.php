@@ -39,6 +39,10 @@ final class DrawErdCommand extends Command
     /** Laravel's own bookkeeping, not part of the data model. */
     private const array IGNORED_TABLES = ['migrations'];
 
+    /**
+     * Migrate a throwaway SQLite file and write the diagram of its schema to the output
+     * file. The file is deleted again, whether drawing succeeded or not.
+     */
     public function handle(): int
     {
         // Under storage/, which is gitignored, with a name nobody can predict.
@@ -65,6 +69,10 @@ final class DrawErdCommand extends Command
         }
     }
 
+    /**
+     * Point every configured connection, and `sqlite`, at the throwaway file, so a
+     * migration that names its own connection cannot reach the real database.
+     */
     private function pointEveryConnectionAt(string $database): void
     {
         $sqlite = [
@@ -102,6 +110,10 @@ final class DrawErdCommand extends Command
         );
     }
 
+    /**
+     * The erDiagram of every table: its columns marked PK, FK or UK, and a line per
+     * foreign key, dotted for a relation only the naming convention implies.
+     */
     private function render(Builder $schema): string
     {
         $tables = array_values(array_diff(

@@ -67,6 +67,10 @@ final class GenerateErdCommand extends Command
 
         MARKDOWN;
 
+    /**
+     * Rewrite the block between the markers, or create the document when it is
+     * missing. With --check nothing is written, and an outdated diagram fails.
+     */
     public function handle(): int
     {
         $relativePath = $this->relativePath();
@@ -124,6 +128,7 @@ final class GenerateErdCommand extends Command
         return self::SUCCESS;
     }
 
+    /** The --path option, refused when it is empty. */
     private function relativePath(): string
     {
         $path = $this->option('path');

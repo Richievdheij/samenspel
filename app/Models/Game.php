@@ -46,6 +46,10 @@ class Game extends Model
 
     public const string SOURCE_CATALOG = 'igdb';
 
+    /**
+     * A hash of the title and platform that ignores case, spacing and punctuation but
+     * keeps + and #, so one game is stored once under the unique normalized_name.
+     */
     public static function normalizedKey(string $name, ?string $platform = null): string
     {
         $title = mb_strtolower(trim($name));

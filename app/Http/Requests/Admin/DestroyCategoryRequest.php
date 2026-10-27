@@ -41,6 +41,7 @@ final class DestroyCategoryRequest extends FormRequest
         }];
     }
 
+    /** The category from the route, whose events after() counts. */
     public function category(): Category
     {
         $category = $this->route('category');

@@ -14,6 +14,7 @@ use Illuminate\View\View;
  */
 final class DashboardController extends Controller
 {
+    /** Upcoming sign-ups, the five most recent past ones, and the organiser progress. */
     public function __invoke(Request $request): View
     {
         /** @var User $user */

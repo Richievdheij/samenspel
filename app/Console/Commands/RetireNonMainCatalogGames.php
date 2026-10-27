@@ -16,6 +16,10 @@ use Illuminate\Support\Sleep;
 #[Description('Hide existing IGDB add-ons and incomplete entries from new event choices')]
 final class RetireNonMainCatalogGames extends Command
 {
+    /**
+     * Ask IGDB about every catalog game again and retire those that are no longer a
+     * main game: gone from new event choices, kept on the events that have them.
+     */
     public function handle(GameCatalog $catalog): int
     {
         $checked = 0;

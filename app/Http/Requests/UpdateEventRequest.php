@@ -19,6 +19,7 @@ use LogicException;
  */
 final class UpdateEventRequest extends StoreEventRequest
 {
+    /** Only the event's organiser may edit it; everyone else gets a 403. */
     public function authorize(): bool
     {
         $user = $this->user();
@@ -53,6 +54,7 @@ final class UpdateEventRequest extends StoreEventRequest
         return ['id' => $reference, 'label' => $event->location];
     }
 
+    /** The event being edited, from the route. */
     private function event(): Event
     {
         $event = $this->route('event');

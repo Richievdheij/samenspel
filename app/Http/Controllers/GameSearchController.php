@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 final class GameSearchController extends Controller
 {
+    /**
+     * Search IGDB for the game picker and return the results as JSON. Only users who
+     * may pick games for this event get an answer; a catalog outage gives a 503.
+     */
     public function __invoke(Request $request, GameCatalog $catalog): JsonResponse
     {
         $user = $request->user();

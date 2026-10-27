@@ -36,6 +36,7 @@ final class SearchGameCatalogRequest extends FormRequest
         ];
     }
 
+    /** The validated search term, trimmed; '' when the admin did not search. */
     public function term(): string
     {
         $term = $this->validated('q');

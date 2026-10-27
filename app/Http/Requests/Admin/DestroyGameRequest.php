@@ -41,6 +41,7 @@ final class DestroyGameRequest extends FormRequest
         }];
     }
 
+    /** The game from the route, whose events after() counts. */
     public function game(): Game
     {
         $game = $this->route('game');

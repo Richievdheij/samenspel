@@ -50,6 +50,9 @@ final readonly class Herd
         return array_any($this->configDirectories, fn (string $configDirectory): bool => is_file($configDirectory.'/config.json'));
     }
 
+    /**
+     * Whether Herd or Valet serves the project at this path, linked or parked.
+     */
     public function servesPath(string $path): bool
     {
         return $this->siteUrl($path) !== null;
@@ -110,6 +113,10 @@ final readonly class Herd
         ];
     }
 
+    /**
+     * Whether the project sits directly inside a parked path (`herd park`). One
+     * level only, as Herd's nginx resolves it.
+     */
     private function isParkedIn(string $project, string $registeredPath): bool
     {
         return realpath($registeredPath) === dirname($project);

@@ -11,6 +11,14 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- `docs/security.md` wijst per onderdeel van de OWASP Top 10 aan hoe Laravel en
+  Samenspel het afvangen, met de plek in de code (US18).
+- `php artisan db:seed --class=DemoSeeder` zet voor een demo drie organisatoren
+  met komende events klaar, met de spellen die een admin al heeft toegevoegd. Het
+  testaccount kan zich daarop inschrijven en zo laten zien dat organiseren pas
+  na drie inschrijvingen mag (US8).
+- `docs/otap.md` beschrijft de vier omgevingen, waar de configuratie staat en
+  wat er nodig is om Samenspel op een productieserver te zetten (US19).
 - Admins kunnen bij misbruik elk event sluiten of verwijderen, met dezelfde
   knoppen als de organisator. Dat is een bewuste uitzondering in de
   `EventPolicy`; bewerken blijft alleen voor de organisator (US17).
@@ -84,6 +92,12 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Gewijzigd
 
+- Zoeken in het eventoverzicht vindt een event nu ook op de naam van een van
+  zijn spellen, naast de titel. De beschrijving blijft buiten de zoekopdracht,
+  omdat alleen ingelogde gebruikers die zien (US6).
+- Het aantal inschrijvingen dat nodig is om te organiseren staat op één plek,
+  `User::SIGN_UPS_NEEDED_TO_ORGANIZE`; het aanmaakformulier, het dashboard en de
+  controle gebruiken dezelfde waarde (US8).
 - De tijdzone op de eventpagina noemt het verschil met UTC op de startdag, zoals
   "Amsterdamse tijd (UTC+1)" in de winter en "(UTC+2)" in de zomer (US5).
 - De filters in het eventoverzicht staan in drie even brede kolommen, zodat een

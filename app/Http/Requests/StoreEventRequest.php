@@ -68,6 +68,10 @@ class StoreEventRequest extends FormRequest
         ];
     }
 
+    /**
+     * Once the other rules pass, an event on location needs an address chosen from the
+     * suggestions, which is then looked up at PDOK unless the event already has it.
+     */
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
@@ -184,6 +188,7 @@ class StoreEventRequest extends FormRequest
         return null;
     }
 
+    /** An input value as a string, or '' when it is missing or not a string. */
     private function stringInput(string $key): string
     {
         $value = $this->input($key);
