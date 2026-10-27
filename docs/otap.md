@@ -18,7 +18,7 @@ omgevingen heeft gewerkt.
   zien. De seeders maken testaccounts en demo-events aan.
 - **Test**: `phpunit.xml` zet de testomgeving. Elke test krijgt een lege database
   (`RefreshDatabase`), dus tests beïnvloeden elkaar niet. GitHub Actions draait bij
-  elke push naar `main` dezelfde controles (`.github/workflows/ci.yml`), ook tegen
+  elke push naar `main` en `develop` dezelfde controles (`.github/workflows/ci.yml`), ook tegen
   MySQL 8.4, de versie van productie.
 - **Acceptatie**: dezelfde instellingen als productie, maar met testdata. Hier
   controleert de opdrachtgever een nieuwe versie voordat hij live gaat. Voor dit

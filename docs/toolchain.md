@@ -173,11 +173,15 @@ reads.
 Stated so the next person adds them **on purpose** rather than assuming they
 exist.
 
-Release tagging and deployment · container image publishing, scanning, SBOM and
-provenance · an encrypted secret store · the dependency upgrade drill ·
-build-output byte reproducibility · end-to-end browser tests · path-gated CI · a
-licence gate · task-graph caching · automated dependency updates · generated API
-documentation · queue and scheduler supervision.
+Container image publishing, scanning, SBOM and provenance · an encrypted secret
+store · the dependency upgrade drill · build-output byte reproducibility ·
+end-to-end browser tests · path-gated CI · a licence gate · task-graph caching ·
+generated API documentation.
+
+Since set up, and documented where they live: deployment and queue and scheduler
+supervision (`make provision`, `make deploy`, [otap.md](otap.md)), release tagging
+([branching.md](branching.md)), and automated dependency updates
+(`.github/dependabot.yml`).
 
 Specific omissions with their reasons:
 

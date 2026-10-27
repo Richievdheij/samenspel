@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/Richievdheij/samenspel/actions/workflows/ci.yml"><img src="https://github.com/Richievdheij/samenspel/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
-  <a href="https://github.com/Richievdheij/samenspel/releases/latest"><img src="https://img.shields.io/github/v/release/Richievdheij/samenspel" alt="Laatste release"></a>
+  <a href="https://github.com/Richievdheij/samenspel/releases/latest"><img src="https://img.shields.io/github/v/release/Richievdheij/samenspel?sort=semver&label=release" alt="Laatste release"></a>
   <img src="https://img.shields.io/badge/licentie-alle%20rechten%20voorbehouden-lightgrey" alt="Licentie: alle rechten voorbehouden">
 </p>
 
@@ -108,6 +108,19 @@ Niemand commit direct op `main`. Werk gebeurt op `develop` of op een
 `type(scope): onderwerp`, bijvoorbeeld `feat(events): add sign-up`. Zie
 [docs/branching.md](docs/branching.md).
 
+## Productie en releases
+
+Samenspel draait op een eigen server bij Oracle Cloud, met HTTPS. Een release is
+een tag `vX.Y.Z` op `main`, met de notities uit de [CHANGELOG](CHANGELOG.md); de
+eerste is [v1.0.0](https://github.com/Richievdheij/samenspel/releases/tag/v1.0.0).
+
+| Wat                                | Commando                        |
+| ---------------------------------- | ------------------------------- |
+| Een lege server inrichten, eenmaal | `make provision domain=<adres>` |
+| De nieuwste `main` live zetten     | `make deploy`                   |
+
+Hoe de server is ingericht en beveiligd staat in [docs/otap.md](docs/otap.md).
+
 ## Huisstijl
 
 De kleuren, lettertypes, afstanden en vormen staan als design tokens (CSS custom
@@ -134,7 +147,9 @@ Het volledige design system, inclusief contrastwaarden en logo-regels, staat in
 - [docs/toolchain.md](docs/toolchain.md): de controles en de keuzes erachter.
 - [docs/otap.md](docs/otap.md): de omgevingen en de productieserver.
 - [docs/security.md](docs/security.md): de OWASP Top 10 in Samenspel.
+- [docs/game-catalog.md](docs/game-catalog.md): hoe de spellen uit IGDB komen.
 - [CHANGELOG.md](CHANGELOG.md): wat er per release is veranderd.
+- [SECURITY.md](SECURITY.md): een kwetsbaarheid privé melden.
 - [AGENTS.md](AGENTS.md): de afspraken voor codeerassistenten.
 
 ## Licentie

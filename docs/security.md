@@ -86,7 +86,8 @@ De regels van het domein staan op de server, niet alleen in de interface:
 
 - `composer.lock` en `package-lock.json` leggen de exacte versies vast.
 - `make audit` draait `composer audit` en `npm audit` en faalt bij een bekende
-  kwetsbaarheid. CI (GitHub Actions) draait dit bij elke push naar `main`.
+  kwetsbaarheid. CI (GitHub Actions) draait dit bij elke push naar `main` en
+  `develop`, en Dependabot stelt elke week updates voor.
 
 ## A07 Identification and Authentication Failures
 

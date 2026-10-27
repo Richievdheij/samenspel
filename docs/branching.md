@@ -34,6 +34,25 @@ git push -u origin feature/example-list
 When it is reviewed and CI is green, merge it into `develop`. When `develop` is
 worth releasing, merge `develop` into `main`.
 
+## A release
+
+A release is an annotated tag `vX.Y.Z` on `main`, following semantic versioning,
+and a GitHub release whose notes come from that version's section in
+`CHANGELOG.md`. The first was `v1.0.0`.
+
+```bash
+# in CHANGELOG.md: rename [Unreleased] to [X.Y.Z] - <date>, add a new empty
+# [Unreleased] above it, and update the two compare links at the bottom
+git switch main && git merge --ff-only develop && git push origin main
+# wait until CI on main is green
+git tag -a vX.Y.Z -m "Samenspel X.Y.Z" && git push origin vX.Y.Z
+gh release create vX.Y.Z --title "Samenspel X.Y.Z" --notes-file <notes.md> --verify-tag
+make deploy
+```
+
+Tag only a commit that CI has passed on `main`: the tag is what a release points
+at, and moving it afterwards rewrites what that version means.
+
 ## Why not just commit to main
 
 Three reasons, and none of them is ceremony:
