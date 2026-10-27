@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Edit :name', ['name' => $category->name])" :back="route('admin.categories.index')" :back-label="__('Back to categories')" robots="noindex, follow">
+<x-layouts.app :title="__('Edit :name', ['name' => $category->name])" :back="route('admin.categories.index')" :back-label="__('Back to categories')">
     <x-slot:header>
         <h1>{{ __('Edit :name', ['name' => $category->name]) }}</h1>
     </x-slot:header>

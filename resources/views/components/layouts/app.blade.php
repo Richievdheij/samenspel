@@ -18,7 +18,11 @@
                               __('Back to dashboard')
       string|null $description  page summary used by search and social previews
       string|null $canonical    preferred public URL for search engines
-      string|null $robots       indexing instruction; private pages use noindex
+      string|null $robots       indexing instruction, `index, follow` by default.
+                                Private pages need no noindex: a crawler is
+                                redirected to the login before it sees them, and
+                                filtered lists rely on $canonical instead, which
+                                Google advises against combining with noindex
 
     Slots
 

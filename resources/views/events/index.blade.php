@@ -6,7 +6,7 @@
     called, when, and whether there is still room. The entire card
     opens the detail page.
 --}}
-<x-layouts.app :title="__('Events')" :description="__('Discover upcoming gaming events on Samenspel. Sign in for locations and participant details.')" :canonical="route('events.index')" :robots="request()->query() === [] ? null : 'noindex, follow'">
+<x-layouts.app :title="__('Events')" :description="__('Discover upcoming gaming events on Samenspel. Sign in for locations and participant details.')" :canonical="route('events.index')">
     <x-slot:header>
         <h1>{{ __('Upcoming events') }}</h1>
         <p class="page-header__intro">
@@ -77,9 +77,9 @@
                             <x-icon name="chevron-down" />
                         </summary>
                         <div class="event-filters__options" role="group" aria-label="{{ __('Game') }}">
-                            <label class="event-filters__search">
+                            <label class="event-filters__search" for="game-filter-search">
                                 <span class="sr-only">{{ __('Search games') }}</span>
-                                <input class="field__control" type="search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off" maxlength="80">
+                                <input class="field__control" type="search" id="game-filter-search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off" maxlength="80">
                             </label>
                             <label class="event-filters__option">
                                 <input class="checkbox__control" type="radio" name="game" value="" @checked(!$selectedGame)>

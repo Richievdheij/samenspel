@@ -21,7 +21,7 @@ it('shows the platforms of an event as icons and filters the overview on them', 
 
     get(route('events.show', $event))
         ->assertSeeHtml('platform-label--switch')
-        ->assertSeeHtml('aria-label="Nintendo Switch"')
+        ->assertSeeHtml('role="img" aria-label="Nintendo Switch"')
         ->assertSeeHtml('platform-label--mobile')
         ->assertDontSeeHtml('>Nintendo Switch</span>');
     get(route('events.index', ['platform' => [$switch->id]]))->assertSee('Console night');

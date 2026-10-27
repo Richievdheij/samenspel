@@ -22,7 +22,7 @@
             'title' => $title,
             'description' => __('Bring players together for gaming events and LAN parties on Samenspel.'),
             'canonical' => null,
-            'robots' => 'noindex, follow',
+            'robots' => 'index, follow',
         ])
     </head>
 

@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Create an event')" robots="noindex, follow">
+<x-layouts.app :title="__('Create an event')">
     <x-slot:header>
         <h1>{{ __('Create an event') }}</h1>
         <p class="page-header__intro">{{ __('Bring players together for a game you enjoy.') }}</p>

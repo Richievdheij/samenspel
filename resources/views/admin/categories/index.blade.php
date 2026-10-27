@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Manage categories')" robots="noindex, follow">
+<x-layouts.app :title="__('Manage categories')">
     <x-slot:header>
         <h1>{{ __('Manage categories') }}</h1>
         <p class="page-header__intro">{{ __('Add, rename and remove the categories organisers choose from.') }}</p>

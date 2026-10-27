@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Edit :name', ['name' => $game->name])" :back="route('admin.games.index')" :back-label="__('Back to games')" robots="noindex, follow">
+<x-layouts.app :title="__('Edit :name', ['name' => $game->name])" :back="route('admin.games.index')" :back-label="__('Back to games')">
     <x-slot:header>
         <h1>{{ __('Edit :name', ['name' => $game->name]) }}</h1>
     </x-slot:header>

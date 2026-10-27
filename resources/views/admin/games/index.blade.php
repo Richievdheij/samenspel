@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Manage games')" robots="noindex, follow">
+<x-layouts.app :title="__('Manage games')">
     <x-slot:header>
         <h1>{{ __('Manage games') }}</h1>
         <p class="page-header__intro">{{ __('Add games from the IGDB catalog and choose how Samenspel shows them.') }}</p>

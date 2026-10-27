@@ -2,7 +2,7 @@
     The signed-in start page: the events the user signed up for, and how far
     they are from organising one themselves.
 --}}
-<x-layouts.app :title="__('Dashboard')" robots="noindex, follow">
+<x-layouts.app :title="__('Dashboard')">
     <x-slot:header>
         <h1>{{ __('Dashboard') }}</h1>
         <p class="page-header__intro">{{ __('Welcome back, :name.', ['name' => auth()->user()->name]) }}</p>

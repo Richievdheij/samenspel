@@ -149,7 +149,7 @@ it('searches the public title and the game names, not the description, and keeps
         ->assertDontSeeText('Schaakavond')
         ->assertDontSeeText('Mario van gisteren')
         ->assertSeeText('Zoekresultaten voor "Mario" (2)')
-        ->assertSeeHtml('content="noindex, follow"')
+        ->assertSeeHtml('content="index, follow"')
         ->assertSeeHtml('rel="canonical" href="'.route('events.index').'"')
         ->assertSeeHtml('aria-label="Zoekopdracht wissen"')
         ->assertSeeHtml('href="'.route('events.index').'"')

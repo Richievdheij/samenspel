@@ -20,9 +20,9 @@
         <x-icon name="chevron-down" />
     </summary>
     <div class="event-create__options event-create__options--games" role="group" aria-label="{{ __('Games') }}">
-        <label class="event-create__search">
+        <label class="event-create__search" for="game-picker-search">
             <span class="sr-only">{{ __('Search games') }}</span>
-            <input class="field__control" type="search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off" maxlength="80">
+            <input class="field__control" type="search" id="game-picker-search" data-option-search placeholder="{{ __('Search games') }}" autocomplete="off" maxlength="80">
         </label>
         <div class="event-create__local-results" data-local-results>
             @foreach ($games as $game)

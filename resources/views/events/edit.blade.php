@@ -1,4 +1,4 @@
-<x-layouts.app :title="__('Edit event')" :back="route('events.show', $event)" :back-label="__('Back to event')" robots="noindex, follow">
+<x-layouts.app :title="__('Edit event')" :back="route('events.show', $event)" :back-label="__('Back to event')">
     <x-slot:header>
         <h1>{{ __('Edit event') }}</h1>
         <p class="page-header__intro">{{ $event->title }}</p>
