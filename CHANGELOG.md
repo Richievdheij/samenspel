@@ -11,6 +11,11 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ### Toegevoegd
 
+- Samenspel staat live op een eigen server bij Oracle Cloud, met HTTPS:
+  <https://samenspel.158-178-149-229.sslip.io>. `make provision` richt een lege
+  Ubuntu-server in en beveiligt hem, `make deploy` zet daarna de nieuwste `main`
+  live. `docs/otap.md` beschrijft de server (US19).
+- Elke functie in `app/` heeft een korte docblock die uitlegt wat hij doet.
 - `docs/security.md` wijst per onderdeel van de OWASP Top 10 aan hoe Laravel en
   Samenspel het afvangen, met de plek in de code (US18).
 - `php artisan db:seed --class=DemoSeeder` zet voor een demo drie organisatoren

@@ -2,6 +2,8 @@
   <img src="public/brand/samenspel-stacked-light.svg" alt="Samenspel" width="240">
 </p>
 
+https://samenspel.158-178-149-229.sslip.io/
+
 # Samenspel
 
 Samenspel is een webapplicatie waarmee je gaming-events en LAN-party's organiseert

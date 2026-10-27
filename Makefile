@@ -83,6 +83,7 @@ err = printf "\033[1;31m✗\033[0m %s\n"
         dev stop fresh migrate seed migration erd \
         format format-check lint analyse arch checks rector rector-check \
         test test-one coverage integration browser build clean \
+        provision deploy \
         verify ci audit secrets-scan commit-messages
 
 ##@ Workspace
@@ -286,6 +287,21 @@ clean: ## Remove build output and caches
 	@rm -rf public/build public/hot
 	@php artisan optimize:clear
 	@$(ok) "Cleaned"
+
+##@ Production
+
+# The server is reached through an SSH alias, so no address or key path lives in
+# this file. docs/otap.md shows the ~/.ssh/config entry; override with host=.
+# Both scripts travel over SSH on stdin, which means the version that runs is the
+# one in this checkout, not whatever the server last pulled.
+host ?= samenspel
+
+provision: ## Prepare a fresh Ubuntu server, once — make provision domain=<domain> [host=samenspel]
+	@[ -n "$(domain)" ] || { $(err) "Usage: make provision domain=<domain> [host=samenspel]"; exit 1; }
+	@ssh "$(host)" 'sudo bash -s -- "$(domain)"' < scripts/server/provision.sh
+
+deploy: ## Put the newest main live on the server — push first; make deploy [host=samenspel]
+	@ssh "$(host)" 'bash -s' < scripts/server/deploy.sh
 
 ##@ Gates
 
