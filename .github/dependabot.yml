@@ -1,0 +1,36 @@
+# Weekly update proposals, so a vulnerable package reaches a pull request before
+# `make audit` turns CI red over it. Pull requests target develop, where work is
+# integrated; main only receives what develop has already passed.
+#
+# Minor and patch updates are grouped into one pull request per ecosystem, so a
+# quiet week costs one review rather than twenty. A major version arrives alone,
+# because it is the one that can break something.
+
+version: 2
+
+updates:
+  - package-ecosystem: composer
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    groups:
+      composer-minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+
+  # The actions are pinned to a commit SHA with a `# vN` comment; Dependabot
+  # updates both together.
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly

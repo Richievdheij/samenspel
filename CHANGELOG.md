@@ -9,8 +9,16 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-27
+
+De eerste release: Samenspel staat live, en alles hieronder zit erin.
+
 ### Toegevoegd
 
+- `SECURITY.md` legt uit hoe je een kwetsbaarheid privé meldt, en Dependabot stelt
+  elke week updates voor de Composer- en npm-pakketten en de GitHub Actions voor.
+  `LICENSE` zegt nu ook wat de GitHub-voorwaarden anderen wel toestaan (bekijken
+  en forken op GitHub) en dat beoordelaars het project mogen draaien.
 - Samenspel staat live op een eigen server bij Oracle Cloud, met HTTPS:
   <https://samenspel.158-178-149-229.sslip.io>. `make provision` richt een lege
   Ubuntu-server in en beveiligt hem, `make deploy` zet daarna de nieuwste `main`
@@ -221,3 +229,6 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 - Laravel 13-project met registreren, inloggen, uitloggen, wachtwoord resetten
   en een eigen profielpagina (US1, US2, US3).
 - Databaseconfiguratie voor MySQL-database `samenspel`.
+
+[Unreleased]: https://github.com/Richievdheij/samenspel/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Richievdheij/samenspel/releases/tag/v1.0.0

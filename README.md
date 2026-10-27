@@ -2,9 +2,15 @@
   <img src="public/brand/samenspel-stacked-light.svg" alt="Samenspel" width="240">
 </p>
 
-https://samenspel.158-178-149-229.sslip.io/
+<p align="center">
+  <a href="https://github.com/Richievdheij/samenspel/actions/workflows/ci.yml"><img src="https://github.com/Richievdheij/samenspel/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/Richievdheij/samenspel/releases/latest"><img src="https://img.shields.io/github/v/release/Richievdheij/samenspel" alt="Laatste release"></a>
+  <img src="https://img.shields.io/badge/licentie-alle%20rechten%20voorbehouden-lightgrey" alt="Licentie: alle rechten voorbehouden">
+</p>
 
 # Samenspel
+
+**Live:** <https://samenspel.158-178-149-229.sslip.io>
 
 Samenspel is een webapplicatie waarmee je gaming-events en LAN-party's organiseert
 en eraan meedoet.
@@ -32,6 +38,9 @@ De applicatie is gebouwd in Laravel.
 | Taal      | Nederlands (`nl`) met Engels als fallback                       |
 
 ## Aan de slag
+
+Klonen en draaien mag alleen voor de beoordeling van dit schoolproject, of met
+schriftelijke toestemming; zie [Licentie](#licentie).
 
 Nodig: PHP 8.4+, Composer 2, Node 24 (zie [.nvmrc](.nvmrc)), npm 11+ en make. Op
 Windows werk je in WSL2.
@@ -123,11 +132,15 @@ Het volledige design system, inclusief contrastwaarden en logo-regels, staat in
   en het logo.
 - [docs/branching.md](docs/branching.md): `main`, `develop` en feature-branches.
 - [docs/toolchain.md](docs/toolchain.md): de controles en de keuzes erachter.
+- [docs/otap.md](docs/otap.md): de omgevingen en de productieserver.
+- [docs/security.md](docs/security.md): de OWASP Top 10 in Samenspel.
+- [CHANGELOG.md](CHANGELOG.md): wat er per release is veranderd.
 - [AGENTS.md](AGENTS.md): de afspraken voor codeerassistenten.
 
 ## Licentie
 
-**Alle rechten voorbehouden.** Dit is privéwerk, geen open source. Zie
-[LICENSE](LICENSE). Het Laravel-skelet waarop dit gebouwd is blijft MIT
+**Alle rechten voorbehouden.** Dit is privéwerk, geen open source: kopiëren,
+hergebruiken, aanpassen of verspreiden mag niet zonder schriftelijke toestemming.
+Zie [LICENSE](LICENSE). Het Laravel-skelet waarop dit gebouwd is blijft MIT
 (© Taylor Otwell). Bricolage Grotesque valt onder de SIL Open Font License, zie
 `resources/fonts/bricolage-grotesque/OFL.txt`.
