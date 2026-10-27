@@ -9,6 +9,12 @@ al bestond, **Opgelost** voor bugfixes en **Verwijderd** voor wat eruit gaat.
 
 ## [Unreleased]
 
+### Verwijderd
+
+- De wekelijkse Dependabot-updates. Ze gaven elke week een pull request zonder dat
+  er iets mis was. De meldingen en beveiligingsupdates van GitHub blijven aan,
+  dus een kwetsbaar pakket wordt nog steeds gemeld.
+
 ## [1.0.0] - 2026-10-27
 
 De eerste release: Samenspel staat live, en alles hieronder zit erin.

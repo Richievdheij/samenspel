@@ -19,8 +19,9 @@ Alleen de laatste release en de versie die live staat op
 
 - `make audit` faalt bij een bekende kwetsbaarheid in een Composer- of
   npm-pakket. CI draait die controle bij elke push naar `main` en `develop`.
-- Dependabot stelt elke week updates voor de pakketten en de GitHub Actions
-  voor ([.github/dependabot.yml](.github/dependabot.yml)).
+- GitHub meldt een bekende kwetsbaarheid in een pakket via Dependabot-alerts,
+  en opent dan zelf een pull request met de veilige versie. Wekelijkse
+  versie-updates staan bewust uit; zie [docs/toolchain.md](docs/toolchain.md).
 - Hoe de applicatie de OWASP Top 10 afvangt, staat in
   [docs/security.md](docs/security.md). Hoe de productieserver beveiligd is, staat
   in [docs/otap.md](docs/otap.md).

@@ -176,12 +176,11 @@ exist.
 Container image publishing, scanning, SBOM and provenance · an encrypted secret
 store · the dependency upgrade drill · build-output byte reproducibility ·
 end-to-end browser tests · path-gated CI · a licence gate · task-graph caching ·
-generated API documentation.
+automated dependency updates · generated API documentation.
 
 Since set up, and documented where they live: deployment and queue and scheduler
 supervision (`make provision`, `make deploy`, [otap.md](otap.md)), release tagging
-([branching.md](branching.md)), and automated dependency updates
-(`.github/dependabot.yml`).
+([branching.md](branching.md)).
 
 Specific omissions with their reasons:
 
@@ -199,10 +198,11 @@ Specific omissions with their reasons:
   touches Docker, as a tool runner rather than a runtime, and it fails loudly
   rather than skipping when Docker is absent.
 
-- **No automated dependency updates.** Dependabot was configured and then removed
-  deliberately. On a private repository every one of its pull requests spends
-  Actions minutes from a metered quota, and an update nobody reviews is worse than
-  no update at all. This is NOT the same as being unprotected: `make audit` runs
+- **No automated dependency updates.** Dependabot version updates were configured
+  and then removed deliberately, twice. Every one of their pull requests runs the
+  full CI and waits for a review, and an update nobody reviews is worse than no
+  update at all. GitHub's Dependabot _alerts_ and _security updates_ stay on: they
+  say something only when a dependency has a known vulnerability. This is NOT the same as being unprotected: `make audit` runs
   `composer audit --locked` and `npm audit --audit-level=high` on every CI run and
   fails on a vulnerable dependency, and `roave/security-advisories` stops a known
   vulnerable version from resolving in the first place. What is absent is the
