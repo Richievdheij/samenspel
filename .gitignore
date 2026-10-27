@@ -44,6 +44,9 @@ Thumbs.db
 # into the history that the secret scanner then reported forever.
 /.claude/skills
 
+# The same skills, copied for GitHub Copilot when Boost has that agent enabled.
+/.github/skills
+
 # JetBrains Junie skill copies, written by boost:install alongside .claude/skills.
 # Nobody here uses Junie and they duplicate that directory file for file.
 /.junie
