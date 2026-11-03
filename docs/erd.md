@@ -5,7 +5,7 @@ hoe ze met elkaar verbonden zijn. GitHub tekent het diagram hieronder automatisc
 uit de Mermaid-code.
 
 De migrations in `database/migrations/` bouwen precies deze tabellen, en de
-models in `app/Models/` (`User`, `Game`, `Category`, `Event`) hebben de relaties
+models in `app/Models/` (`User`, `Game`, `Category`, `Platform`, `Event`) hebben de relaties
 die de lijnen tekenen. Wijkt de code af, dan wint de code en wordt dit bestand in
 dezelfde commit bijgewerkt.
 
@@ -20,6 +20,8 @@ erDiagram
     categories ||--o{ events : "hoofdcategorie"
     categories ||--o{ category_event : "labelt"
     events ||--o{ category_event : "heeft categorieen"
+    platforms ||--o{ event_platform : "wordt gekozen"
+    events ||--o{ event_platform : "heeft platforms"
     users ||--o{ event_user : "schrijft zich in"
     events ||--o{ event_user : "heeft inschrijvingen"
 
@@ -37,7 +39,18 @@ erDiagram
 
     games {
         bigint id PK
-        string name UK
+        string name "officiële titel"
+        string normalized_name UK "nullable, voor dubbel-check"
+        string source "igdb, manual of retired_catalog"
+        string provider "nullable, igdb"
+        bigint provider_id "nullable, ID bij IGDB"
+        string platform "nullable"
+        json available_platforms "nullable"
+        smallint release_year "nullable"
+        string cover_image_url "nullable"
+        string cover_image_path "nullable, eigen upload"
+        string logo_image_path "nullable"
+        timestamp catalog_synced_at "nullable"
         timestamp created_at
         timestamp updated_at
     }
@@ -47,6 +60,12 @@ erDiagram
         string name UK
         timestamp created_at
         timestamp updated_at
+    }
+
+    platforms {
+        bigint id PK
+        string slug UK "bijvoorbeeld pc of switch"
+        string name
     }
 
     events {
@@ -60,6 +79,7 @@ erDiagram
         datetime ends_at "nullable"
         string location "nullable, onbekend mogelijk"
         string location_reference "nullable, PDOK adres-ID"
+        boolean is_online "true bij een online event"
         smallint min_participants "nullable"
         smallint max_participants "nullable, geen limiet"
         string status "open of closed"
@@ -83,6 +103,11 @@ erDiagram
     event_game {
         bigint event_id PK,FK
         bigint game_id PK,FK
+    }
+
+    event_platform {
+        bigint event_id PK,FK
+        bigint platform_id PK,FK
     }
 ```
 
@@ -127,8 +152,11 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 | `users`          | Iedereen met een account. `role` maakt iemand een gewone gebruiker of admin                        |
 | `games`          | De spellen uit de IGDB-catalogus die events gebruiken, onder hun officiële titel                   |
 | `categories`     | De soorten events die een admin beheert, bijvoorbeeld LAN, Online of Casual                        |
+| `platforms`      | De vaste lijst platforms, zoals PC, PlayStation en Switch. De migration zet ze klaar               |
 | `events`         | Een gaming-event of LAN-party, met spel, hoofdcategorie, tijd, plek en optionele deelnemersgrenzen |
+| `event_game`     | Alle spellen die op een event gespeeld worden                                                      |
 | `category_event` | Alle categorieën die bij een event horen                                                           |
+| `event_platform` | Op welke platforms je bij een event kunt meedoen                                                   |
 | `event_user`     | De inschrijvingen: welke user op welk event ingeschreven staat                                     |
 
 ## Relaties
@@ -136,9 +164,11 @@ code staat dat zo: `users ||--o{ events : "organiseert"`.
 | Van          | Naar     | Soort        | In gewone taal                                                                                         |
 | ------------ | -------- | ------------ | ------------------------------------------------------------------------------------------------------ |
 | `users`      | `events` | één-op-veel  | Een user organiseert meerdere events, een event heeft één organisator                                  |
-| `games`      | `events` | één-op-veel  | Een spel kan op meerdere events gespeeld worden, een event heeft één spel                              |
+| `games`      | `events` | één-op-veel  | Een event bewaart één primair spel (`game_id`) voor bestaande gegevens en code                         |
+| `games`      | `events` | veel-op-veel | Via `event_game`: op een event kunnen meerdere spellen gespeeld worden                                 |
 | `categories` | `events` | één-op-veel  | Een event bewaart één hoofdcategorie voor bestaande gegevens en code                                   |
 | `categories` | `events` | veel-op-veel | Via `category_event`: een event kan meerdere categorielabels dragen                                    |
+| `platforms`  | `events` | veel-op-veel | Via `event_platform`: een event kan op meerdere platforms gespeeld worden                              |
 | `users`      | `events` | veel-op-veel | Via `event_user`: een user schrijft zich in op meerdere events, en een event heeft meerdere deelnemers |
 
 ### Waarom een tussentabel?
@@ -157,15 +187,20 @@ verschillende dingen: `events.user_id` is de **organisator**, `event_user` zijn 
 Voor categorieën bestaat daarnaast `category_event`. Bestaande events zijn bij de
 migratie met hun oorspronkelijke categorie aan deze tabel toegevoegd. De
 `category_id` in `events` blijft hun hoofdcategorie; de labels en filters lezen
-alle categorieën uit de tussentabel.
+alle categorieën uit de tussentabel. Voor spellen werkt het net zo: `game_id` in
+`events` is het primaire spel, `event_game` bevat alle spellen van het event.
+
+`event_platform` koppelt een event aan de platforms waarop je mee kunt doen. De
+filter op platform op de eventlijst leest deze tabel.
 
 ## Ontwerpkeuzes
 
 - `event_user` heeft een unieke index op de combinatie (`event_id`, `user_id`),
   zodat iemand zich niet twee keer op hetzelfde event kan inschrijven, ook niet als
   de validatie wordt omzeild.
-- `category_event` heeft een samengestelde primaire sleutel, zodat hetzelfde
-  categorielabel niet dubbel op een event kan staan.
+- `category_event`, `event_game` en `event_platform` hebben een samengestelde
+  primaire sleutel, zodat hetzelfde label, spel of platform niet dubbel op een
+  event kan staan.
 - `min_participants` en `max_participants` zijn bij oude events onbekend. Een
   event zonder grenzen bewaart voor beide `null`; zonder maximum wordt het niet vol.
 - Er is geen kolom die bijhoudt op hoeveel events iemand ingeschreven staat. De
@@ -176,8 +211,13 @@ alle categorieën uit de tussentabel.
 - `role` en `status` zijn gewone tekstkolommen met een PHP-enum in het model, geen
   database-enum, zodat de migrations eenvoudig blijven.
 - Wordt een event verwijderd, dan verdwijnen de inschrijvingen mee
-  (`cascadeOnDelete` op `event_user.event_id`). Een spel of categorie die nog bij
-  een event hoort, kan niet verwijderd worden (`restrictOnDelete`).
+  (`cascadeOnDelete` op `event_user.event_id`), net als de koppelingen in
+  `event_game`, `category_event` en `event_platform`. Een spel, categorie of
+  platform die nog bij een event hoort, kan niet verwijderd worden
+  (`restrictOnDelete`).
+- `games.available_platforms` is een JSON-lijst uit IGDB: op welke platforms een
+  spel uitkomt. Dat is informatie over het spel, geen koppeling, dus het staat niet
+  in een tussentabel.
 - Verwijdert iemand zijn account, dan verdwijnen de events die hij organiseerde
   en zijn inschrijvingen mee (`cascadeOnDelete` op `events.user_id` en
   `event_user.user_id`).
